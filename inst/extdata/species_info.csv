@@ -1,0 +1,12 @@
+number,code,species,SMS_species,short,predator_sp,other_predator_sp,prey_sp,nodc,first_age,last_age
+0,OTH,other,other,other,F,F,F,-9,1,1
+1,HKE,Merluccius merluccius,Merluccius merluccius,Hake,T,T,F,8791040105,1,9
+2,COD,Gadus morhua,Gadus morhua,Cod,T,F,T,8791030402,0,10
+3,WHG,Merlangius merlangus,Merlangius merlangus,Whiting,T,F,T,8791031801,0,8
+4,HAD,Melanogrammus aeglefinus,Melanogrammus aeglefinus,Haddock,T,F,T,8791031301,0,10
+5,POK,Pollachius virens,Pollachius virens,Saithe,T,F,F,8791030901,0,10
+6,MAC,Scomber scombrus,Scomber scombrus,Mackerel,T,F,F,8850030302,0,10
+7,HER,Clupea harengus,Clupea harengus,Herring,F,F,T,8747010201,0,9
+8,SAN,Ammodytidae,Ammodytidae,Sandeel,F,F,T,8845010000,0,4
+9,NOP,Trisopterus esmarkii,Trisopterus esmarkii,Nor. Pout,F,F,T,8791031703,0,3
+10,SPR,Sprattus sprattus,Sprattus sprattus,Sprat,F,F,T,8747011701,0,3

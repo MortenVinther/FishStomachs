@@ -1,0 +1,55 @@
+---
+title: "Example 05:Create data for model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ex05_Create_data_for_model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  options(rmarkdown.html_vignette.check_title = FALSE) 
+)
+```
+
+
+The transformation of population diet into model data is highly dependent on the receiving model. In this case the data is made for the model SMS (REF).
+
+Fist diet data are loaded and options for model data are checked.
+
+```{r ex05_01}
+library(FishStomachs)
+suppressMessages(library(readr))
+
+load(file=file.path(system.file( package = "FishStomachs"),"extdata","ex03d.Rdata"))
+d
+
+control<-attr(d,'control')
+print(control,show=c('model_output','constants'))
+
+# in this case the default setting are fine, however 
+# they could be changed by a call to edit_control(), see example 3
+
+```
+
+The options are mainly how to handle missing values ("wholes") for prey sizes. If for example, there are information for prey herring 5-7 cm and 10-15 cm (but no 7-10 cm), the option insert_mid_value=TRUE will insert a low weight proportion  "mid_value" for the herring size 7-10 cm. The option "insert_tails" is for adding low weight proportions with a size smaller (and higher) than the observed size range.
+
+
+
+The function for converting data ("model_output") reqires two input files; one for specfifyingn length classes and one file for intenal MS numbering and naming of species. Data and call are shown below.
+
+```{r ex05_02}
+
+read_csv(system.file("extdata","length_classes.csv",package = "FishStomachs"),col_types=cols())
+read_csv(system.file("extdata","species_info.csv",package = "FishStomachs"),col_types=cols())
+
+# create data for the SMS model
+SMS<-model_output(d, length_classes_file=system.file("extdata","length_classes.csv",package = "FishStomachs"),
+                  sp_info_file=system.file("extdata","species_info.csv",package = "FishStomachs"),
+                  intoSMSformat=FALSE) 
+ 
+SMS
+```

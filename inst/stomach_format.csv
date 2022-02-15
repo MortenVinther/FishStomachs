@@ -1,0 +1,57 @@
+alias_1,alias_2,alias_3,field,types,mandatory,PRED,PREY,units,remarks
+Dataset, ,filename,dataset,c,T,T,F,free text,Data set name
+Country, , ,country,c,T,T,F,ICES Alpha code,Sampling country
+Ship, , ,ship,c,T,T,F,ICES Alpha code,"Sampling platform, e.g. Research vessel name "
+Latitude,latitude, ,lat,d,F,T,F,,"Sample lattitude, decimal format"
+Longitude,longitude, ,lon,d,F,T,F, ,"Sample lattitude, decimal format"
+Estimated_Lat_Lon, , ,est_lat_lon,c,F,T,F,,Is longitude or lattitude estimated?
+ICES_StatRec, ,Square,rectangle,c,T,T,F, ,"ICES statistical rectangle, or other smaller area"
+ICES_AreaCode, , ,area,c,T,T,F, ,"ICES area, or other larger area"
+Year, , ,year,i,T,T,F,yyyy,Sampling year
+Quarter, , ,quarter,i,T,T,F,[1-4],Quarter of the year
+Month, , ,month,i,T,T,F,[1-12],Month
+Day, , ,day,i,T,T,F,[1-31],Day of the month
+Time, , ,time,i,F,T,F,HHMM,Time of the day (24 hours)
+Station, , ,station,c,T,T,F,free text,Sampling station
+Haul, , ,haul,c,T,T,F,free text,Sampling haul
+Sampling_Method,sampling_method,Sampling_method,samp_meth,c,F,T,F,free text,"Sampling method, e.g. DEM=Demersal, PEL=Pelagic"
+Depth, , ,depth,d,F,T,F,meter,Ambient depth
+Temperature,temperature, ,temp,d,F,T,F,degree Celcius,Ambient temperature
+Sample_ID, ,sample_number,sample_id,c,T,T,T,free text,"Unique id for one or more individual  stomachs or  pool of  stomachs from the same sample station (e.g. haul ). Unique within the full dataset, e.g. created from combination of pred_name, pred_l, year, month, day, country, ship, haul, station, fish nr "
+SampleNo(FishID),SampleNoFishID,StomachID,fish_id,c,T,T,T,free text,Id for each individual stomach or pool of stomachs. Unique id in combination with sample_id 
+RecordType, , ,record_type,c,F,T,F,SS|PS,"Collation of stomachs by individual stomach or by a pool of stomachs, SS=Single stomachs, PS=Pooled stomachs"
+Predator_AphiaID,pred_aphia_id,Predator_code,pred_aphia,i,F,T,F,WoRMS aphia id,World Register of Marine Species code
+Predator_NODC, , ,pred_nodc,d,F,T,F,NODC 10 digits,"NODC coding system, obselete but usefull"
+Predator_LatinName, ,scientific_name,pred_name,c,T,T,F,text,"Predator taxon, latin name "
+Predator_Weight(mean),Predator_Weight,PredatorWeight,pred_w,d,F,T,F,gram,Body weight of predator
+Predator_Age(mean),Predator_Age,PredatorAge,pred_age,i,F,T,F,years,Age of predator
+Predator_Lengh(mean),Predator_Length,Predatorlengh,pred_l,i,T,T,F,mm,Length of predator
+Predator_LowerLengthBound, ,PredatorLowerLenghBound,pred_ll,i,T,T,F,mm,Predator length lower bound 
+Predator_UpperLengthBound, ,PredatorUpperLengthBound,pred_lu,i,T,T,F,mm,Predator length upper bound 
+Predator_CPUE, ,CPUE,pred_cpue,d,F,T,F, ,"Catch Per Unit effort, or other weighting factor for collation of data"
+GallBladder_stage(class),GallBladder_stage, ,gall_bladder,c,F,T,F, ,Gall bladder stage 
+Stomach_METFP, ,StomachConservationStatus,preservation,c,F,T,F, ,Method of stomach preservation 
+Stomach_TotalNo, ,NumberStomachsAnalised,n_tot,i,F,T,F, ,Total number of stomachs in the pool. For single stomach always 1
+Stomach_WithFood, ,NumberWithFood,n_food,i,T,T,F, ,Number of stomachs with food (and not regurgitated)
+Stomach_Regurgitated, ,NumberRegurgitated,n_regur,i,T,T,F, ,Number of regurgitated stomachs
+Stomach_WithSkeletalRemains, ,NumberWithSkeletalRemains,n_skel,i,T,T,F, ,Number of stomachs with skeletal remains  only
+Stomach_Empty, ,NumberEmpty,n_empty,i,T,T,F, ,Number of empty stomachs
+Stomach_ContentWgt, , ,stom_content_w,d,F,T,F,gram,Total weight of stomach contents
+Stomach_EmptyWgt, ,stomachWeighEmpty,stom_empty_w,d,F,T,F,gram,Weigth of stomach with no food left
+Stomach_fullness, ,stomachFullness,stom_fullness,d,F,T,F,%,Stomach fullness ?????
+Stomach_Item, , ,prey_item,c,F,F,T, ,Prey name as used in the original dataset
+Prey_AphiaID, ,PreySpeciesCode,prey_aphia,i,F,F,T,WoRMS aphia id,World Register of Marine Species code
+Prey_NODC, , ,prey_nodc,d,F,F,T,NODC 10 digits,"NODC coding system, obselete but usefull"
+Prey_LatinName, , ,prey_name,c,T,F,T, ,"Prey taxon, e.g. latin name "
+ICES_ItemID, , ,prey_group,c,F,F,T, ,"Name used for grouping of  ""prey_name"", e.g. broader taxonomic group"
+Prey_IdentMet, , ,prey_ident_met,c,F,F,T, ,????
+Prey_DigestionStage,digestion_stage,DigestionStage,digest,i,T,F,T,0|1|2|3|9,"Prey digestion stage 0= Intact prey (skin, fins, legs and flesh is complete), 1= partially digested prey (prey in more advanced stages of digestion), 2= partially digested prey (prey in more advanced stages of digestion), 3= skeletal material (no flesh, only bones, shells, otoliths)"
+Prey_LengthIdentifier,prey_length_identifier, ,prey_l_ident,c,F,F,T, ,Prey length identifier ?????
+Prey_Length, , ,prey_l,d,T,F,T,mm,Length of an individual prey 
+Prey_LowerLengthBound, ,PreyLowerLengthBound,prey_ll,i,T,F,T,mm,Prey length lower bound 
+Prey_UpperLengthBound, ,PreyUpperLengthBound,prey_lu,i,T,F,T,mm,Prey length upper bound 
+Weight_method,prey_weight_method, ,prey_w_meth,c,T,F,T,r|p,"Method of weiging and recording the weights of preys items. r=by record, p=by prey species and digestion stage "
+Prey_TotalNo, ,PreyNumber,prey_n,i,T,F,T, ,"Number of preys (whole animals) , or number of preys counted for weight_method equal to ""p"""
+Prey_Weight, ,PreyWeight,prey_w,d,T,F,T,gram,Weight of prey (see prey_weight_method)
+Prey_MinNo, ,minimumofPreys,prey_min_n,c,F,F,T, ,Minimum number of preys or flag ?
+Remarks, , ,remarks,c,F,T,F, ,Free  text

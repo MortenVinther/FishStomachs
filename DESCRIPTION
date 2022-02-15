@@ -1,0 +1,63 @@
+Package: FishStomachs
+Type: Package
+Title: Compilation of stomach contents data
+Version: 0.1.0
+Date: 2022-01-21
+Authors@R: c(person(given="Morten",
+                    family="Vinther",
+                    email="mv@aqua.dtu.dk",
+                    role=c("aut","cre","cph"),
+                    comment=c(ORCID="0000-0002-2535-5575"))
+                    )
+Author: Morten Vinther
+Maintainer: Morten Vinther <mv@aqua.dtu.dk>
+Description: Compiles observed stomach contents data on a flexible exchange format into food ration and diet data used for multi species models.
+Encoding: UTF-8
+License: GPL
+LazyData: true
+RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
+Depends: R (>= 3.50)
+Collate:
+    'utils-pipe.R'
+    'STOMobs.R'
+    'STOMdiet.R'
+    'add_aphia.R'
+    'add_nodc.R'
+    'bias_correct_regurgitated.R'
+    'put_length_classes_on.R'
+    'read_exchange_data.R'
+    'redistribution.R'
+    'sum_stom_functions.R'
+    'stom.control.R'
+    'add_strata.R'
+    'aggregate_sample_id.R'
+    'change_data.R'
+    'check_unique_sample_id.R'
+    'individual_prey_weights_from_pooled_weight.R'
+    'group_preys.R'
+    'stom_attributes.R'
+    'strata_stom.R'
+    'detailed_output.R'
+    'make_length_classess.R'
+    'population_stom.R'
+    'ICES_year_of_the_stomach.R'
+    'bias_correct_energy_etc.R'
+    'model_output.R'
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Imports: 
+    rlang,
+    utils,
+    methods,
+    graphics,
+    stats,
+    magrittr,
+    dplyr,
+    forcats,
+    tidyr,
+    readr,
+    ggplot2,
+    ggthemes

@@ -1,0 +1,17 @@
+field,types,units,remarks
+area,c,free text,"area ID, usefull for more than one model area"
+year,i,yyyy,Sampling year
+quarter,i,[1-4],Quarter of the year
+predator,c,text,Predator name or code
+pred_id_number,i,,Predator number used in model
+pred_size,c,,"Predator size , e.g. 0200-0300"
+pred_size_class,i, ,Predator size using an increasing and consecutive number by increasing size
+pred_l_mean,i,mm,Predator mean length within the given pred_size
+sampling_effort,d,,Number of stomach analysed or similar meassure of sampling effort
+prey,c,text,Prey name or code
+prey_id_number,i,,Prey number used in model
+prey_size,c,,"Prey size , e.g. 0200-0300"
+prey_size_class,i, ,Prey size using an increasing and consecutive number by increasing size
+prey_l_meanl,i,mm,Prey mean length within the given pred_size
+prey_w,d,,"Ingested weight of prey,or weight proportion, of the given prey  in the diet"
+obs_type,c,obs|mid|tail,"Kind of observation, obs=observed value, mid=dummy value inserted if thre are no observations  within a range of prey sizes, tails=dummy value inserted at the tails of a prey size range."
