@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Database_format</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Database_format</h1>
+
+
+
+<p><strong>Table 1. database format. “field” is variable name used in FishStomachs; “types” is the type of input(c=character, i=intger, d=double, l=logical); “mandatory” is the field required as minimum (T=TRUE, F=FALSE); “PRED” is the variable part of predator information; “PREY” is the informtion part of prey information; “units” is the unit or values applied.</strong></p>
+<table>
+<colgroup>
+<col width="4%" />
+<col width="1%" />
+<col width="2%" />
+<col width="1%" />
+<col width="1%" />
+<col width="8%" />
+<col width="80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">field</th>
+<th align="left">types</th>
+<th align="left">mandatory</th>
+<th align="left">PRED</th>
+<th align="left">PREY</th>
+<th align="left">units</th>
+<th align="left">remarks</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">dataset</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">free text</td>
+<td align="left">Data set name</td>
+</tr>
+<tr class="even">
+<td align="left">country</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">ICES Alpha code</td>
+<td align="left">Sampling country</td>
+</tr>
+<tr class="odd">
+<td align="left">ship</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">ICES Alpha code</td>
+<td align="left">Sampling platform, e.g. Research vessel name</td>
+</tr>
+<tr class="even">
+<td align="left">lat</td>
+<td align="left">d</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Sample lattitude, decimal format</td>
+</tr>
+<tr class="odd">
+<td align="left">lon</td>
+<td align="left">d</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Sample lattitude, decimal format</td>
+</tr>
+<tr class="even">
+<td align="left">est_lat_lon</td>
+<td align="left">c</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Is longitude or lattitude estimated?</td>
+</tr>
+<tr class="odd">
+<td align="left">rectangle</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">ICES statistical rectangle, or other smaller area</td>
+</tr>
+<tr class="even">
+<td align="left">area</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">ICES area, or other larger area</td>
+</tr>
+<tr class="odd">
+<td align="left">year</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">yyyy</td>
+<td align="left">Sampling year</td>
+</tr>
+<tr class="even">
+<td align="left">quarter</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">[1-4]</td>
+<td align="left">Quarter of the year</td>
+</tr>
+<tr class="odd">
+<td align="left">month</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">[1-12]</td>
+<td align="left">Month</td>
+</tr>
+<tr class="even">
+<td align="left">day</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">[1-31]</td>
+<td align="left">Day of the month</td>
+</tr>
+<tr class="odd">
+<td align="left">time</td>
+<td align="left">i</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">HHMM</td>
+<td align="left">Time of the day (24 hours)</td>
+</tr>
+<tr class="even">
+<td align="left">station</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">free text</td>
+<td align="left">Sampling station</td>
+</tr>
+<tr class="odd">
+<td align="left">haul</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">free text</td>
+<td align="left">Sampling haul</td>
+</tr>
+<tr class="even">
+<td align="left">samp_meth</td>
+<td align="left">c</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">free text</td>
+<td align="left">Sampling method, e.g. DEM=Demersal, PEL=Pelagic</td>
+</tr>
+<tr class="odd">
+<td align="left">depth</td>
+<td align="left">d</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">meter</td>
+<td align="left">Ambient depth</td>
+</tr>
+<tr class="even">
+<td align="left">temp</td>
+<td align="left">d</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">degree Celcius</td>
+<td align="left">Ambient temperature</td>
+</tr>
+<tr class="odd">
+<td align="left">sample_id</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">free text</td>
+<td align="left">Unique id for one or more individual stomachs or pool of stomachs from the same sample station (e.g. haul ). Unique within the full dataset, e.g. created from combination of pred_name, pred_l, year, month, day, country, ship, haul, station, fish nr</td>
+</tr>
+<tr class="even">
+<td align="left">fish_id</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">free text</td>
+<td align="left">Id for each individual stomach or pool of stomachs. Unique id in combination with sample_id</td>
+</tr>
+<tr class="odd">
+<td align="left">record_type</td>
+<td align="left">c</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">SS|PS</td>
+<td align="left">Collation of stomachs by individual stomach or by a pool of stomachs, SS=Single stomachs, PS=Pooled stomachs</td>
+</tr>
+<tr class="even">
+<td align="left">pred_aphia</td>
+<td align="left">i</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">WoRMS aphia id</td>
+<td align="left">World Register of Marine Species code</td>
+</tr>
+<tr class="odd">
+<td align="left">pred_nodc</td>
+<td align="left">d</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">NODC 10 digits</td>
+<td align="left">NODC coding system, obselete but usefull</td>
+</tr>
+<tr class="even">
+<td align="left">pred_name</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">text</td>
+<td align="left">Predator taxon, latin name</td>
+</tr>
+<tr class="odd">
+<td align="left">pred_w</td>
+<td align="left">d</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">gram</td>
+<td align="left">Body weight of predator</td>
+</tr>
+<tr class="even">
+<td align="left">pred_age</td>
+<td align="left">i</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">years</td>
+<td align="left">Age of predator</td>
+</tr>
+<tr class="odd">
+<td align="left">pred_l</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">mm</td>
+<td align="left">Length of predator</td>
+</tr>
+<tr class="even">
+<td align="left">pred_ll</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">mm</td>
+<td align="left">Predator length lower bound</td>
+</tr>
+<tr class="odd">
+<td align="left">pred_lu</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">mm</td>
+<td align="left">Predator length upper bound</td>
+</tr>
+<tr class="even">
+<td align="left">pred_cpue</td>
+<td align="left">d</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Catch Per Unit effort, or other weighting factor for collation of data</td>
+</tr>
+<tr class="odd">
+<td align="left">gall_bladder</td>
+<td align="left">c</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Gall bladder stage</td>
+</tr>
+<tr class="even">
+<td align="left">preservation</td>
+<td align="left">c</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Method of stomach preservation</td>
+</tr>
+<tr class="odd">
+<td align="left">n_tot</td>
+<td align="left">i</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Total number of stomachs in the pool. For single stomach always 1</td>
+</tr>
+<tr class="even">
+<td align="left">n_food</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Number of stomachs with food (and not regurgitated)</td>
+</tr>
+<tr class="odd">
+<td align="left">n_regur</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Number of regurgitated stomachs</td>
+</tr>
+<tr class="even">
+<td align="left">n_skel</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Number of stomachs with skeletal remains only</td>
+</tr>
+<tr class="odd">
+<td align="left">n_empty</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Number of empty stomachs</td>
+</tr>
+<tr class="even">
+<td align="left">stom_content_w</td>
+<td align="left">d</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">gram</td>
+<td align="left">Total weight of stomach contents</td>
+</tr>
+<tr class="odd">
+<td align="left">stom_empty_w</td>
+<td align="left">d</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">gram</td>
+<td align="left">Weigth of stomach with no food left</td>
+</tr>
+<tr class="even">
+<td align="left">stom_fullness</td>
+<td align="left">d</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">%</td>
+<td align="left">Stomach fullness ?????</td>
+</tr>
+<tr class="odd">
+<td align="left">prey_item</td>
+<td align="left">c</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left"></td>
+<td align="left">Prey name as used in the original dataset</td>
+</tr>
+<tr class="even">
+<td align="left">prey_aphia</td>
+<td align="left">i</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">WoRMS aphia id</td>
+<td align="left">World Register of Marine Species code</td>
+</tr>
+<tr class="odd">
+<td align="left">prey_nodc</td>
+<td align="left">d</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">NODC 10 digits</td>
+<td align="left">NODC coding system, obselete but usefull</td>
+</tr>
+<tr class="even">
+<td align="left">prey_name</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left"></td>
+<td align="left">Prey taxon, e.g. latin name</td>
+</tr>
+<tr class="odd">
+<td align="left">prey_group</td>
+<td align="left">c</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left"></td>
+<td align="left">Name used for grouping of “prey_name”, e.g. broader taxonomic group</td>
+</tr>
+<tr class="even">
+<td align="left">prey_ident_met</td>
+<td align="left">c</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left"></td>
+<td align="left">????</td>
+</tr>
+<tr class="odd">
+<td align="left">digest</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">0|1|2|3|9</td>
+<td align="left">Prey digestion stage 0= Intact prey (skin, fins, legs and flesh is complete), 1= partially digested prey (prey in more advanced stages of digestion), 2= partially digested prey (prey in more advanced stages of digestion), 3= skeletal material (no flesh, only bones, shells, otoliths)</td>
+</tr>
+<tr class="even">
+<td align="left">prey_l_ident</td>
+<td align="left">c</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left"></td>
+<td align="left">Prey length identifier ?????</td>
+</tr>
+<tr class="odd">
+<td align="left">prey_l</td>
+<td align="left">d</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">mm</td>
+<td align="left">Length of an individual prey</td>
+</tr>
+<tr class="even">
+<td align="left">prey_ll</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">mm</td>
+<td align="left">Prey length lower bound</td>
+</tr>
+<tr class="odd">
+<td align="left">prey_lu</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">mm</td>
+<td align="left">Prey length upper bound</td>
+</tr>
+<tr class="even">
+<td align="left">prey_w_meth</td>
+<td align="left">c</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">r|p</td>
+<td align="left">Method of weiging and recording the weights of preys items. r=by record, p=by prey species and digestion stage</td>
+</tr>
+<tr class="odd">
+<td align="left">prey_n</td>
+<td align="left">i</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left"></td>
+<td align="left">Number of preys (whole animals) , or number of preys counted for weight_method equal to “p”</td>
+</tr>
+<tr class="even">
+<td align="left">prey_w</td>
+<td align="left">d</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">gram</td>
+<td align="left">Weight of prey (see prey_weight_method)</td>
+</tr>
+<tr class="odd">
+<td align="left">prey_min_n</td>
+<td align="left">c</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left"></td>
+<td align="left">Minimum number of preys or flag ?</td>
+</tr>
+<tr class="even">
+<td align="left">remarks</td>
+<td align="left">c</td>
+<td align="left">F</td>
+<td align="left">T</td>
+<td align="left">F</td>
+<td align="left"></td>
+<td align="left">Free text</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table 2. Alias names accectped as default. Can be changed by using a local version of the the database fortmat (see xxxxc).</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">alias_1</th>
+<th align="left">alias_2</th>
+<th align="left">alias_3</th>
+<th align="left">field</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Dataset</td>
+<td align="left"></td>
+<td align="left">filename</td>
+<td align="left">dataset</td>
+</tr>
+<tr class="even">
+<td align="left">Country</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">country</td>
+</tr>
+<tr class="odd">
+<td align="left">Ship</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">ship</td>
+</tr>
+<tr class="even">
+<td align="left">Latitude</td>
+<td align="left">latitude</td>
+<td align="left"></td>
+<td align="left">lat</td>
+</tr>
+<tr class="odd">
+<td align="left">Longitude</td>
+<td align="left">longitude</td>
+<td align="left"></td>
+<td align="left">lon</td>
+</tr>
+<tr class="even">
+<td align="left">Estimated_Lat_Lon</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">est_lat_lon</td>
+</tr>
+<tr class="odd">
+<td align="left">ICES_StatRec</td>
+<td align="left"></td>
+<td align="left">Square</td>
+<td align="left">rectangle</td>
+</tr>
+<tr class="even">
+<td align="left">ICES_AreaCode</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">area</td>
+</tr>
+<tr class="odd">
+<td align="left">Year</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">year</td>
+</tr>
+<tr class="even">
+<td align="left">Quarter</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">quarter</td>
+</tr>
+<tr class="odd">
+<td align="left">Month</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">month</td>
+</tr>
+<tr class="even">
+<td align="left">Day</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">day</td>
+</tr>
+<tr class="odd">
+<td align="left">Time</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">time</td>
+</tr>
+<tr class="even">
+<td align="left">Station</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">station</td>
+</tr>
+<tr class="odd">
+<td align="left">Haul</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">haul</td>
+</tr>
+<tr class="even">
+<td align="left">Sampling_Method</td>
+<td align="left">sampling_method</td>
+<td align="left">Sampling_method</td>
+<td align="left">samp_meth</td>
+</tr>
+<tr class="odd">
+<td align="left">Depth</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">depth</td>
+</tr>
+<tr class="even">
+<td align="left">Temperature</td>
+<td align="left">temperature</td>
+<td align="left"></td>
+<td align="left">temp</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_ID</td>
+<td align="left"></td>
+<td align="left">sample_number</td>
+<td align="left">sample_id</td>
+</tr>
+<tr class="even">
+<td align="left">SampleNo(FishID)</td>
+<td align="left">SampleNoFishID</td>
+<td align="left">StomachID</td>
+<td align="left">fish_id</td>
+</tr>
+<tr class="odd">
+<td align="left">RecordType</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">record_type</td>
+</tr>
+<tr class="even">
+<td align="left">Predator_AphiaID</td>
+<td align="left">pred_aphia_id</td>
+<td align="left">Predator_code</td>
+<td align="left">pred_aphia</td>
+</tr>
+<tr class="odd">
+<td align="left">Predator_NODC</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">pred_nodc</td>
+</tr>
+<tr class="even">
+<td align="left">Predator_LatinName</td>
+<td align="left"></td>
+<td align="left">scientific_name</td>
+<td align="left">pred_name</td>
+</tr>
+<tr class="odd">
+<td align="left">Predator_Weight(mean)</td>
+<td align="left">Predator_Weight</td>
+<td align="left">PredatorWeight</td>
+<td align="left">pred_w</td>
+</tr>
+<tr class="even">
+<td align="left">Predator_Age(mean)</td>
+<td align="left">Predator_Age</td>
+<td align="left">PredatorAge</td>
+<td align="left">pred_age</td>
+</tr>
+<tr class="odd">
+<td align="left">Predator_Lengh(mean)</td>
+<td align="left">Predator_Length</td>
+<td align="left">Predatorlengh</td>
+<td align="left">pred_l</td>
+</tr>
+<tr class="even">
+<td align="left">Predator_LowerLengthBound</td>
+<td align="left"></td>
+<td align="left">PredatorLowerLenghBound</td>
+<td align="left">pred_ll</td>
+</tr>
+<tr class="odd">
+<td align="left">Predator_UpperLengthBound</td>
+<td align="left"></td>
+<td align="left">PredatorUpperLengthBound</td>
+<td align="left">pred_lu</td>
+</tr>
+<tr class="even">
+<td align="left">Predator_CPUE</td>
+<td align="left"></td>
+<td align="left">CPUE</td>
+<td align="left">pred_cpue</td>
+</tr>
+<tr class="odd">
+<td align="left">GallBladder_stage(class)</td>
+<td align="left">GallBladder_stage</td>
+<td align="left"></td>
+<td align="left">gall_bladder</td>
+</tr>
+<tr class="even">
+<td align="left">Stomach_METFP</td>
+<td align="left"></td>
+<td align="left">StomachConservationStatus</td>
+<td align="left">preservation</td>
+</tr>
+<tr class="odd">
+<td align="left">Stomach_TotalNo</td>
+<td align="left"></td>
+<td align="left">NumberStomachsAnalised</td>
+<td align="left">n_tot</td>
+</tr>
+<tr class="even">
+<td align="left">Stomach_WithFood</td>
+<td align="left"></td>
+<td align="left">NumberWithFood</td>
+<td align="left">n_food</td>
+</tr>
+<tr class="odd">
+<td align="left">Stomach_Regurgitated</td>
+<td align="left"></td>
+<td align="left">NumberRegurgitated</td>
+<td align="left">n_regur</td>
+</tr>
+<tr class="even">
+<td align="left">Stomach_WithSkeletalRemains</td>
+<td align="left"></td>
+<td align="left">NumberWithSkeletalRemains</td>
+<td align="left">n_skel</td>
+</tr>
+<tr class="odd">
+<td align="left">Stomach_Empty</td>
+<td align="left"></td>
+<td align="left">NumberEmpty</td>
+<td align="left">n_empty</td>
+</tr>
+<tr class="even">
+<td align="left">Stomach_ContentWgt</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">stom_content_w</td>
+</tr>
+<tr class="odd">
+<td align="left">Stomach_EmptyWgt</td>
+<td align="left"></td>
+<td align="left">stomachWeighEmpty</td>
+<td align="left">stom_empty_w</td>
+</tr>
+<tr class="even">
+<td align="left">Stomach_fullness</td>
+<td align="left"></td>
+<td align="left">stomachFullness</td>
+<td align="left">stom_fullness</td>
+</tr>
+<tr class="odd">
+<td align="left">Stomach_Item</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">prey_item</td>
+</tr>
+<tr class="even">
+<td align="left">Prey_AphiaID</td>
+<td align="left"></td>
+<td align="left">PreySpeciesCode</td>
+<td align="left">prey_aphia</td>
+</tr>
+<tr class="odd">
+<td align="left">Prey_NODC</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">prey_nodc</td>
+</tr>
+<tr class="even">
+<td align="left">Prey_LatinName</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">prey_name</td>
+</tr>
+<tr class="odd">
+<td align="left">ICES_ItemID</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">prey_group</td>
+</tr>
+<tr class="even">
+<td align="left">Prey_IdentMet</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">prey_ident_met</td>
+</tr>
+<tr class="odd">
+<td align="left">Prey_DigestionStage</td>
+<td align="left">digestion_stage</td>
+<td align="left">DigestionStage</td>
+<td align="left">digest</td>
+</tr>
+<tr class="even">
+<td align="left">Prey_LengthIdentifier</td>
+<td align="left">prey_length_identifier</td>
+<td align="left"></td>
+<td align="left">prey_l_ident</td>
+</tr>
+<tr class="odd">
+<td align="left">Prey_Length</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">prey_l</td>
+</tr>
+<tr class="even">
+<td align="left">Prey_LowerLengthBound</td>
+<td align="left"></td>
+<td align="left">PreyLowerLengthBound</td>
+<td align="left">prey_ll</td>
+</tr>
+<tr class="odd">
+<td align="left">Prey_UpperLengthBound</td>
+<td align="left"></td>
+<td align="left">PreyUpperLengthBound</td>
+<td align="left">prey_lu</td>
+</tr>
+<tr class="even">
+<td align="left">Weight_method</td>
+<td align="left">prey_weight_method</td>
+<td align="left"></td>
+<td align="left">prey_w_meth</td>
+</tr>
+<tr class="odd">
+<td align="left">Prey_TotalNo</td>
+<td align="left"></td>
+<td align="left">PreyNumber</td>
+<td align="left">prey_n</td>
+</tr>
+<tr class="even">
+<td align="left">Prey_Weight</td>
+<td align="left"></td>
+<td align="left">PreyWeight</td>
+<td align="left">prey_w</td>
+</tr>
+<tr class="odd">
+<td align="left">Prey_MinNo</td>
+<td align="left"></td>
+<td align="left">minimumofPreys</td>
+<td align="left">prey_min_n</td>
+</tr>
+<tr class="even">
+<td align="left">Remarks</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">remarks</td>
+</tr>
+</tbody>
+</table>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
