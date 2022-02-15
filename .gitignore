@@ -9,4 +9,6 @@
 inst/doc
 inst/NotUsed
 Meta
-doc
+
+vignettes/*.html  
+vignettes/*.R
