@@ -26,7 +26,14 @@
     </style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
@@ -151,33 +158,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>d[[<span class="st">&#39;PRED&#39;</span>]]  <span class="co"># predator related information</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 36 x 8</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    stratum_area stratum_time pred_name pred_size pred_size_class n_tot</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;fct&gt;        &lt;fct&gt;        &lt;fct&gt;     &lt;fct&gt;               &lt;int&gt; &lt;int&gt;</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 all          1991-Q1      Gadus mo~ 0100-0149               3    42</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 all          1991-Q1      Gadus mo~ 0150-0199               4   117</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 all          1991-Q1      Gadus mo~ 0200-0249               5   123</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 all          1991-Q1      Gadus mo~ 0250-0299               6    61</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 all          1991-Q1      Gadus mo~ 0300-0399               7   379</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 all          1991-Q1      Gadus mo~ 0400-0499               8   327</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 all          1991-Q1      Gadus mo~ 0500-0699               9   610</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 all          1991-Q1      Gadus mo~ 0700-0999              10   444</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 all          1991-Q1      Gadus mo~ 1000-1499              11    84</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 all          1991-Q2      Gadus mo~ 0100-0149               3     6</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    stratum_area stratum_time pred_name    pred_size pred_size_class n_tot</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;fct&gt;        &lt;fct&gt;        &lt;fct&gt;        &lt;fct&gt;               &lt;int&gt; &lt;int&gt;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 all          1991-Q1      Gadus morhua 0100-0149               3    42</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 all          1991-Q1      Gadus morhua 0150-0199               4   117</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 all          1991-Q1      Gadus morhua 0200-0249               5   123</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 all          1991-Q1      Gadus morhua 0250-0299               6    61</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 all          1991-Q1      Gadus morhua 0300-0399               7   379</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 all          1991-Q1      Gadus morhua 0400-0499               8   327</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 all          1991-Q1      Gadus morhua 0500-0699               9   610</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 all          1991-Q1      Gadus morhua 0700-0999              10   444</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 all          1991-Q1      Gadus morhua 1000-1499              11    84</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 all          1991-Q2      Gadus morhua 0100-0149               3     6</span></span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ... with 26 more rows, and 2 more variables: pred_l_mean &lt;dbl&gt;, key &lt;fct&gt;</span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>d[[<span class="st">&#39;PREY&#39;</span>]]  <span class="co"># prey related information</span></span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 469 x 5</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    key                         prey_name       prey_size prey_size_class  prey_w</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;fct&gt;                       &lt;fct&gt;           &lt;fct&gt;               &lt;int&gt;   &lt;dbl&gt;</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 all_Gadus morhua_1991-Q1_0~ other           9999-9999               0 1.75e+1</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 all_Gadus morhua_1991-Q1_0~ Ammodytidae     0070-0099               2 4.54e-1</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 all_Gadus morhua_1991-Q1_0~ Ammodytidae     0150-0199               4 1.47e+0</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 all_Gadus morhua_1991-Q1_0~ other           9999-9999               0 1.89e+1</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 all_Gadus morhua_1991-Q1_0~ Sprattus sprat~ 0050-0069               1 8.54e-3</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 all_Gadus morhua_1991-Q1_0~ Sprattus sprat~ 0070-0099               2 5.85e-2</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 all_Gadus morhua_1991-Q1_0~ Ammodytidae     0050-0069               1 4.75e+0</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 all_Gadus morhua_1991-Q1_0~ Ammodytidae     0100-0149               3 1.91e-1</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 all_Gadus morhua_1991-Q1_0~ other           9999-9999               0 4.16e+1</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 all_Gadus morhua_1991-Q1_0~ Sprattus sprat~ 0070-0099               2 1.47e+0</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    key                               prey_name prey_size prey_size_class  prey_w</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;fct&gt;                             &lt;fct&gt;     &lt;fct&gt;               &lt;int&gt;   &lt;dbl&gt;</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 all_Gadus morhua_1991-Q1_0100-01~ other     9999-9999               0 1.75e+1</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 all_Gadus morhua_1991-Q1_0150-01~ Ammodyti~ 0070-0099               2 4.54e-1</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 all_Gadus morhua_1991-Q1_0150-01~ Ammodyti~ 0150-0199               4 1.47e+0</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 all_Gadus morhua_1991-Q1_0150-01~ other     9999-9999               0 1.89e+1</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 all_Gadus morhua_1991-Q1_0150-01~ Sprattus~ 0050-0069               1 8.54e-3</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 all_Gadus morhua_1991-Q1_0150-01~ Sprattus~ 0070-0099               2 5.85e-2</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 all_Gadus morhua_1991-Q1_0200-02~ Ammodyti~ 0050-0069               1 4.75e+0</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 all_Gadus morhua_1991-Q1_0200-02~ Ammodyti~ 0100-0149               3 1.91e-1</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 all_Gadus morhua_1991-Q1_0200-02~ other     9999-9999               0 4.16e+1</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 all_Gadus morhua_1991-Q1_0200-02~ Sprattus~ 0070-0099               2 1.47e+0</span></span>
 <span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ... with 459 more rows</span></span>
 <span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co"># show parts of the control attributes</span></span>
@@ -197,7 +204,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; calc_total: List of 3</span></span>
 <span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ relative_weight      : logi FALSE</span></span>
 <span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ weighting_factor     : logi NA</span></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ weigthing_factor_file: chr &quot;C:/Users/movi/AppData/Local/Temp/RtmpKu81vK/temp_libpath439443b12ee3/FishStomachs/extdata/weighting_total.csv&quot;</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ weigthing_factor_file: chr &quot;C:/Users/movi/AppData/Local/Temp/RtmpeYTU6m/temp_libpath364458cae67/FishStomachs/extdata/weighting_total.csv&quot;</span></span>
 <span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #### group: stratification </span></span>
 <span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; strata_area_exp:   expression(paste(&quot;R&quot;, area, sep = &quot;-&quot;))</span></span>
@@ -249,18 +256,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(d)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>df</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 469 x 12</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    stratum_area stratum_time pred_name pred_size pred_size_class n_tot</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;fct&gt;        &lt;fct&gt;        &lt;fct&gt;     &lt;fct&gt;               &lt;int&gt; &lt;int&gt;</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 all          1991-Q1      Gadus mo~ 0100-0149               3    42</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 all          1991-Q1      Gadus mo~ 0150-0199               4   117</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 all          1991-Q1      Gadus mo~ 0150-0199               4   117</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 all          1991-Q1      Gadus mo~ 0150-0199               4   117</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 all          1991-Q1      Gadus mo~ 0150-0199               4   117</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 all          1991-Q1      Gadus mo~ 0150-0199               4   117</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 all          1991-Q1      Gadus mo~ 0200-0249               5   123</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 all          1991-Q1      Gadus mo~ 0200-0249               5   123</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 all          1991-Q1      Gadus mo~ 0200-0249               5   123</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 all          1991-Q1      Gadus mo~ 0200-0249               5   123</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    stratum_area stratum_time pred_name    pred_size pred_size_class n_tot</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;fct&gt;        &lt;fct&gt;        &lt;fct&gt;        &lt;fct&gt;               &lt;int&gt; &lt;int&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 all          1991-Q1      Gadus morhua 0100-0149               3    42</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 all          1991-Q1      Gadus morhua 0150-0199               4   117</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 all          1991-Q1      Gadus morhua 0150-0199               4   117</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 all          1991-Q1      Gadus morhua 0150-0199               4   117</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 all          1991-Q1      Gadus morhua 0150-0199               4   117</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 all          1991-Q1      Gadus morhua 0150-0199               4   117</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 all          1991-Q1      Gadus morhua 0200-0249               5   123</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 all          1991-Q1      Gadus morhua 0200-0249               5   123</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 all          1991-Q1      Gadus morhua 0200-0249               5   123</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 all          1991-Q1      Gadus morhua 0200-0249               5   123</span></span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ... with 459 more rows, and 6 more variables: pred_l_mean &lt;dbl&gt;, key &lt;fct&gt;,</span></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   prey_name &lt;fct&gt;, prey_size &lt;fct&gt;, prey_size_class &lt;int&gt;, prey_w &lt;dbl&gt;</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>

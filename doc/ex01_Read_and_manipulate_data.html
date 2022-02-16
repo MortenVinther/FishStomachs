@@ -26,7 +26,14 @@
     </style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
@@ -142,30 +149,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>In this case, data from 1991 and for the predator cod (<em>Gadus morhua</em>) are used.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(dplyr))</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FishStomachs)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>control<span class="ot">&lt;-</span><span class="fu">new</span>(<span class="st">&quot;STOMcontrol&quot;</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">name=</span><span class="st">&quot;Test cod&quot;</span>,  <span class="co"># just a name</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># specify where to find data on exchange format. This example uses data for cod incl. in the package</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">stomach_dir=</span><span class="fu">file.path</span>(<span class="fu">system.file</span>( <span class="at">package =</span> <span class="st">&quot;FishStomachs&quot;</span>),<span class="st">&quot;extdata&quot;</span>), </span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">dataSets=</span><span class="st">&quot;cod_stom_1991.csv&quot;</span>,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">predators=</span><span class="fu">c</span>(<span class="st">&quot;Gadus morhua&quot;</span>),</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">years=</span>1991L <span class="co"># keep only data from 1991</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#print(control) # This will show the full list of options</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(control,<span class="at">show=</span><span class="fu">c</span>(<span class="st">&#39;general&#39;</span>,<span class="st">&#39;data_used&#39;</span>))</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #### group: general </span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; name:  chr &quot;Test cod&quot;</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; stomach_format:   expression(system.file(&quot;stomach_format.csv&quot;, package = &quot;FishStomachs&quot;))</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #### group: data_used </span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; stomach_dir:  chr &quot;C:/Users/movi/AppData/Local/Temp/RtmpKu81vK/temp_libpath439443b12ee3/FishStomachs/extdata&quot;</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dataSets:  chr &quot;cod_stom_1991.csv&quot;</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; years:  int 1991</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; quarters:  int [1:4] 1 2 3 4</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; predators:  chr &quot;Gadus morhua&quot;</span></span></code></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;dplyr&#39; was built under R version 4.0.5</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FishStomachs)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>control<span class="ot">&lt;-</span><span class="fu">new</span>(<span class="st">&quot;STOMcontrol&quot;</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">name=</span><span class="st">&quot;Test cod&quot;</span>,  <span class="co"># just a name</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="co"># specify where to find data on exchange format. This example uses data for cod incl. in the package</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">stomach_dir=</span><span class="fu">file.path</span>(<span class="fu">system.file</span>( <span class="at">package =</span> <span class="st">&quot;FishStomachs&quot;</span>),<span class="st">&quot;extdata&quot;</span>), </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">dataSets=</span><span class="st">&quot;cod_stom_1991.csv&quot;</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">predators=</span><span class="fu">c</span>(<span class="st">&quot;Gadus morhua&quot;</span>),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">years=</span>1991L <span class="co"># keep only data from 1991</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#print(control) # This will show the full list of options</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(control,<span class="at">show=</span><span class="fu">c</span>(<span class="st">&#39;general&#39;</span>,<span class="st">&#39;data_used&#39;</span>))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #### group: general </span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; name:  chr &quot;Test cod&quot;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; stomach_format:   expression(system.file(&quot;stomach_format.csv&quot;, package = &quot;FishStomachs&quot;))</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #### group: data_used </span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; stomach_dir:  chr &quot;C:/Users/movi/AppData/Local/Temp/RtmpeYTU6m/temp_libpath364458cae67/FishStomachs/extdata&quot;</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dataSets:  chr &quot;cod_stom_1991.csv&quot;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; years:  int 1991</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; quarters:  int [1:4] 1 2 3 4</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; predators:  chr &quot;Gadus morhua&quot;</span></span></code></pre></div>
 <p>The stomach_format: in the control shows where to find the format and for the input file. In this case it is the default value that is used, which is the file included in FishStomachs, but another specification file can be specified, see vignette Database_format.</p>
 <p>Data are read in using the read_exchange_data function.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>s<span class="ot">&lt;-</span><span class="fu">read_exchange_data</span>(control,<span class="at">keep_just_mandatory_fields =</span> <span class="cn">TRUE</span>)</span>
@@ -221,7 +229,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  - attr(*, &quot;control&quot;)=Formal class &#39;STOMcontrol&#39; [package &quot;FishStomachs&quot;] with 28 slots</span></span>
 <span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .. ..@ name                 : chr &quot;Test cod&quot;</span></span>
 <span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .. ..@ stomach_format       :  expression(system.file(&quot;stomach_format.csv&quot;, package = &quot;FishStomachs&quot;))</span></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .. ..@ stomach_dir          : chr &quot;C:/Users/movi/AppData/Local/Temp/RtmpKu81vK/temp_libpath439443b12ee3/FishStomachs/extdata&quot;</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .. ..@ stomach_dir          : chr &quot;C:/Users/movi/AppData/Local/Temp/RtmpeYTU6m/temp_libpath364458cae67/FishStomachs/extdata&quot;</span></span>
 <span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .. ..@ dataSets             : chr &quot;cod_stom_1991.csv&quot;</span></span>
 <span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .. ..@ years                : int 1991</span></span>
 <span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .. ..@ quarters             : int [1:4] 1 2 3 4</span></span>
@@ -295,18 +303,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   n_food &lt;int&gt;, n_regur &lt;int&gt;, n_skel &lt;int&gt;, n_empty &lt;int&gt;</span></span>
 <span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>s[[<span class="st">&#39;PREY&#39;</span>]]</span>
 <span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 16,160 x 10</span></span>
-<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    sample_id fish_id prey_name digest prey_l prey_ll prey_lu prey_w_meth prey_n</span></span>
-<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;fct&gt;     &lt;fct&gt;   &lt;fct&gt;      &lt;int&gt;  &lt;dbl&gt;   &lt;int&gt;   &lt;int&gt; &lt;fct&gt;        &lt;int&gt;</span></span>
-<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 Gadus mo~ 109     Pagurus ~      1     NA      NA      NA r                1</span></span>
-<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 Gadus mo~ 109     Buglossi~      1     NA      35      40 r                1</span></span>
-<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 Gadus mo~ 116     Pseudocu~      1     NA      12      15 r                1</span></span>
-<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 Gadus mo~ 116     Gammarid~      1     NA      12      15 r                1</span></span>
-<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 Gadus mo~ 116     Crangon ~      1     NA      25      30 r                1</span></span>
-<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 Gadus mo~ 116     Pomatosc~      1     NA      NA      NA r                1</span></span>
-<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 Gadus mo~ 128     Sprattus~      1     NA      80     100 r                1</span></span>
-<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 Gadus mo~ 131     Polychae~      1     NA      NA      NA r                1</span></span>
-<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 Gadus mo~ 131     Crangon ~      1     NA      25      30 r                1</span></span>
-<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 Gadus mo~ 139     Pagurus ~      1     NA      NA      NA r                1</span></span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    sample_id  fish_id prey_name digest prey_l prey_ll prey_lu prey_w_meth prey_n</span></span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;fct&gt;      &lt;fct&gt;   &lt;fct&gt;      &lt;int&gt;  &lt;dbl&gt;   &lt;int&gt;   &lt;int&gt; &lt;fct&gt;        &lt;int&gt;</span></span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 Gadus mor~ 109     Pagurus ~      1     NA      NA      NA r                1</span></span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 Gadus mor~ 109     Buglossi~      1     NA      35      40 r                1</span></span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 Gadus mor~ 116     Pseudocu~      1     NA      12      15 r                1</span></span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 Gadus mor~ 116     Gammarid~      1     NA      12      15 r                1</span></span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 Gadus mor~ 116     Crangon ~      1     NA      25      30 r                1</span></span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 Gadus mor~ 116     Pomatosc~      1     NA      NA      NA r                1</span></span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 Gadus mor~ 128     Sprattus~      1     NA      80     100 r                1</span></span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 Gadus mor~ 131     Polychae~      1     NA      NA      NA r                1</span></span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 Gadus mor~ 131     Crangon ~      1     NA      25      30 r                1</span></span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 Gadus mor~ 139     Pagurus ~      1     NA      NA      NA r                1</span></span>
 <span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ... with 16,150 more rows, and 1 more variable: prey_w &lt;dbl&gt;</span></span></code></pre></div>
 <p>A subset of data can be made by the method subset, and several data sets can be combined with the method c, see below.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>

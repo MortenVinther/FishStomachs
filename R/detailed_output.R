@@ -40,7 +40,7 @@ make_criteria_set<-function(stom){
 do_detailed_output <-function(stom,append=TRUE,to_screen=FALSE,label,digits=1,rel_weight=FALSE,write_criteria=FALSE,use_criteria=TRUE,show_mis_length=TRUE,transpose=FALSE,by_sample_id=FALSE) {
   #test  stom<-s; digits=1; rel_weight=FALSE; write_criteria=TRUE; append=FALSE;transpose=TRUE;by_sample_id=TRUE; show_mis_length=FALSE; use_criteria=FALSE
 
-   control<-attr(stom,'control')
+  control<-attr(stom,'control')
   if (!use_criteria) by_sample_id<-FALSE
   if (!control@detailed_tst_output & use_criteria) return('no output requested (option detailed_tst_output=FALSE)')
 

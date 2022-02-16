@@ -10,7 +10,8 @@
 #' @exportS3Method
 #' @examples \dontrun{a<-as.data.frame(stom); a}
 as.data.frame.STOMobs <- function(stom,add_empty=TRUE){
-  a<-dplyr::left_join(stom[['PRED']],stom[['PREY']],by = c("sample_id", "fish_id"))
+
+   a<-dplyr::left_join(stom[['PRED']],stom[['PREY']],by = c("sample_id", "fish_id"))
   if (add_empty) {
     control<-attr(stom,'control')
     min_prey_length<-control@min_prey_length
@@ -20,10 +21,12 @@ as.data.frame.STOMobs <- function(stom,add_empty=TRUE){
     mis_ll<-paste(mis_l,mis_l,sep='-')
     cnames<-colnames(a)
     crit<-is.na(a$prey_name)
-    a[crit,'prey_name']<-other
-    if ('prey_size' %in% cnames) a[crit,'prey_size']<-mis_ll
-    if ('prey_size_class' %in% cnames) a[crit,'prey_size_class']<-mis_size_class
-    a[crit,'prey_w']<-0
+    if (any(crit)) {
+      a[crit,'prey_name']<-other
+      if ('prey_size' %in% cnames) a[crit,'prey_size']<-mis_ll
+      if ('prey_size_class' %in% cnames) a[crit,'prey_size_class']<-mis_size_class
+      a[crit,'prey_w']<-0
+    }
   }
 
   attr(a,'PRED')<-names(stom[['PRED']])

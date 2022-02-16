@@ -26,7 +26,14 @@
     </style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
@@ -192,19 +199,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ... with 2,126 more rows</span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>,<span class="st">&quot;species_info.csv&quot;</span>,<span class="at">package =</span> <span class="st">&quot;FishStomachs&quot;</span>),<span class="at">col_types=</span><span class="fu">cols</span>())</span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 11 x 11</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    number code  species SMS_species short predator_sp other_predator_~ prey_sp</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt; &lt;lgl&gt;       &lt;lgl&gt;            &lt;lgl&gt;  </span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1      0 OTH   other   other       other FALSE       FALSE            FALSE  </span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2      1 HKE   Merluc~ Merluccius~ Hake  TRUE        TRUE             FALSE  </span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3      2 COD   Gadus ~ Gadus morh~ Cod   TRUE        FALSE            TRUE   </span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4      3 WHG   Merlan~ Merlangius~ Whit~ TRUE        FALSE            TRUE   </span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5      4 HAD   Melano~ Melanogram~ Hadd~ TRUE        FALSE            TRUE   </span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6      5 POK   Pollac~ Pollachius~ Sait~ TRUE        FALSE            FALSE  </span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7      6 MAC   Scombe~ Scomber sc~ Mack~ TRUE        FALSE            FALSE  </span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8      7 HER   Clupea~ Clupea har~ Herr~ FALSE       FALSE            TRUE   </span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9      8 SAN   Ammody~ Ammodytidae Sand~ FALSE       FALSE            TRUE   </span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10      9 NOP   Trisop~ Trisopteru~ Nor.~ FALSE       FALSE            TRUE   </span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11     10 SPR   Spratt~ Sprattus s~ Sprat FALSE       FALSE            TRUE   </span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    number code  species   SMS_species short predator_sp other_predator_~ prey_sp</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt; &lt;lgl&gt;       &lt;lgl&gt;            &lt;lgl&gt;  </span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1      0 OTH   other     other       other FALSE       FALSE            FALSE  </span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2      1 HKE   Merlucci~ Merluccius~ Hake  TRUE        TRUE             FALSE  </span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3      2 COD   Gadus mo~ Gadus morh~ Cod   TRUE        FALSE            TRUE   </span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4      3 WHG   Merlangi~ Merlangius~ Whit~ TRUE        FALSE            TRUE   </span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5      4 HAD   Melanogr~ Melanogram~ Hadd~ TRUE        FALSE            TRUE   </span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6      5 POK   Pollachi~ Pollachius~ Sait~ TRUE        FALSE            FALSE  </span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7      6 MAC   Scomber ~ Scomber sc~ Mack~ TRUE        FALSE            FALSE  </span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8      7 HER   Clupea h~ Clupea har~ Herr~ FALSE       FALSE            TRUE   </span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9      8 SAN   Ammodyti~ Ammodytidae Sand~ FALSE       FALSE            TRUE   </span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10      9 NOP   Trisopte~ Trisopteru~ Nor.~ FALSE       FALSE            TRUE   </span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11     10 SPR   Sprattus~ Sprattus s~ Sprat FALSE       FALSE            TRUE   </span></span>
 <span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ... with 3 more variables: nodc &lt;dbl&gt;, first_age &lt;dbl&gt;, last_age &lt;dbl&gt;</span></span>
 <span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co"># create data for the SMS model</span></span>

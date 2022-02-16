@@ -15,7 +15,7 @@ Description: Compiles observed stomach contents data on a flexible exchange form
 Encoding: UTF-8
 License: GPL
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
 Depends: R (>= 3.50)
 Collate:
