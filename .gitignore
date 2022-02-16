@@ -10,7 +10,7 @@ inst/doc
 inst/NotUsed
 
 doc
-meta
+Meta
 
 vignettes/*.html  
 vignettes/*.R
