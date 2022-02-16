@@ -456,8 +456,8 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
 #' Change predator or prey names.
 #'
 #' @param d Diet data set of class STOMdiet.
-#' @param pred_from_to Change predator name (variable pred_name) from an external lookup table using pred_from_to[1] as key and pred_from_to[2] as new name.
-#' @param prey_from_to Change prey name (variable prey_name) from an external lookup table using prey_from_to[1] as key and prey_from_to[2] as new name.
+#' @param pred_from_to Change predator name (variable pred_name) from an external lookup table using first element of pred_from_to as key and second element of pred_from_to as new name.
+#' @param prey_from_to Change prey name Same as above, but for prey name.
 #' @param sp_info_file CSV file with the fields used for \code{pred_from_to}  and \code{prey_from_to} and and additional field "number" used for arranging predator and prey names as factors.
 #' @param refactor Logical for re-factor of predator and prey names in accordance with the sequence given by the "number" variable in the \code{sp_info_file}
 #' @return update data of class STOMdiet.

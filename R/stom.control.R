@@ -27,16 +27,18 @@ validSTOMcontrol <- function(object) {
 #' An s4 class for Control object for stomach compilation
 #'
 #' @slot name character. Name of control object.
-#' @slot stomach_format expression. \code{expression} to get file name for file defining stomach contents data. Default: expression(system.file("stomach_format.csv", package = "FishStomachs"))
-#' @slot stomach_dir characters. Directory name for directory with stomach data on exchange format.
-#' @slot dataSets vector of characters. File name or file names for data on exchange format.
-#' @slot years vector. Year of data to be used.
-#' @slot quarters vector. Quarters of the year ( or similar time split) to be used.
-#' @slot strata_area_exp expression for defining strata area.
-#' @slot strata_sub_area_exp expression for defining sub_area.
-#' @slot strata_time_exp expression for defining temporal strata.
-#' @slot strata_year_back    "expression" (R-code) for getting year information out of diet data, e.g. \code{expression(as.numeric(substr(stratum_time,1,4)))}.
-#' @slot strata_quarter_back "expression" (R-code) for getting quarter information out of diet data.
+#' @slot stomach_format  \code{expression} (R code) for file name for CSV file defining stomach contents data.
+#' Default: expression(system.file("stomach_format.csv", package = "FishStomachs"))
+#' For more details on exchange format see the vignette: \code{vignette("Database_format", package = "FishStomachs")}
+#' @slot stomach_dir characters. Directory name with stomach data on exchange format.
+#' @slot dataSets File name or file names for data on exchange format.
+#' @slot years Year or years of data to be used.
+#' @slot quarters Quarters of the year ( or similar time split) to be used.
+#' @slot strata_area_exp  \code{expression} for defining strata area.
+#' @slot strata_sub_area_exp  \code{expression} for defining sub_area.
+#' @slot strata_time_exp \code{expression} for defining temporal strata.
+#' @slot strata_year_back \code{expression} for getting year information out of diet data, e.g. \code{expression(as.numeric(substr(stratum_time,1,4)))}.
+#' @slot strata_quarter_back \code{expression} for getting quarter information out of diet data.
 #' @slot sel_preys vector.
 #' @slot year_quarter_strata vector.
 #' @slot weighting_by_nstom logical.

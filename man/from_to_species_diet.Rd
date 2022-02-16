@@ -15,9 +15,9 @@ from_to_species_diet(
 \arguments{
 \item{d}{Diet data set of class STOMdiet.}
 
-\item{pred_from_to}{Change predator name (variable pred_name) from an external lookup table using pred_from_to\link{1} as key and pred_from_to\link{2} as new name.}
+\item{pred_from_to}{Change predator name (variable pred_name) from an external lookup table using first element of pred_from_to as key and second element of pred_from_to as new name.}
 
-\item{prey_from_to}{Change prey name (variable prey_name) from an external lookup table using prey_from_to\link{1} as key and prey_from_to\link{2} as new name.}
+\item{prey_from_to}{Change prey name Same as above, but for prey name.}
 
 \item{sp_info_file}{CSV file with the fields used for \code{pred_from_to}  and \code{prey_from_to} and and additional field "number" used for arranging predator and prey names as factors.}
 

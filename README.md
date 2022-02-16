@@ -6,7 +6,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-FishStomachs is a pcakage for compilation of stomach contents into
+FishStomachs is a package for compilation of stomach contents into
 population diet and food rations.
 
 ## Installation
@@ -17,13 +17,12 @@ You can install the development version from
 ``` r
 # install.packages("devtools")
 devtools::install_github("MortenVinther/FishStomachs")
+
+# or to get the full documentation
+devtools::install_github("MortenVinther/FishStomachs",build_manual=TRUE,build_vignettes=TRUE)
 ```
 
-## Example
+## Examples
 
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(FishStomachs)
-## basic example code
-```
+The Vignettes, Example 1 - Example 5 show you how to use
+**FishStomachs**.

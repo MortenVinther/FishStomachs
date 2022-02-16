@@ -15,25 +15,27 @@ An s4 class for Control object for stomach compilation
 \describe{
 \item{\code{name}}{character. Name of control object.}
 
-\item{\code{stomach_format}}{expression. \code{expression} to get file name for file defining stomach contents data. Default: expression(system.file("stomach_format.csv", package = "FishStomachs"))}
+\item{\code{stomach_format}}{\code{expression} (R code) for file name for CSV file defining stomach contents data.
+Default: expression(system.file("stomach_format.csv", package = "FishStomachs"))
+For more details on exchange format see the vignette: \code{vignette("Database_format", package = "FishStomachs")}}
 
-\item{\code{stomach_dir}}{characters. Directory name for directory with stomach data on exchange format.}
+\item{\code{stomach_dir}}{characters. Directory name with stomach data on exchange format.}
 
-\item{\code{dataSets}}{vector of characters. File name or file names for data on exchange format.}
+\item{\code{dataSets}}{File name or file names for data on exchange format.}
 
-\item{\code{years}}{vector. Year of data to be used.}
+\item{\code{years}}{Year or years of data to be used.}
 
-\item{\code{quarters}}{vector. Quarters of the year ( or similar time split) to be used.}
+\item{\code{quarters}}{Quarters of the year ( or similar time split) to be used.}
 
-\item{\code{strata_area_exp}}{expression for defining strata area.}
+\item{\code{strata_area_exp}}{\code{expression} for defining strata area.}
 
-\item{\code{strata_sub_area_exp}}{expression for defining sub_area.}
+\item{\code{strata_sub_area_exp}}{\code{expression} for defining sub_area.}
 
-\item{\code{strata_time_exp}}{expression for defining temporal strata.}
+\item{\code{strata_time_exp}}{\code{expression} for defining temporal strata.}
 
-\item{\code{strata_year_back}}{"expression" (R-code) for getting year information out of diet data, e.g. \code{expression(as.numeric(substr(stratum_time,1,4)))}.}
+\item{\code{strata_year_back}}{\code{expression} for getting year information out of diet data, e.g. \code{expression(as.numeric(substr(stratum_time,1,4)))}.}
 
-\item{\code{strata_quarter_back}}{"expression" (R-code) for getting quarter information out of diet data.}
+\item{\code{strata_quarter_back}}{\code{expression} for getting quarter information out of diet data.}
 
 \item{\code{sel_preys}}{vector.}
 

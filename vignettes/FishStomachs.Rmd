@@ -16,18 +16,18 @@ knitr::opts_chunk$set(
 ## Compilation of stomach content data for estimation of population diet and food ration. ##
 
 Compilation of data from individual stomachs to population level is not
-trivial and the method will highly depend on the question asked. Stomach
+trivial and the method will depend highly on the question asked. Stomach
 data are often collected to get information on the average diet or food
 ration of a given species within a given area to inform multispecies
 assessment models (e.g. SMS or Gadget). Such models require data on diet
 and biomass eaten (food ration) by predator species and size
 classes. The average "population" diet or food ration should basically
 be calculated from a stratified mean of the individual stomach content
-samples, weighted by strata abundances of the predator and strata areas.
+samples, weighted by strata adensity of the predator and the area of the strata.
 This seems simple, but incomplete and patchy sampling makes it often
 necessary to use a series of *ad hoc* solutions.
 
-In general a series of data compilation methods must be applied:
+In general a series of data compilation methods could be applied:
 
 1.  Read and check data from agreed exchange format;
 2.  Bias correct to take into account variable evacuation rate;
@@ -35,7 +35,7 @@ In general a series of data compilation methods must be applied:
 4.  Bias correct to take into account regurgitated stomachs within sample units;
 5.  Aggregate stomachs contents within sample_id and size classes.
 6.  Allocate unidentified or partly identified prey items;
-7.  Calculate population diet or ration from Weighted average per sample_id. 
+7.  Calculate population diet and food ration from a weighted average. 
 
 The sequence of these steps, of which some of the steps might be repeated, 
 will depend on the individual sampling design and the quality of the analysed data.
@@ -50,16 +50,43 @@ how these can be applied.
 
 Data must be recorded, stored and exchanged on an agreed and documented
 format suitable for the purpose of sampling. 
-This R-package uses a user defined format \link{Database_format.html} and a possibility to rename variable names  \code{vignette("Database_format.Rmd", package = "FishStomachs")}, which makes it possible to include existing
-data bases- The new format includes a number of mandatory (system defined) and optional (user defined) variable names, 
-which are linked to "internal" variable names used for processing. Section XXX gives details.
+This R-package uses a user defined format (see Table 1)  with the possibility to rename variable names
+such that it is possible to include existing
+data bases (e.g. ICES stomach contents data base). The new format includes a number of mandatory (system defined) and optional (user defined) variable names, 
+which uses "aliases" (See Table 2)  as a link to "internal" variable names used for processing by FishStomachs. 
+
+
+**Table 1. Database format. "field" is variable name used in FishStomachs; "types" is the type of input(c=character, i=integer, d=double, l=logical);	"mandatory" is the field required as minimum (T=TRUE, F=FALSE);	"PRED" is the variable part of predator information; 
+"PREY" is the information part of prey information; "units" is the unit or values applied.
+The data base format is specified in the file stomach_format.csv.**
+
+```{r, maketable1, results = "asis", echo=FALSE,message=FALSE}
+a<-readr::read_csv(file.path(system.file( package = "FishStomachs"),"stomach_format.csv"),col_types = readr::cols())
+a<-  dplyr::mutate_if(a,is.logical,as.character()) 
+a<-  dplyr::mutate(a,mandatory=dplyr::if_else(mandatory=='FALSE','F','T'),
+                   PRED=dplyr::if_else(PRED=='FALSE','F','T'),PREY=dplyr::if_else(PREY=='FALSE','F','T'))
+a<-  dplyr::mutate(a,units=dplyr::if_else(is.na(units),' ',units))
+knitr::kable(a[,4:10])
+
+```
+  
+     
+  
+**Table 2. Alias names accepted as default. Aliases can be changed and added  by using a local version of the the database format. The data base format and aliases are specified in the file stomach_format.csv.**
+```{r, maketable2, results = "asis", echo=FALSE,message=FALSE}
+a<-dplyr::mutate(a,alias_1=dplyr::if_else(is.na(alias_1),' ',alias_1),alias_2=dplyr::if_else(is.na(alias_2),' ',alias_2),alias_3=dplyr::if_else(is.na(alias_3),' ',alias_3))
+knitr::kable(a[,1:4]) 
+
+```
+   
+
 
 The presently used ICES
-data exchange format for stomachs (see Appendix 1) is based on the "Year
+data exchange format for stomachs (see Appendix 1 in this document) is based on the "Year
 of the stomach" sampling for North Sea stocks in the period 1981-1991
 (see Appendix 2). The new version includes some extensions to better
 include stomachs sampled outside the "Year of the stomach", e.g. from
-national sampling programs whit less standardized recording. Another
+national sampling programs with less standardized recording. Another
 change is that the new exchange format uses the WoRMS AphiaID
 (<http://www.marinespecies.org/index.php>) species taxonomic ode, where
 the old format used the NODC codes
@@ -71,7 +98,7 @@ data set on the ICES exchange format (Appendix 1).
 
 ### 2) Bias correction to take into account variable evacuation rate ###
 
-It is often assumed that diet is the same as the observed stomach
+It is often assumed that diet (eaten food) is the same as the observed stomach
 content. This is however not the case as the stomach evacuation rate of
 an individual stomach depends on e.g. the average meal size, average
 energy density of the meal, prey armament and temperature. Large energy
@@ -117,20 +144,20 @@ N= Number of stomachs in the sample, total (A) and with food (F)
 S = average stomach contents in grams
 
 
-$\rho$, $\delta$, $\lambda$, $\xi$ and K are parameters to the model (Table 1)
+$\rho$, $\delta$, $\lambda$, $\xi$ and K are parameters to the model (Table 3)
 
 Values for armament (M) and average energy density of individual prey
 (groups) as used in the compilation of the North Sea stomachs are presented
-in Table 2.
+in Table 5.
 
 When data exist by the individual stomachs, the ration eaten per
 (feeding) fish can be calculated as:
 
 $$R = \sum_{i}^{}{\rho * M_i* b_i* e^{\delta T} * L^{\lambda} * E^{-\xi} * S^{\alpha}}$$
 
-Table 1. Parameter values of the generic cylinder model of gastric
+**Table 3. Parameter values of the generic cylinder model of gastric
 evacuation used for the compilation of stomachs from predators in the
-North Sea.
+North Sea.**
 
   Predator   $\rho$    $\lambda$ $\delta$  $\xi$  $\alpha$   K
   ---------- --------- --------  -------- ------- -------- ------
@@ -158,22 +185,33 @@ the equation) and can easily be aggregated with average rations of preys
 from other strata. These rations can finally be transformed into diet
 data (weight proportions by prey item).
 
+**Table 4. Average energy density and armament of prey groups as applied
+in the compilation of stomach for use in the North Sea SMS.**
+
+```{r, maketable4, results = "asis", echo=FALSE,message=FALSE}
+a<-readr::read_csv(file.path(system.file( package = "FishStomachs"),"extdata","energy_density_and_armament.csv"),col_types = readr::cols())
+
+knitr::kable(a,col.names=c("Species","Quarter","Lower length (mm)","Upper length (mm)","Energy density (kJ/g wet weight)", "Armament"))
+
+```
+
+
 ### 3) Assign predator and prey size classes. ###
 
 Stomach data can be sampled, analysed and recorded by the individual
 fish or by size group ("pooled stomach data") for the individual sample
 unit (sample_id), e.g. trawl haul. To save time during sampling and analysis of the
 stomach contents, the "Year of the stomach" data were sampled and
-analysed by pre-determined size classes (Table 2). Pooled stomachs do
+analysed by pre-determined size classes (Table 4). Pooled stomachs do
 not provide information by the individual fish and on the variation in
 stomach contents, which is preferable in e.g. estimation of daily food
 ration and diet. Grouping of stomachs by size classes is however often
 necessary in the later compilation of data, as data are to scarce to be
 compiled by e.g. each cm group separately.
 
-In general, I will suggest grouping data size classes, e.g. the size
-classes used in 1991 by "Year of the stomach" sampling (Table 1). That
-means that the variables in the data exchange format (Appendix XXXXXXXXXXXX)
+In general, I will suggest to use size classes, e.g. the size
+classes used in 1991 by "Year of the stomach" sampling (Table 3). That
+means that the variables in the data exchange format.
 
 -   pred_ll (predator lower length bound)
 
@@ -187,9 +225,9 @@ are set from the length information on the individual predators
 and preys, if not already included in the data and defined by the sampling design.
 
 
-Table 2. Size classes (for items larger than 5 cm) used for sampling and
+**Table 5. Size classes (for items larger than 5 cm) used for sampling and
 compilation of stomach data in the North Sea "Year of the stomach" 1991
-sampling .
+sampling.**
 
   Length class, 1991   Length (cm)
   -------------------- -------------
@@ -219,7 +257,7 @@ regurgitated, with skeletal remains only or empty. This information is
 included in the presently used exchange format.
 
  
-**Database variable**    **Comments**
+Database variable        Comments
 ---------------------    -----------------------------------------------------------------
 n_food                    Stomachs with (recently ingested) food
 n_regur                   Stomach with food, but evidence of regurgitation of parts or all the stomach contents.
@@ -331,7 +369,7 @@ most likely were sprat or herring (Clupeidae) but could not be determined to spe
  Other fish	    8791032000	8999999999
  unknown	      9000000000	9999999999
 
-to allocate the partly identified preys, preys within the Clupeidaeand Gadidae were first allocated to the identified species within the group (if such exists......................)
+to allocate the partly identified preys, preys within the Clupeidae and Gadidae were first allocated to the identified species within the group (if such exists)
 
 ### 7) Aggregation of stomachs contents into population metrics ###
 
@@ -375,256 +413,7 @@ The calculation of the population diet for SMS was done as a weighted average
 of the strata (roundfish area) average diet weighted by the product of
 the average strata survey cpue and area of the strata.
 
-### Compilation of stomach data for use in the North Sea SMS model. ###
 
-The section outlines the compilation of stomach data sampled in the
-North Sea "Year of the stomach" (mainly 1981 and 1991 data) for use in
-the North Sea SMS model.
-
-The compilations steps applied using the 6 basic methods already
-presented:
-
-1)  Read data from the exchange data and select the wanted combination
-    of predators, periods and areas.
-
-2)  Bias correct:  Bias correct stomach content due to energy contents, armearment etc. Stomach contents prey weights (prey_w) by sample_id and fish_id (one or more predators) are transformed into an eaten (actually evacuated) food ration  which can be considered a as proxy for stomach contents weight. The food food ration is calculaled as ration (wet weight in grammes) by quarter of the year.
-
-3)  Assign size classes to predators.
-
-4)  Bias correct: Adjust for regurgitated stomachs by sample_id and predator size class. By doing this, it is assumed that the regurgitated stomachs had the same stomach contents as the feeding (not regurgitated) stomachs in the sample. Samples (sample_id) with just regurgitated stomachs are deleted.
-
-5)  Group prey species of partly identified preys and recalctulate the stomach contents weight of the new groups:
-    i)  keep the prey names for prey species used in the SMS model (cod, whiting, haddock, herring, sandeel, Norway pout, sprat) 
-    ii) rename remaining fish prey items into
-        1. Clupeidae: not species identified items, but identified to be a species within the group Clupeidae
-        2. Gadidae: not species identified items, but identified to be a species within the group Gadidae
-        3. "other fish": remaining fish items. 
-    iii) rename all invertabraes to "other". Set number of preys, digestion stage and size information of the preys to missing.
-    iv)  rename preys where it was not possible to classify it as a an invertebra or fish prey into "unknown". Set number of preys, digestion stage and size information of the preys to missing.
-      
-6)  Group prey sizes into prey size classes
-
-7)  Aggregate within sample_id, predator and prey size classes.
-
-8)  Add spatial and temporal stata (sub-strata=ICES rectangle ,strata=roundfish areast, time=yaer and quarter) for for rasing observed stomach content to population diet. 
-
-9)  Aggregate data. Calculate weighted average of average stomach
-    contents by ICES rectangle using the total number of stomachs
-    sampled by sub-strata and year/quarter  within the ICES rectangle as weighting factor.
-    Result: average prey weight and prey number by time period, sub_strata
-    predator, predator size class, prey, prey size class,
-    digestion stage.
-
-
-   
- 
-11)	Aggregate data. Calculate average diet for the population
-
-
-
-4)  Aggregate data. Calculate weighted average of average stomach
-    contents by ICES rectangle using the total number of stomachs
-    sampled by SampleID within the ICES rectangle as weighting factor.
-    Result: average prey weight and prey number by time period, ICES
-    rectangle, predator, predator size class, prey, prey size class,
-    digestion stage.
-
-5)  Aggregate data. Calculate weighted average of average stomach
-    contents by sub-area (i.e. ICES roundfish areas) using average
-    survey CPUE (predator, size class) as weighting factor. Result:
-    average prey weight and prey number by time period, predator
-    sub-area, predator, predator size class, prey, prey size class,
-    digestion stage.
-
-6)  Redistribute partly identified preys. Assign length class to species
-    identified fish preys with no length information.
-
-    a.  Create distribution key from species identified fish preys with
-        length class by time period, predator sub-area, predator,
-        predator size class, prey and prey size class
-
-    b.  Redistribute partly identified preys using the key by time
-        period, predator sub-area, predator, predator size class and
-        prey
-
-7)  Redistribute partly identified preys. Assign species and length
-    class to partly identified fish preys with information on family.
-
-    c.  Create distribution key from species identified fish preys with
-        length class by time period, predator sub-area, predator,
-        predator size class, prey family and prey size class, using the
-        following families:
-
-        i.  Clupeidae: sprat, herring and non-commercial clupeidae
-
-        ii. Gadidae: cod, haddock, saithe, whiting, Norway pout and
-            non-commercial gadidae
-
-        iii. Pleuronectidae: plaice, dab lemon sole, non-commercial
-            pleuronectidae
-
-        iv. Soleidae: sole and solonette
-
-    d.  Redistribute partly identified preys using the key by time
-        period, predator sub-area, predator, predator size class and
-        prey family.
-
-8)  Redistribute partly identified preys. Assign species and size class
-    to partly identified fish preys.
-
-    e.  Create distribution key from species identified fish preys with
-        length class by time period, predator sub-area, predator,
-        predator size class, prey and prey size class
-
-    f.  Redistribute partly identified fish preys using the key by time
-        period, predator sub-area, predator, predator size class and
-        prey equal fish.
-
-9)  Redistribute partly identified preys. Assign species and size class
-    to partly identified preys (remains).
-
-    g.  Create distribution key from species identified fish preys with
-        length class by time period, predator sub-area, predator,
-        predator size class, prey equal invertebrate or fish and prey
-        size class
-
-    h.  Redistribute partly identified preys using the key by time
-        period, predator sub-area, predator, predator size class and
-        prey equal invertebrate or fish and prey
-
-
-
-11) Aggregate data. Calculate average diet for the population.
-
-    i.  Estimate sub-area population numbers ( or indices) of the
-        predator and predator size classes from e.g. IBTS surveys and
-        area of the sub-area
-
-    j.  Calculate the diet for the population as a weighted mean of diet
-        by sub-area weighted by the sub-area population numbers, by time
-        period, predator and predator size class.
-
-### Comments to the applied stomach data compilation
-
-The sequence of compilation steps applied in this case reflects the
-sampling design where pooled stomachs were applied. Ideally stomachs
-should be sampled and analysed individually, such that the "Bias
-correction: From stomach contents to diet" is done on the individual
-stomachs as early as possible in the data compilation, i.e. before any
-grouping or aggregation of data. With pooled stomachs, the effect of
-timing becomes less. Another issue is that the bias correction ideally
-requires fully identified stomach contents as energy density and
-armament differs between preys. The "Year of the stomach" data include a
-substantial number of records with partly identified prey items, like
-prey equal to "Gadidae", "fish meat" or "remains", with or without size
-classes. Some of those could probably have been assigned with high
-probability to one of the identified prey items within the stomachs
-analysed from the same trawl haul, potentially with a flag indicating
-that the identification of the prey identification was "uncertain".
-Given the frequency of partly identified preys, it was necessary first
-to group and aggregate data by roundfish area before all unidentified
-prey items could be redistributed proportionally to the fully identified
-preys.
-
-SKAL IKKE MED Manpower used on compilation of stomach data to derive population ration and diet
----------------------------------------------------------------------------------
-
-This section describes the anticipated manpower needed for compilation
-of a batch of newly sampled stomach data to produce estimates of
-population diet and food ration to be used in multispecies models. The
-compilation of data can be described by three main steps.
-
-1)  Quality check of data on exchange format.
-
-2)  Creation of additional information like
-
-    a.  Stock distribution maps used for stratification and weighting
-        the individual samples
-
-    b.  Compilation of data for use in evacuation models (prey energy
-        density, armament, ambient temperature, *etc*) to produce food
-        ration and diet
-
-3)  Compilation of data to produce food ration and diet
-
-### 1. Quality check of data on exchange format 
-
-Quality check should be done immediately after data have been entered a
-database, preferably concurrently with the analysis of the stomach
-contents, to actually be able to correct suspicious data. After a short
-period of time it becomes practically impossible to correct for wrongly
-identified or coded preys. Ideally, the database program should include
-features for a graphical presentation of newly entered data and
-comparison with previously entered data. I am not aware of software to
-support such concurrent quality check, but development of such database
-program with extensive quality checking and presentations might be
-beneficial in the long run, even though it requires substantial
-resources to develop such.
-
-The process outlined above, should be made before data are released for
-estimation of diet and food rations. It is thereby assumed that exchange
-data are of a quite good quality. However even so, some man power (a day
-or two?) will probably be used on a final quality check, reporting back,
-and new exchange of data for a batch of stomach data
-
-### 2. Creation of additional data
-
-Stomachs are most often sampled during scientific surveys with the main
-purpose to estimate abundance indices of commercial important fish
-stocks. Therefore, data on stock distribution used for weighting of the
-individual stomach samples are already collected and available from ICES
-data bases, e.g. the North Sea IBTS data. For most demersal species
-distribution maps can be made as simple means from the of the average
-mean catch rates per ICES rectangles, as done for the calculation of
-ICES abundance indices used by stock assessment. Other more complex
-methods for stock distributions like the delta-Gam approach (see e.g.
-Berg et al., 2014) could be used, but simple approaches are probably
-sufficient for most demersal species. Some pelagic stocks (e.g. mackerel
-and horse mackerel) and semi pelagic stocks (e.g. saithe) have
-contagious distribution and a variable catchability in demersal trawl
-survey, such that these surveys may be insufficient to get a complete
-and accurate distribution map. Data from outside the sampling period,
-e.g. 10 years of data from the same survey in the same quarter, may
-however give a sufficient accurate picture of stock distribution for
-this task. It is difficult to estimate the manpower needed for such
-analysis; for the experienced user within exchange formats and creation
-of distribution maps, it is a matter of a very few days. For the novel
-user it may take weeks.
-
-Parameters for evacuation rate models should be obtained from the
-literature (which may take a long time) or simply copied or modified
-from the table 2.
-
-Ambient temperature can be obtained from model output of hydrographical
-models. With the right expertise this is simple (1 day task).
-
-### 3. Compilation of data to produce food ration and diet
-
-If the appropriate software is already in place, it is an easy (1 day)
-task. If new software has to be developed it might take several weeks to
-do.
-
-A SAS program has been developed by DTU and used to compile the "Year of
-the Stomach" data. The program uses and a series of additional input
-files including lookup tables for the various species code system and
-cpue by predator size class are available on request. However this suite
-of software and additional data files will probably not be that useful
-for other persons than me, and for other areas than the North Sea. A
-new, area and sampling design independent, software package should be
-developed to basically perform the basic steps 1-6, presented in the
-introduction of this document. Such software could be developed as an
-R-package.
-
-### Total manpower used
-
-The total manpower used for compilation of stomach data will depend on
-the amount data, defined by the number of predators, areas and time
-periods. More strata will of course take longer time to process, but
-time used per stratum will decrease significantly by increasing number
-of strata. My best guess is that compilation of data from one predator
-in one model area, from one year and four quarters will take less than a
-week. This is however for an experienced user, which has the software in
-place already. For the novel user, it may take months.
 
 References
 ==========
@@ -660,743 +449,7 @@ Pinnegar, J.K. (2014) DAPSTOM - An Integrated Database & Portal for Fish
 Stomach Records. Version 4.7. Centre for Environment, Fisheries &
 Aquaculture Science, Lowestoft, UK. February 2014, 39 pp.
 
-Table 2. Average energy density and armament of prey groups as applied
-in the compilation of stomach for use in the North Sea SMS.
 
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Prey      | Quarter   | Length    | Length    | Energy    | Armament  |
-| Group     |           | Lower     | upper     | density   |           |
-|           |           | (mm)      | (mm)      |           |           |
-|           |           |           |           | (kJ/g wet |           |
-|           |           |           |           | weight)   |           |
-+===========+===========+===========+===========+===========+===========+
-| Gadus     | 1         | 10        | 120       | 3.6       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 1         | 150       | 250       | 3.8       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 1         | 300       | 500       | 4         | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 2         | 10        | 120       | 3.9       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 2         | 150       | 500       | 4.1       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 3         | 10        | 80        | 3.9       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 3         | 100       | 150       | 4.1       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 3         | 200       | 500       | 4.4       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 3         | 10        | 80        | 3.9       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 3         | 100       | 150       | 4.1       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 3         | 200       | 500       | 4.4       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 4         | 100       | 150       | 4.1       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 4         | 200       | 500       | 4.4       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 4         | 10        | 80        | 3.9       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 4         | 100       | 150       | 4.1       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Gadus     | 4         | 200       | 500       | 4.4       | 1         |
-| morhua    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 1         | 10        | 120       | 3.6       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 1         | 150       | 150       | 3.7       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 1         | 200       | 200       | 4.3       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 1         | 250       | 500       | 4.7       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 2         | 10        | 200       | 3.9       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 2         | 250       | 250       | 4         | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 2         | 300       | 500       | 4.5       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 3         | 10        | 100       | 3.9       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 3         | 120       | 200       | 4.2       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 3         | 250       | 250       | 4.6       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 3         | 300       | 300       | 5         | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 3         | 350       | 500       | 5.5       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 4         | 10        | 200       | 3.9       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 4         | 250       | 250       | 4.5       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 4         | 250       | 250       | 4.6       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 4         | 300       | 300       | 5.2       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Melanogra | 4         | 350       | 500       | 5.5       | 1         |
-| mmus      |           |           |           |           |           |
-| aeglefinu |           |           |           |           |           |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 1         | 10        | 80        | 3.9       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 1         | 100       | 100       | 4.1       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 1         | 120       | 120       | 4         | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 1         | 150       | 150       | 4.3       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 1         | 200       | 200       | 4.8       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 1         | 250       | 500       | 5         | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 2         | 10        | 150       | 3.9       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 2         | 200       | 200       | 4         | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 2         | 250       | 500       | 4.3       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 3         | 10        | 120       | 3.9       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 3         | 150       | 150       | 4.7       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 3         | 200       | 200       | 5.3       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 3         | 250       | 500       | 5.4       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 4         | 10        | 120       | 3.9       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 4         | 150       | 150       | 4.2       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Merlangiu | 4         | 200       | 500       | 5.3       | 1         |
-| s         |           |           |           |           |           |
-| merlangus |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 1         | 10        | 350       | 4.2       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 1         | 400       | 400       | 4.8       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 1         | 500       | 500       | 5.5       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 2         | 10        | 350       | 4.5       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 2         | 400       | 400       | 4.2       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 2         | 500       | 500       | 4         | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 3         | 10        | 200       | 4.1       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 3         | 250       | 300       | 4.7       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 3         | 350       | 350       | 4.8       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 3         | 400       | 400       | 5.2       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 3         | 500       | 500       | 5.6       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 4         | 10        | 350       | 4.9       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 4         | 400       | 400       | 4.8       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pollachiu | 4         | 500       | 500       | 5.2       | 1         |
-| s         |           |           |           |           |           |
-| virens    |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 1         | 10        | 70        | 3.9       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 1         | 80        | 80        | 4.3       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 1         | 100       | 100       | 6.2       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 1         | 120       | 120       | 6.4       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 1         | 150       | 500       | 4.7       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 2         | 10        | 70        | 3.9       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 2         | 80        | 80        | 4.5       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 2         | 100       | 100       | 4.2       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 2         | 120       | 150       | 4         | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 2         | 200       | 500       | 4.4       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 3         | 10        | 70        | 3.9       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 3         | 80        | 80        | 4.6       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 3         | 100       | 100       | 5.7       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 3         | 120       | 120       | 6.3       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 3         | 150       | 150       | 5.7       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 3         | 200       | 500       | 6         | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 4         | 10        | 70        | 3.9       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 4         | 80        | 80        | 4.8       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 4         | 100       | 100       | 5.2       | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Trisopter | 4         | 120       | 500       | 7         | 1         |
-| us        |           |           |           |           |           |
-| esmarki   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 1         | 10        | 70        | 4.4       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 1         | 80        | 80        | 4.6       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 1         | 100       | 100       | 4.7       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 1         | 120       | 150       | 4.4       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 1         | 200       | 200       | 6.5       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 1         | 250       | 500       | 8.5       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 2         | 10        | 80        | 4.5       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 2         | 100       | 100       | 4.6       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 2         | 120       | 120       | 4.5       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 2         | 150       | 150       | 4.4       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 2         | 200       | 200       | 5.7       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 2         | 250       | 500       | 4.9       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 3         | 10        | 40        | 4.1       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 3         | 50        | 50        | 4.2       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 3         | 60        | 70        | 3.9       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 3         | 80        | 80        | 4.5       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 3         | 100       | 100       | 4.4       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 3         | 120       | 120       | 5.2       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 3         | 150       | 150       | 10.1      | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 3         | 200       | 200       | 11        | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 3         | 250       | 500       | 11.9      | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 4         | 10        | 100       | 4.6       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 4         | 120       | 120       | 6.3       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 4         | 150       | 150       | 7.1       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 4         | 200       | 200       | 8.5       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Clupea    | 4         | 250       | 500       | 8.8       | 1.08      |
-| harengus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 1         | 10        | 40        | 4.4       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 1         | 50        | 50        | 4.6       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 1         | 60        | 60        | 4.7       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 1         | 70        | 70        | 6.5       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 1         | 80        | 500       | 8.5       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 2         | 10        | 40        | 4.5       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 2         | 50        | 50        | 4.6       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 2         | 60        | 60        | 5.1       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 2         | 70        | 70        | 6.7       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 2         | 80        | 80        | 8.6       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 2         | 100       | 100       | 10.5      | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 2         | 120       | 500       | 10.9      | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 3         | 10        | 50        | 4.7       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 3         | 60        | 60        | 5.2       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 3         | 70        | 70        | 6.7       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 3         | 80        | 80        | 8.1       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 3         | 100       | 100       | 11.4      | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 3         | 120       | 500       | 11        | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 4         | 10        | 50        | 4.6       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 4         | 60        | 60        | 6.7       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 4         | 70        | 70        | 7.8       | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 4         | 80        | 80        | 11.4      | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 4         | 100       | 100       | 11        | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Sprattus  | 4         | 120       | 500       | 11.5      | 1.08      |
-| sprattus  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 1         | 1         | 70        | 4         | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 1         | 80        | 80        | 4.4       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 1         | 100       | 100       | 5         | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 1         | 120       | 120       | 5         | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 1         | 150       | 500       | 5.5       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 2         | 1         | 60        | 4         | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 2         | 70        | 70        | 4.6       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 2         | 80        | 80        | 5         | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 2         | 100       | 100       | 5.4       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 2         | 120       | 120       | 5.8       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 2         | 150       | 500       | 6.1       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 3         | 1         | 50        | 4         | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 3         | 60        | 70        | 3.7       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 3         | 70        | 70        | 4.6       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 3         | 80        | 80        | 4.2       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 3         | 100       | 100       | 5.6       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 3         | 120       | 120       | 6.2       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 3         | 150       | 500       | 6.1       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 4         | 1         | 60        | 4         | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 4         | 70        | 70        | 4.6       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 4         | 80        | 80        | 5         | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 4         | 100       | 100       | 5.4       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 4         | 120       | 120       | 5.8       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Ammodytid | 4         | 150       | 500       | 6.1       | 1         |
-| ae        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pleuronec | 1         | 15        | 500       | 4         | 0.94      |
-| tes       |           |           |           |           |           |
-| platessa  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pleuronec | 2         | 15        | 500       | 4         | 0.94      |
-| tes       |           |           |           |           |           |
-| platessa  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pleuronec | 3         | 15        | 500       | 4         | 0.94      |
-| tes       |           |           |           |           |           |
-| platessa  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Pleuronec | 4         | 15        | 500       | 4         | 0.94      |
-| tes       |           |           |           |           |           |
-| platessa  |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Solea     | 1         | 15        | 500       | 4         | 0.94      |
-| solea     |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Solea     | 2         | 15        | 500       | 4         | 0.94      |
-| solea     |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Solea     | 3         | 15        | 500       | 4         | 0.94      |
-| solea     |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Solea     | 4         | 15        | 500       | 4         | 0.94      |
-| solea     |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Limanda   | 1         | 15        | 500       | 4         | 0.94      |
-| limanda   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Limanda   | 2         | 15        | 500       | 4         | 0.94      |
-| limanda   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Limanda   | 3         | 15        | 500       | 4         | 0.94      |
-| limanda   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Limanda   | 4         | 15        | 500       | 4         | 0.94      |
-| limanda   |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Maurolicu | 1         | 5         | 500       | 4         | 1.08      |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Maurolicu | 2         | 5         | 500       | 4         | 1.08      |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Maurolicu | 3         | 5         | 500       | 4         | 1.08      |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Maurolicu | 4         | 5         | 500       | 4         | 1.08      |
-| s         |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 1         | 0         | 500       | 4         | 1         |
-| fish      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 2         | 0         | 500       | 4         | 1         |
-| fish      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 3         | 0         | 500       | 4         | 1         |
-| fish      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 4         | 0         | 500       | 4         | 1         |
-| fish      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Astacidea | 1         | 1         | 500       | 5         | 0.3       |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Astacidea | 2         | 1         | 500       | 5         | 0.3       |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Astacidea | 3         | 1         | 500       | 5         | 0.3       |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Astacidea | 4         | 1         | 500       | 5         | 0.3       |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Anomura   | 1         | 1         | 500       | 5         | 0.3       |
-| mm        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Anomura   | 2         | 1         | 500       | 5         | 0.3       |
-| mm        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Anomura   | 3         | 1         | 500       | 5         | 0.3       |
-| mm        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Anomura   | 4         | 1         | 500       | 5         | 0.3       |
-| mm        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Caridea   | 1         | 1         | 500       | 4         | 0.6       |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Caridea   | 2         | 1         | 500       | 4         | 0.6       |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Caridea   | 3         | 1         | 500       | 4         | 0.6       |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Caridea   | 4         | 1         | 500       | 4         | 0.6       |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Euphausia | 1         | 1         | 500       | 4         | 1         |
-| cea       |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Euphausia | 2         | 1         | 500       | 4         | 1         |
-| cea       |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Euphausia | 3         | 1         | 500       | 4         | 1         |
-| cea       |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Euphausia | 4         | 1         | 500       | 4         | 1         |
-| cea       |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 1         | 1         | 500       | 4         | 1         |
-| Crustacea |           |           |           |           |           |
-| ns        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 2         | 1         | 500       | 4         | 1         |
-| Crustacea |           |           |           |           |           |
-| ns        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 3         | 1         | 500       | 4         | 1         |
-| Crustacea |           |           |           |           |           |
-| ns        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 4         | 1         | 500       | 4         | 1         |
-| Crustacea |           |           |           |           |           |
-| ns        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Cephalopo | 1         | 1         | 500       | 4.5       | 1         |
-| da        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Cephalopo | 2         | 1         | 500       | 4.5       | 1         |
-| da        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Cephalopo | 3         | 1         | 500       | 4.5       | 1         |
-| da        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Cephalopo | 4         | 1         | 500       | 4.5       | 1         |
-| da        |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Echinoder | 1         | 1         | 500       | 2.5       | 0.25      |
-| mata      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Echinoder | 2         | 1         | 500       | 2.5       | 0.25      |
-| mata      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Echinoder | 3         | 1         | 500       | 2.5       | 0.25      |
-| mata      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Echinoder | 4         | 1         | 500       | 2.5       | 0.25      |
-| mata      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Annelida  | 1         | 1         | 500       | 2.7       | 1         |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Annelida  | 2         | 1         | 500       | 2.7       | 1         |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Annelida  | 3         | 1         | 500       | 2.7       | 1         |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Annelida  | 4         | 1         | 500       | 2.7       | 1         |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 1         | 1         | 500       | 4         | 1         |
-| Inv.      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 2         | 1         | 500       | 4         | 1         |
-| Inv.      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 3         | 1         | 500       | 4         | 1         |
-| Inv.      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 4         | 1         | 500       | 4         | 1         |
-| Inv.      |           |           |           |           |           |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 1         | 1         | 500       | 4         | 1         |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 2         | 1         | 500       | 4         | 1         |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 3         | 1         | 500       | 4         | 1         |
-+-----------+-----------+-----------+-----------+-----------+-----------+
-| Other     | 4         | 1         | 500       | 4         | 1         |
-+-----------+-----------+-----------+-----------+-----------+-----------+
 
 **\
 **
@@ -1547,7 +600,7 @@ Source *ICES Coop. Res. Rep. No. 219 , pp 421-422*
   3-4            Year                          2N            01-99                 Year - 1900
   5              Quarter                       1N            1-4                   X
   6-9            Square                        4AN                                 ICES rectangle
-  10-19          Predator code                 10N                                 NODC 10-digit, see footnote^c^
+  10-19          Predator code                 10N                                 NODC 10-digit 
   20-24          Sample number                 5N            1-99999               Unique fish ID
   25-27          Country                       3A                                  ICES alpha codes, No data:XXX
   28-31          Ship                          4A                                  ICES alpha, if available, No data: XXXX
@@ -1556,7 +609,7 @@ Source *ICES Coop. Res. Rep. No. 219 , pp 421-422*
   41-42          Month                         2N            01-12                 Not known: 99
   43-44          Day                           2N            01-31                 Not known: 99
   45-48          Time of day                   4N            0-2359,               Local time, hh/mm, start of tow. Not known: 9999
-  49             Quadrant                      lN            1-4, 9                See footnote^e^ Not known: 9
+  49             Quadrant                      lN            1-4, 9                See footnote^d^ Not known: 9
   50-53          Latitude                      4N            0-9000,               dd/mm. Not known: 9999
   54-58          Longitude                     5N            0-18000,              ddd/mm. Not known: 99999
   59-61          Depth (meters)                3N            1-999                 Mean depth of tow. Not know: 999
@@ -1576,7 +629,7 @@ Source *ICES Coop. Res. Rep. No. 219 , pp 421-422*
   117-120        Prey upper length bound       4N            1-9999                mm XXXX. Not known: 9999
   121-128        Prey weight                   8N            1-99999999            Total weight mg XXXXXXXX
   129-134        Prey number                   6N            1-999999              Total number. Not known: 999999
-  135            Digestion stage               1N            0-2, 9                See footnote^f^
+  135            Digestion stage               1N            0-2, 9                See footnote^e^
 
 a)  All numeric fields (N) right justified, zero filled; all apha (A)
     and mixed alpha/numeric fields (AN) left justified, space filled
@@ -1584,28 +637,14 @@ a)  All numeric fields (N) right justified, zero filled; all apha (A)
 b)  North Sea=l, Baltic Sea=2, Barents Sea=3, Iceland=4, Northeastern
     Newfoundland=5, Northeastern USA=6, Southern Shelf=7, Faroes=8
 
-c)  NODC codes for predators:
-
-+------------+------------------------------+--------------+
-| > Cod      | > *Gadus morhua*             | > 8791030402 |
-+------------+------------------------------+--------------+
-| > Whiting  | > *Merlangius merlangus*     | > 8791031801 |
-+------------+------------------------------+--------------+
-| > Haddock  | > *Melanogrammus aeglefinus* | > 8791031301 |
-+------------+------------------------------+--------------+
-| > Saithe   | > *Pollachius virens*        | > 8791030901 |
-+------------+------------------------------+--------------+
-| > Mackerel | > *Scomber scombrus*         | > 8850030302 |
-+------------+------------------------------+--------------+
-
-d)  DEM=demersally caught by trawling or seining gears PEL=pelagically
+c)  DEM=demersally caught by trawling or seining gears PEL=pelagically
     caught by trawling or seining gears DHL=demersal hook and line
 
     PHL=pelagic hook and line DGN=demersal gill net PGN=pelagic gill net
 
-e)  Quadrants for position identification are: l=NE, 2=NW, 3=SW, 4=SE
+d)  Quadrants for position identification are: l=NE, 2=NW, 3=SW, 4=SE
     (The axes of the quadrants are the equator and the Greenwich
     meridian)
 
-f)  Digestion stages are: 0 =Pristine, 1 =Affected by digestion,
+e)  Digestion stages are: 0 =Pristine, 1 =Affected by digestion,
     2=Skeletal remains, 9=Unknown

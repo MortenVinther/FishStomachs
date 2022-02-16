@@ -9,6 +9,8 @@
 inst/doc
 inst/NotUsed
 
+doc
+meta
 
 vignettes/*.html  
 vignettes/*.R
