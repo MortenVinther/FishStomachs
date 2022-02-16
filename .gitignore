@@ -8,8 +8,9 @@
 .Rproj.user
 inst/doc
 inst/NotUsed
-Meta
+
 
 vignettes/*.html  
 vignettes/*.R
-doc
+
+
