@@ -16,3 +16,5 @@ vignettes/*.html
 vignettes/*.R
 
 
+/doc/
+/Meta/

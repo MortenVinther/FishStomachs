@@ -2,7 +2,7 @@
 % Please edit documentation in R/detailed_output.R
 \name{do_detailed_output}
 \alias{do_detailed_output}
-\title{Extract a subset from test criteria}
+\title{Show a subset from test criteria}
 \usage{
 do_detailed_output(
   stom,
@@ -42,7 +42,7 @@ do_detailed_output(
 \item{by_sample_id}{Output by sample id.}
 }
 \value{
-STOMobs object.
+test output.
 }
 \description{
 Make detailed summary output from a STOMobs object using a subset of data defined in the control attributes.

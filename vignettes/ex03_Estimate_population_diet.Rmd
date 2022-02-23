@@ -239,12 +239,12 @@ do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE,use_criteria=FALSE,rel_we
 
 ```
 
-After the allocation af preys, data now includes the named species (for later use in models) and the groups "other" and "othe fish" that wil connverted to "other food" later.
-There are however stil named preys with unknown size (9999-9999) taha need to allocated to known sizes. 
+After the allocation of preys, data now includes the named species (for later use in models) and the groups "other" and "other fish" that will be converted to "other food" later.
+There are however still named preys with unknown size (9999-9999) that need to allocated to known sizes. 
 
 ###  Assigning size classes where missing ###
 
-The assigning of size classes where missing is done in a similar way as the allocation of species name to partly idenstified prey items, but using the function redist_unidentifed_prey_lengths(). This function only works for the species provided by sel_preys in the  control object
+The assigning of size classes where missing is done in a similar way as the allocation of species name to partly identified prey items, but using the function redist_unidentifed_prey_lengths(). This function only works for the species provided by sel_preys in the  control object
 
 
 ```{r ex03_15}
@@ -259,7 +259,7 @@ s<-edit_control(s,sel_preys=keep_prey)
 
 ```
 
-We can now do the re-allocation of mising size classes.
+We can now do the re-allocation of missing size classes.
 
 
 
@@ -302,7 +302,7 @@ the individual stomach content samples, weighted by strata abundances
 
 i.   Sample level. stomach from the same sample (i.e. location and time). The average stomach contents at that level have been calculated in the previous examples
 ii.  Sub-area level. For this example, ICES statistical rectangles have been used as sub-area strata. The average diet within a sub-area is in this example calculated as a simple mean.
-iii. Area level. ICES roundfish areas are used for area strata. Average diet within an area is calculated a as weighted mean, weighted by the predator survey cpue by the sub-area (ICES rectangel)
+iii. Area level. ICES roundfish areas are used for area strata. Average diet within an area is calculated a as weighted mean, weighted by the predator survey cpue by the sub-area (ICES rectangle)
 iv.  Population. The average population diet is calculated from diet by are weighted by extend of the ambient area of the area (e.g. number of ICES rectangles within a roundfish area)
 
 The method for calculating the population is specified with options in the control object as shown below.
@@ -328,7 +328,7 @@ s<-edit_control(s,
           relative_weight=FALSE,
           # set to NA when input is provided in a file
           weighting_factor=NA,
-          # use data from a specified file (in thos case, a file provided by the FishStomachs)
+          # use data from a specified file (in those case, a file provided by the FishStomachs)
           weigthing_factor_file=file.path(system.file( package = "FishStomachs"),"extdata","weighting_total.csv")
         )
 )
@@ -340,7 +340,7 @@ print(attr(s,"control"),show='constants')
 
 ```
 
-For each of the three strata, it must be specified whether the absolute or relative weight of the diet by strata should be used to calculate the weighted mean. The weighting factor for the for the weighted mean must either be given as an expression wit R codes for variables within the STOMobs object or provided as input from a csv file. In this case the weighting factor used to calculate average diet per sub-area is the number of stomachs (n-tot) within each sample. The average diet at strata level uses the mean cpue variable within the STOMobs ojcet. Finally the population diet is calculated from average diet by strata weighted by input values from a file. This file must contain a weighting factor ( w_fac_area) for each combination of predator name (pred_name), temporal strata (stratum_time), predator size class (pred_size) and name of the area (stratum_area). If input from files are used, it is possible to select combinations of areas and sub-areas that should be included, as only stomach data that have a match in weighing files are used in the calculation. 
+For each of the three strata, it must be specified whether the absolute or relative weight of the diet by strata should be used to calculate the weighted mean. The weighting factor for the for the weighted mean must either be given as an expression wit R codes for variables within the STOMobs object or provided as input from a csv file. In this case the weighting factor used to calculate average diet per sub-area is the number of stomachs (n-tot) within each sample. The average diet at strata level uses the mean cpue variable within the STOMobs object. Finally the population diet is calculated from average diet by strata weighted by input values from a file. This file must contain a weighting factor ( w_fac_area) for each combination of predator name (pred_name), temporal strata (stratum_time), predator size class (pred_size) and name of the area (stratum_area). If input from files are used, it is possible to select combinations of areas and sub-areas that should be included, as only stomach data that have a match in weighing files are used in the calculation. 
 
 
 
@@ -356,7 +356,7 @@ read_csv(file.path(system.file( package = "FishStomachs"),"extdata","weighting_t
 ```
 
 
-Now it just to call the estimate population diet.
+Now it just to call the estimate population diet function.
 
 ```{r ex04_04}
 print(attr(s,"control"))

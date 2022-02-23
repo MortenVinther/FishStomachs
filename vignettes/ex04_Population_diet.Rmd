@@ -97,6 +97,7 @@ plot(d)
 #   added number of stomachs and added title
 plot(d,Ncol=1,cut_pred_size=c(1,4),addTitle = TRUE, addNstom=TRUE,refac_prey=TRUE)
 
+
 ```
 
 
@@ -111,6 +112,17 @@ d2<-from_to_species_diet(d,pred_from_to=c("species","short"),prey_from_to=c("spe
 plot(d2,Ncol=1,cut_pred_size=c(1,4),addTitle = TRUE, addNstom=TRUE)
 
 
+```
 
+
+Plots can also be done where the prey size class is shown. In this plot data from all quarters in 1991 are combined (simple mean of all quarters of 1991).
+
+
+```{r ex04_07}
+
+# detailed plot by predator size class at the top, 
+#   prey size class on the x-axis and prey species shown at the right margin. 
+
+plotSize(d2,cut_pred_size=c(1,3),addTitle=TRUE, byVar=c('year-quarter','year','quarter','none')[2])
 
 ```

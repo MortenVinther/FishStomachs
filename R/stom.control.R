@@ -230,7 +230,7 @@ setMethod("print", signature(x = "STOMcontrol"), function(x,show=c('general','da
 #' Edit control attribute
 #'
 #' @param x data of class STOMobs.
-#' @param ... ... One or more settings value, see XXXX
+#' @param ... One or more settings value, see XXXX
 #' @return  Data set of class STOMobs with changed control attributes
 #' @export
 edit_control<-function(x,...) {

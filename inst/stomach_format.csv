@@ -40,7 +40,7 @@ Stomach_ContentWgt, , ,stom_content_w,d,F,T,F,gram,Total weight of stomach conte
 Stomach_EmptyWgt, ,stomachWeighEmpty,stom_empty_w,d,F,T,F,gram,Weigth of stomach with no food left
 Stomach_fullness, ,stomachFullness,stom_fullness,d,F,T,F,%,Stomach fullness ?????
 Stomach_Item, , ,prey_item,c,F,F,T, ,Prey name as used in the original dataset
-Prey_AphiaID, ,PreySpeciesCode,prey_aphia,i,F,F,T,WoRMS aphia id,World Register of Marine Species code
+Prey_AphiaID,prey_aphia_id,PreySpeciesCode,prey_aphia,i,F,F,T,WoRMS aphia id,World Register of Marine Species code
 Prey_NODC, , ,prey_nodc,d,F,F,T,NODC 10 digits,"NODC coding system, obselete but usefull"
 Prey_LatinName, , ,prey_name,c,T,F,T, ,"Prey taxon, e.g. latin name "
 ICES_ItemID, , ,prey_group,c,F,F,T, ,"Name used for grouping of  ""prey_name"", e.g. broader taxonomic group"

@@ -19,7 +19,7 @@ make_criteria_set<-function(stom){
 
 #' Make detailed summary output from a STOMobs object using a subset of data defined in the control attributes.
 #'
-#' @title Extract a subset from test criteria
+#' @title Show a subset from test criteria
 #' @param stom Stomach data set of class STOMobs.
 #' @param append logical, append to output file?
 #' @param to_screen logical, write results on the screen.
@@ -32,7 +32,7 @@ make_criteria_set<-function(stom){
 #' @param show_mis_length Include preys with missing length information.
 #' @param transpose Transpose output table.
 #' @param by_sample_id Output by sample id.
-#' @return STOMobs object.
+#' @return test output.
 #' @examples  \dontrun{do_detailed_output(stom)}
 #' @export
 #'
@@ -86,7 +86,23 @@ do_detailed_output <-function(stom,append=TRUE,to_screen=FALSE,label,digits=1,re
 }
 
 
-do_detailed_output_diet <-function(diet,append=TRUE,to_screen=FALSE,label,digits=1,write_criteria=FALSE,transpose=FALSE) {
+#' Make detailed summary output from a STOMdiet object using a subset of data defined in the control attributes.
+#'
+#' @title Show a subset from test criteria
+#' @param stom data set of class STOMdiet.
+#' @param append logical, append to output file?
+#' @param to_screen logical, write results on the screen.
+#' @param label text included in output.
+#' @param digits number of significant digits in output.
+#'@param rel_weight logical for relative or absolute weight.
+#' @param write_criteria logical, write criteria for sub-setting.
+#' @param transpose Transpose output table.
+#' @return test output.
+#' @examples  \dontrun{do_detailed_output_diet(stom)}
+#' @export
+#'
+#'
+do_detailed_output_diet <-function(diet,append=TRUE,to_screen=FALSE,label,digits=1,rel_weight=FALSE,write_criteria=FALSE,transpose=FALSE) {
   #test  diet<-bb; digits=1; write_criteria=TRUE; append=FALSE;transpose=TRUE; to_screen=FALSE
   control<-attr(diet,'control')
   if (!control@detailed_tst_output) return('no output requested (option detailed_tst_output=FALSE)')
@@ -116,7 +132,7 @@ do_detailed_output_diet <-function(diet,append=TRUE,to_screen=FALSE,label,digits
     x<-rbind(x,all=colSums(x,na.rm=TRUE))
     x<-cbind(x,all=rowSums(x,na.rm=TRUE))
     x<-x*100
-    #x<-x/x[dim(x)[[1]],dim(x)[[2]]]*100
+    if (rel_weight) x<-x/x[dim(x)[[1]],dim(x)[[2]]]*100
     if (transpose) x<-t(x)
     print(round(x,digits))
     invisible(NULL)

@@ -403,7 +403,7 @@ cleanup<-function(){for(i in dev.list()) if (names(dev.off())=='null device') br
 #' @param Colours vector of colours for preys.
 #' @param otherCol Colour for "other prey"
 #' @param refac_prey Reorder preys
-#' @return nothing (if show_plot=TRUE) or list of plots.
+#' @return nothing (if show_plot=TRUE) or a list of plots.
 #' @importFrom ggplot2 ggplot facet_wrap geom_col labs geom_text theme theme_minimal scale_fill_manual aes element_text element_line
 #' @importFrom rlang .data
 #' @method  plot STOMdiet
@@ -427,6 +427,7 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
 
   x<-x %>%  dplyr::group_by(key) %>% dplyr::mutate(prey_w=prey_w/sum(prey_w)*100) %>% dplyr::ungroup() %>%
     dplyr::mutate(pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2])) %>%
+    dplyr::group_by(stratum_time,pred_name, pred_size,n_tot,year,quarter,prey_name) %>% dplyr::summarise(prey_w=sum(prey_w)) %>% ungroup() %>%
     dplyr::select(stratum_time,pred_name, pred_size,n_tot,year,quarter,prey_name,prey_w)
 
 
@@ -452,6 +453,65 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
   })
   if (show_plot) return() else return(out)
 }
+
+
+#' Plot diet data.
+#'
+#' @param d Diet data set of class STOMdiet.
+#' @param cut_pred_size From to in substring of predator size
+#' @param show_plot Show the resulting graphs on screen (or save the results for later processing)
+#' @param addTitle Add predator name on top of the plot.
+#' @param tAngle Angle X-axis text.
+#' @param Strip.position strip.position: "top" | "bottom" | "left" | "right"
+#' @param Colours vector of colours for preys.
+#' @param otherCol Colour for "other prey"
+#' @param refac_prey Reorder preys
+#' @param byVar Make individual plots by combinations of 'year-quarter','year' or'quarter' or lump all data together ('none').
+#' @return nothing (if show_plot=TRUE) or a list of plots.
+#' @importFrom ggplot2 ggplot facet_grid geom_col labs geom_text theme theme_minimal scale_fill_manual aes element_text element_line
+#' @importFrom rlang .data
+#' @export
+plotSize<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=90,
+                             Strip.position = c("top", "bottom", "left", "right")[1],Colours,otherCol='grey',refac_prey=FALSE,
+                             byVar=c('year-quarter','year','quarter','none')[1]) {
+  key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-quarter<-year<-NULL
+  if (missing(Colours)) Colours<-c('red','green','plum','blue','cyan','yellow','coral','skyblue','purple','magenta','limegreen','pink' )
+
+  if (refac_prey) d<-refac_prey(d)
+  Colours[nlevels(d[['PREY']]$prey_name)]<-otherCol
+  pn<-levels(d[['PREY']]$prey_name)
+  allNames<- Colours[1:length(pn)]
+  names(allNames)<-pn
+
+  control<-attr(d,'control')
+  # calculate year and quarter from specifications
+  d[['PRED']]<-d[['PRED']] %>% dplyr::mutate(year=as.integer(eval(control@strata_year_back)),quarter=as.integer(eval(control@strata_quarter_back)))
+
+  x<-as.data.frame(d) %>% dplyr::mutate(year=as.integer(eval(control@strata_year_back)),quarter=as.integer(eval(control@strata_quarter_back)))
+  if (byVar=='year-quarter') {x$key<-paste(x$year,x$quarter,x$pred_name,x$pred_size); x$stratum_time<-paste(x$year,x$quarter,sep='_') }
+  if (byVar=='year')         {x$key<-paste(x$year,x$pred_name,x$pred_size); x$stratum_time<-paste(x$year,sep='_') }
+  if (byVar=='quarter')      {x$key<-paste(x$quarter,x$pred_name,x$pred_size); x$stratum_time<-paste(x$quarter,sep='_') }
+  if (byVar=='none')         {x$key<-paste(x$pred_name,x$pred_size); x$stratum_time<-paste('all',sep='_') }
+  x<- x %>%  dplyr::group_by(key) %>% dplyr::mutate(prey_w=prey_w/sum(prey_w)*100) %>% dplyr::ungroup() %>%
+    dplyr::mutate(pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2]),
+                  prey_size=substr(prey_size,cut_pred_size[1],cut_pred_size[2])) %>%
+    dplyr::select(key,stratum_time,pred_name, pred_size,n_tot,prey_name,prey_size,prey_w)
+
+
+  out<-by(x,list(x$pred_name,x$stratum_time),function(x) {
+    if (addTitle) tit<- as.character(x$pred_name)[1] else tit<-NULL
+    a<-ggplot(x) +
+      facet_grid(vars(prey_name), vars(pred_size),scales = "free_y", drop = TRUE)+
+      scale_fill_manual(  values = allNames,name='Prey')+
+      geom_col(aes(x=prey_size, y = prey_w, fill = prey_name ))+
+      labs(x='Prey size',y='weight percentage',title=tit)+
+      theme(axis.text.x = element_text(angle = tAngle, vjust = 0.5 ),legend.position = 'none')
+    if (show_plot) print(a) else return(a)
+  })
+  if (show_plot) return() else return(out)
+}
+
+
 
 #' Change predator or prey names.
 #'

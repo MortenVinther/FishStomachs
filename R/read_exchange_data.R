@@ -101,7 +101,7 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
 
 
     if (keep_just_mandatory_fields)
-        a <- dplyr::select(a, mandatory_names)
+        a <- dplyr::select(a, dplyr::all_of(mandatory_names))
 
     ## convert all strings to factors
     strings_to_factors <- function(x) {
@@ -182,6 +182,6 @@ write_exchange_data <- function(stom, exchange_file = NA) {
     if (is.na(exchange_file))
         stop("\nError Input file name for stomach data on exchange format must be given\n")
 
-    readr::write_csv(as.data.frame(stom), path = exchange_file)
+    readr::write_csv(as.data.frame(stom), file = exchange_file)
 }
 

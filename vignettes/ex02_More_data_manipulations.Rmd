@@ -32,7 +32,7 @@ load(file=file.path(system.file( package = "FishStomachs"),"extdata","ex01.Rdata
 s
 ```
 
-A series of data manipulations, with addition of new variables, are needed before the population diet (or food ration) can be calculated. This example shows how the FishStomachs function canbe used.
+A series of data manipulations, with addition of new variables, are needed before the population diet (or food ration) can be calculated. This example shows how the FishStomachs function can be used.
 
 
 ### Bias correct, energy contents, arament etc.

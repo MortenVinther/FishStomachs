@@ -9,7 +9,7 @@ edit_control(x, ...)
 \arguments{
 \item{x}{data of class STOMobs.}
 
-\item{...}{... One or more settings value, see XXXX}
+\item{...}{One or more settings value, see XXXX}
 }
 \value{
 Data set of class STOMobs with changed control attributes

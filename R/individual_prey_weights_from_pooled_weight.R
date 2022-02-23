@@ -10,12 +10,13 @@
 #' @param quantile_lw Quantile of size range of prey length to be used for estimating length-weight relation
 #' @importFrom stats as.formula coef ftable lm quantile xtabs
 #' @return Stomach data, class STOMobs.
+#' @export
 #' @examples \dontrun{individual_prey_weights_from_pooled_weight(stom=a,sel_preys=c("Clupea harengus"),
 #'       sum_other_preys=TRUE,do_plots=FALSE)}
 prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_other_preys=TRUE,do_plots=FALSE,quantile_lw=c(0.01,0.99)) {
 
-   a<-b<-calc_prey_w<-digest<-fish_id<-lw_a<-n<-pool_prey_w<-prey_l<-prey_n<-prey_name<-prey_w<-prey_w_meth<-records<-sample_id<-sum_calc_prey_w<-sum_mis_l<-weight_pool_id<-weight_sample_id<-NULL
-  control<-attr(stom,'control')
+  a<-b<-calc_prey_w<-digest<-fish_id<-lw_a<-n<-pool_prey_w<-prey_l<-prey_n<-prey_name<-prey_w<-prey_w_meth<-records<-sample_id<-sum_calc_prey_w<-sum_mis_l<-weight_pool_id<-weight_sample_id<-NULL
+
   if (FALSE) {  # for debugging
     sum_other_preys<-TRUE
     do_plots<-FALSE
@@ -53,22 +54,8 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
   # extract data for length weight relation of preys
   lw<-dplyr::filter(prey, prey_n==1 & !is.na(prey_l) & prey_w_meth=='r' & prey_name %in% sel_preys )
 
-  if (do_plots) {
-    by(lw,list(lw$prey_name), function(x) {
-      print(ggplot(x,aes(prey_l,prey_w)) +
-              theme_bw() +
-              geom_point() +
-              facet_wrap(~ paste(prey_name,digest), scales="free_y") +
-              labs(x="Prey Length", y="Prey Weight",title="")
-      )
-    })
-  }
-
-  if (do_plots) cleanup()
-
-
   # data for length weight relation
-  lw<-dplyr::filter(lw, prey_l>=50 &  prey_l<=300)
+  lw<-dplyr::filter(lw, prey_l>=50 &  prey_l<=300) %>% droplevels()
   lw<-lw %>% dplyr::mutate(lw_a=prey_w/prey_l^3) %>% dplyr::filter(lw_a<1.5e-5  & lw_a>1e-6)
 
   #summary(lw)
@@ -297,6 +284,6 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
   bb<-bb %>% dplyr::mutate(sample_id=factor(sample_id,levels=levels(stom[['PRED']]$sample_id)),fish_id=factor(fish_id,levels=levels(stom[['PRED']]$fish_id)))
 
     stom[['PREY']]<-bb
-  attr(stom,all_stom_attributes()["prey_w_id"])<-TRUE
+  #attr(stom,all_stom_attributes()["prey_w_id"])<-TRUE
   return(stom)
 }
