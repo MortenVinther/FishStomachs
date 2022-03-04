@@ -163,7 +163,7 @@ the prey (e.g. implemented as s[['PREY']]), which are linked  by the variables s
 # add a variable, box17 to the predator set
 s[['PRED']]<- s[['PRED']] %>% mutate(box17=if_else(rectangle %in% c('40F6','40F7'),'inside','outside'))
 
-s<-update(s) # you have to run update() after adding or removing variables
+# s<-update(s) # you have to run update() after adding or removing variables to keep changes (not done here)
 
 ```
 

@@ -2,35 +2,64 @@
 % Please edit documentation in R/model_output.R
 \name{model_output}
 \alias{model_output}
-\title{Make model output}
+\title{Produce input for the SMS model.
+
+Transform diet data (of class STOMdiet) into data used for the SMS model.
+
+The transformation uses values provided by the list \code{control@model_options}
+\preformatted{The list must include the names:
+ "delete_small": logical, delete input with relative stomach contents weight lower than "min_value".
+                If TRUE values smaller than "min_values" are deleted.
+                If FALSE values lower than "min_value" are increased to "min_value".
+ "min_value": minimum relative stomach contents weight (see above)
+ "insert_mid_value": logical, insert dummy value ("mid_value") where observations for a prey
+                within a size range are missing
+ "mid_value": value used for missing mid-values.
+ "insert_tails", logical for insertion of dummy values("tail_value") for the prey size class
+               which are lower and higher than the observed size range for a prey
+ "tail_value":  value used for missing tail-values.
+
+ In addition a number for each predator and prey species is added (and later used for ordering of species).
+ data for that is included in the CSV file sp_info_file.
+ }}
 \usage{
-model_output(
-  diet,
-  length_classes_file,
-  sp_info_file,
-  intoSMSformat = FALSE,
-  pred_is_coded = FALSE,
-  prey_is_coded = FALSE
-)
+model_output(diet, length_classes_file, sp_info_file, intoSMSformat = FALSE)
 }
 \arguments{
 \item{diet}{Object of class STOMdiet.}
 
 \item{length_classes_file}{bla}
 
-\item{sp_info_file}{bla}
+\item{sp_info_file}{CSV file with the fields used arranging order of predator and prey.
+The file must include two fields \code{code} (predator and prey names used in input)
+and \code{number} (integer for arranging predator and preys).}
 
-\item{intoSMSformat}{bla}
-
-\item{pred_is_coded}{Logical; predator name is already on a short form (e.g. FAO 3 letter code)}
-
-\item{prey_is_coded}{Logical; prey name is already on a short form (e.g. FAO 3 letter code)}
+\item{intoSMSformat}{Logical for transformation into SMS format.}
 }
 \value{
-Stomach contents data of class STOMobs.
+Data for use in the SMS model.
 }
 \description{
-Model output for the SMS model are produced from a STOMdiet object.
+Produce input for the SMS model.
+
+Transform diet data (of class STOMdiet) into data used for the SMS model.
+
+The transformation uses values provided by the list \code{control@model_options}
+\preformatted{The list must include the names:
+ "delete_small": logical, delete input with relative stomach contents weight lower than "min_value".
+                If TRUE values smaller than "min_values" are deleted.
+                If FALSE values lower than "min_value" are increased to "min_value".
+ "min_value": minimum relative stomach contents weight (see above)
+ "insert_mid_value": logical, insert dummy value ("mid_value") where observations for a prey
+                within a size range are missing
+ "mid_value": value used for missing mid-values.
+ "insert_tails", logical for insertion of dummy values("tail_value") for the prey size class
+               which are lower and higher than the observed size range for a prey
+ "tail_value":  value used for missing tail-values.
+
+ In addition a number for each predator and prey species is added (and later used for ordering of species).
+ data for that is included in the CSV file sp_info_file.
+ }
 }
 \examples{
 \dontrun{x=2}

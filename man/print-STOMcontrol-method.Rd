@@ -6,14 +6,14 @@
 \usage{
 \S4method{print}{STOMcontrol}(
   x,
-  show = c("general", "data_used", "stratification", "calc_diet", "model_output",
-    "constants", "test_output", "detailed_test_output")
+  show = c("general", "data_used", "stratification", "calc_diet", "model_options",
+    "ALK", "constants", "test_output", "detailed_test_output", "bootstrapping")
 )
 }
 \arguments{
 \item{x}{object of class STOMcontrol or STOMobs.}
 
-\item{show}{Show values for selected group of options. Possible groups are 'general','data_used','stratification','calc_diet','model_output','constants','test_output' and 'detailed_test_output'.}
+\item{show}{Show values for selected group of options. Possible groups are 'general','data_used','stratification','calc_diet','model_options','ALK','constants','test_output' and 'detailed_test_output'.}
 }
 \description{
 Print control object

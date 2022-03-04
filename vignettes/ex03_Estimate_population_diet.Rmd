@@ -36,7 +36,7 @@ do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE, label='Begin example 3')
 
 ###  Group prey species ###
 
-The Multi species model, SMS, groups the prey species into commercial species and a other species, both fish and invertebrates, into "Other food". For this The NODC system is convenient due to its hierarchical structure. First, the structure for grouping is made input files. Here, data files from the FishStomachs package are used to produce the key (data set NODC_split) to split/aggregate data. 
+The Multi species model, SMS, groups the prey species into commercial species and a other species, both fish and invertebrates, into "Other food". For this the NODC system is convenient due to its hierarchical structure. First, the structure for grouping is made input files. Here, data files from the FishStomachs package are used to produce the key (data set NODC_split) to split/aggregate data. 
 
 
 ```{r ex03_02}
@@ -59,7 +59,7 @@ NODC_split<-bind_rows(a,b)
 NODC_split
 
 ```
-The NODC_split data includes the names preys (named=TRUE) that is included in the SMS model. The other group of preys (named=FALSE ) includes other prey groups that not fully species identified or species identified preys which belongs to the group of "other food" where 
+The NODC_split data includes the named preys (named=TRUE) that is included in the SMS model. The other group of preys (named=FALSE ) includes other prey groups that not fully species identified or species identified preys which belongs to the group of "other food" where 
 
 
 - "other" contains the NODC range for invertebrate preys that that will part of the "other food" group in SMS.
@@ -85,7 +85,7 @@ The individual stomachs from the same sample Id, predator and prey size classes 
 ```{r ex03_04}
 s<-aggregate_within_sample(s)
 s
-do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE, label="Exampel 2, begins")
+do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE, label="After aggregation")
 ```
 
 
@@ -95,11 +95,11 @@ The call to \code{aggregate_within_sample} replaces fish_id by the predator size
 
 The average diet should basically be calculated as a stratified mean of
 the individual stomach content samples, weighted by strata abundances
-(indices) of the predator and strata areas. In this example an average stomach contents is first
+(indices) of the predator and areas of the strata. In this example an average stomach contents is first
 calculate by ICES rectangles. When there was more than one sample within a rectangle the
 rectangle value was calculated as the weighted mean of the sample (haul)
 average values, the weighting factors being the number of stomachs from
-each sample. 
+each haul. 
 
 The average stomach contents is then calculated for a larger area which in this case is the ICES roundfish areas consisting of a number of ICES rectangles.
 The mean strata_area is a weighted average of the The rectangle values were weighted by the mean square root of survey
@@ -138,14 +138,16 @@ The "strata_year_back" and "strata_quarter_back" are expression to derive year a
 s<-add_strata(s)
 
 do_detailed_output(s,label='After add_strata', by_sample_id=TRUE,to_screen=TRUE)
-```
 
+# save data set for use in example 5
+ save(s,file=file.path(system.file( package = "FishStomachs"),"extdata","ex03half.Rdata"))
+```
 
 
 ###  Assigning partly identified prey items to identified preys. ###
 
-Prey items are now names as model preys (named prey from data set NODC_split) or or the unnamed preys "other", "other food", "other fish",  "Clupeidae", "Gadidae" and "unknown".
-This assigning of partly identified preys are done using a key (data set "from_to_species.csv below") and the function \code{make_from_to_species}.  
+Prey items are now named as model preys (named prey from data set NODC_split) or or the unnamed preys "other", "other food", "other fish",  "Clupeidae", "Gadidae" and "unknown".
+This assigning of partly identified preys are done using a key (data set "from_to_species.csv below") and the function make_from_to_species().  
 
 
 ```{r ex03_07}
@@ -182,14 +184,14 @@ The call to redist_unidentified_prey_sp() is quite complex, so please see help (
 
 The function redistribute partly identified preys to the distribution of the identified prey species from the same predator and predator size. The distribution key is made from an extract of data, which are filtered by the parameters dist_time, dist_area and dist_pred_size. In this example, a unique re-distribution key is made by each combination of stratum_time (year quarter combination), sample_id and predator size class. The by_prey_size=FALSE specifies that prey sizes is not used in the stratification, e.g. a Clupeida size 9999-9999 can be re-distributed to *Clupea harengus* with known sizes. The do_only=c(1,2) specifies that is only step number 1 and 2 in the from_to that should performed (i.e just redistribution of Clupeidae and Gadidae). 
 
-the messages from the redist_unidentified_prey_sp() says that 81 records with prey=Clupeidae were founs, of which 618 could be realloacted to other named Clupeidae species within tha sample, but there are still 63 records where no named Clupeidae species within the sample.  The unallocated records are kept as they were as parameter remains_to_other = FALSE. If set to TRUE, the remaining records would have been changed into "other".
+The messages from the redist_unidentified_prey_sp() say that 63 records with prey=Clupeidae were found, of which 32 could be reallocated to named Clupeidae species within tha sample, but there are still 63 records where no named Clupeidae species within the sample.  The unallocated records are kept as they were as parameter remains_to_other = FALSE. If set to TRUE, the remaining records would have been changed into "other".
 
-Befor the redistribution, there was Gadidae comprised 3.6 % of the total stomach contents weight. This is reduced to 2.3 % after the redistribution, while the stomach contents of the named Gadidae (*Gadus morhua*, *Melanogrammus aeglefinus*, *Merlangius merlangus*, *Trisopterus esmarkii*) have increased shlightly.
+Before the redistribution, there was Gadidae comprised 3.6 % of the total stomach contents weight. This is reduced to 2.3 % after the redistribution, while the stomach contents of the named Gadidae (*Gadus morhua*, *Melanogrammus aeglefinus*, *Merlangius merlangus*, *Trisopterus esmarkii*) have increased slightly.
 
 
 The next calls to redist_unidentified_prey_sp() show how to widen the selection of data to make the allocation key from at sample level (previous example), to all samples within the rectangle, all samples within the roundfish area, and the full area of all samples. The last call make the allocation key from data by year and half year, whereas the previous calls used data by year and quarter, as that is the used temporal stratification use in data.
 
-```{r ex03_10}
+```{r ex03_09}
 
 # by sub_area (rectangel)                                                         
 s<-redist_unidentified_prey_sp(s,dist_time=stratum_time,dist_area=stratum_sub_area,
@@ -216,7 +218,7 @@ s<-redist_unidentified_prey_sp(s,dist_time=paste(year,ifelse(quarter %in% c(1,2)
 
 There is still one occurrence of "Gadidae" that cannot be redistributed.
 
-```{r ex03_11}
+```{r ex03_10}
 
 as.data.frame(subset(as.data.frame(s),prey_name=='Gadidae'))
 
@@ -226,7 +228,7 @@ The problem seems to be a small cod  (0150-0199) which has eaten "Gadidae". Othe
 
 
 
-```{r ex03_12}
+```{r ex03_11}
 
 # the same as above, but unallocated remains to "other food".                                                             
 s<-redist_unidentified_prey_sp(s,dist_time=paste(year,ifelse(quarter %in% c(1,2),'S1','S2')),
@@ -247,13 +249,13 @@ There are however still named preys with unknown size (9999-9999) that need to a
 The assigning of size classes where missing is done in a similar way as the allocation of species name to partly identified prey items, but using the function redist_unidentifed_prey_lengths(). This function only works for the species provided by sel_preys in the  control object
 
 
-```{r ex03_15}
+```{r ex03_12}
 
 # a very complex way of getting a list of prey names!
 keep_prey <-(read_csv(file.path(system.file( package = "FishStomachs"),"extdata","species_info.csv"),
         col_types = cols())  %>% 
         filter(prey_sp)  %>% select(species) %>% unique())$species
-keep_prey #input is just vector of prey names
+keep_prey #input is just a vector of prey names
 
 s<-edit_control(s,sel_preys=keep_prey)
 
@@ -263,7 +265,7 @@ We can now do the re-allocation of missing size classes.
 
 
 
-```{r ex03_145}
+```{r ex03_13}
 
 # by statum_area (=roundfish area) 
 s<-redist_unidentified_prey_lengths(s,dist_time=stratum_time,dist_area=stratum_area,
@@ -295,20 +297,18 @@ The prey species are now the selected ones and "other".
 
 ###  Calculating population diet ###
 
-
 The average diet should basically be calculated as a stratified mean of
 the individual stomach content samples, weighted by strata abundances
 (e.g survey cpue indices) of the predator and strata areas. FishStomachs uses three strata (ii-iv) in the calculation of population diet:
 
 i.   Sample level. stomach from the same sample (i.e. location and time). The average stomach contents at that level have been calculated in the previous examples
-ii.  Sub-area level. For this example, ICES statistical rectangles have been used as sub-area strata. The average diet within a sub-area is in this example calculated as a simple mean.
-iii. Area level. ICES roundfish areas are used for area strata. Average diet within an area is calculated a as weighted mean, weighted by the predator survey cpue by the sub-area (ICES rectangle)
-iv.  Population. The average population diet is calculated from diet by are weighted by extend of the ambient area of the area (e.g. number of ICES rectangles within a roundfish area)
+ii.  Sub-area level. ICES statistical rectangles have been used as sub-area strata. The average diet within a sub-area is in this example calculated as a weighted mean (weighted by the number of stomachs).
+iii. Area level. ICES roundfish areas are used for area strata. Average diet within an area is calculated a as weighted mean, weighted by the predator survey mean cpue by the sub-area (ICES rectangle)
+iv.  Population. The average population diet is calculated from diet by are weighted by the extend of the ambient area of the area (e.g. number of ICES rectangles within a roundfish area)
 
 The method for calculating the population is specified with options in the control object as shown below.
 
-
-```{r ex04_02}
+```{r ex03_14}
 
 s<-edit_control(s,
         calc_sub_strata=list(
@@ -335,7 +335,7 @@ s<-edit_control(s,
 
 print(attr(s,"control"),show='calc_diet')
 
-# informtion from the group constants in the control obsject is also used.
+# information from the group constants in the control object is also used.
 print(attr(s,"control"),show='constants')
 
 ```
@@ -347,20 +347,18 @@ For each of the three strata, it must be specified whether the absolute or relat
 The input files for stratification can be made from a call to make_template_strata_weighting() using data and its control object.
 The call makes a csv file (if write_CSV=TRUE) and return a data set with the template for stratification at the strata level specified.
 
-```{r ex04_03}
+```{r ex03_15}
 
 make_template_strata_weighting(s,strata=c('sub_strata','strata','total')[3],write_CSV=FALSE)
 
 # to show the contents of stratification file as created above (with write_CSV=TRUE)
-read_csv(file.path(system.file( package = "FishStomachs"),"extdata","weighting_total.csv"))
+read_csv(file.path(system.file( package = "FishStomachs"),"extdata","weighting_total.csv"),show_col_types=FALSE)
 ```
 
 
-Now it just to call the estimate population diet function.
+Now it is just to call the estimate population diet function.
 
-```{r ex04_04}
-print(attr(s,"control"))
-
+```{r ex03_16}
 d<-calc_population_stom(s)
 d
 
@@ -368,9 +366,8 @@ d
 The population diet is store in an object of class STOMdiet - more details in the next example.
 
 
-```{r ex03_1122,  include = FALSE}
+```{r ex03_17,  include = FALSE}
 # save data
- save(s,file=file.path(system.file( package = "FishStomachs"),"extdata","ex03s.Rdata"))
  save(d,file=file.path(system.file( package = "FishStomachs"),"extdata","ex03d.Rdata"))
 ```
 

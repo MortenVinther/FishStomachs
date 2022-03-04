@@ -4,7 +4,7 @@
 #'
 #' The number of stomachs (n_tot) is dplyr::summarise within the strata.
 #'
-#' @title Aggregate stoamch contents within strata (time, area and sub-area)
+#' @title Aggregate stomach contents within strata (time, area and sub-area)
 #' @param stom  stomach contents data of class STOMobs.
 #' @return stomach contents data of class STOMstrata.
 #' @examples \dontrun{b<-strata_aggegate(stom)}

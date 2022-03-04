@@ -2,7 +2,7 @@
 % Please edit documentation in R/strata_stom.R
 \name{strata_aggregate}
 \alias{strata_aggregate}
-\title{Aggregate stoamch contents within strata (time, area and sub-area)}
+\title{Aggregate stomach contents within strata (time, area and sub-area)}
 \usage{
 strata_aggregate(stom)
 }

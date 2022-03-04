@@ -24,7 +24,7 @@ validSTOMcontrol <- function(object) {
 }
 
 
-#' An s4 class for Control object for stomach compilation
+#' An s4 class for Control object for stomach compilation.
 #'
 #' @slot name character. Name of control object.
 #' @slot stomach_format  \code{expression} (R code) for file name for CSV file defining stomach contents data.
@@ -49,12 +49,24 @@ validSTOMcontrol <- function(object) {
 #' @slot other character. Name for the "Other food", which is prey items not considered as individual prey species for further analysis, e.g. "other".
 #' @slot mis_size_class integer. Number for size class where the size is unknown, e.g. 0L
 #' @slot model_options list. Options for producing input values to multi species models as SMS.
+#' \preformatted{The list must include the names:
+#'  "delete_small" logical, delete input with relative stomach contents weight lower than "min_value".
+#'                 if FALSE values lower than "min_value" are increased to "min_value".
+#'  "min_value", minimum relative stomach contents weight (see above)
+#'  "insert_mid_value" logical, insert dummy value ("mid_value") where observations for a prey  within a size range are missing
+#'  "mid_value" value used for missing mid-values.
+#'  "insert_tails", logical for insertion of dummy values("tail_value") for the prey size class which are lower and higher than the observed size range for a prey
+#'  "tail_value",  value used for missing tail-values.
+#'  }
+#' @slot ALK_options list, options used for creating Age Length Keys
 #' @slot do_test_output logical.
 #' @slot do_test_output_file logical.
 #' @slot tst_file character.
 #' @slot detailed_tst_output logical.
 #' @slot detailed_tst_file character.
 #' @slot detailed_tst_criteria list.
+#' @slot boots_haul \code{expression} for defining sampling unit (haul) from STOMobs variables.
+#' @slot boots_sample \code{expression} for defining sampling unit (haul).
 #' @export
 #' @return a control object
 #'
@@ -93,6 +105,9 @@ setClass(
     ## Options for creating stomach contents file to SMS
     model_options ="list",
 
+    ## Options for creating Age Length Key data to SMS
+    ALK_options ="list",
+
     ## Constants used
     max_l = "integer",
     mis_l = "integer",
@@ -107,7 +122,10 @@ setClass(
     ## options for detailed test output
     detailed_tst_output = "logical",
     detailed_tst_file = "character",
-    detailed_tst_criteria = "list"
+    detailed_tst_criteria = "list",
+
+    ## options for bootstrap
+    bootstrapping= "list"
   ),
   prototype = list(
     name = "myDataSet",
@@ -149,13 +167,16 @@ setClass(
 
     ## Options for creating stomach contents file to SMS
     model_options = list(
-      minimum_stom = 1.0E-4, # minimum stomach contents proportion to be used by SMS
+      delete_small= TRUE, #delete observation with a value lower than min_stom
+      min_stom = 1.0E-4, # minimum stomach contents proportion to be used by SMS
       insert_mid_value = TRUE,
       mid_value = 1.0E-4,  # stomach contents value inserted for missing prey lengths within an observed range
       insert_tails = FALSE,
-      tail_value = 1.0E-4,
+      tail_value = 1.0E-4
+    ),
 
-      ## Options for creating ALK file to SMS
+    ## Options for creating ALK file to SMS
+    ALK_options=list(
       first_age = 0L,
       first_quarter_first_age = 3L,
       minimum_alk = 1.0E-4   # minimum proportion for ALK to be used by SMS
@@ -167,7 +188,7 @@ setClass(
     other = "other",
     mis_size_class=0L,
 
-      ####### options for test output
+    ####### options for test output
     do_test_output = FALSE,
     do_test_output_file = FALSE,
     tst_file = "my_detailed.file",
@@ -195,23 +216,30 @@ setClass(
         "pred_l",
         "pred_ll"
       )
+    ),
+
+    ## options for bootstrap
+    bootstrapping = list(
+         boots_id = expression(paste(country,ship,year,quarter,haul,spe='_')),
+         boots_strata= expression(paste(year,quarter,pred_name))
     )
-  ) ,  validity = validSTOMcontrol
+  )
+  ,  validity = validSTOMcontrol
 )
 ### End class ###########################################################
 
 #' Print control object
 #' @param x object of class STOMcontrol or STOMobs.
-#' @param show Show values for selected group of options. Possible groups are 'general','data_used','stratification','calc_diet','model_output','constants','test_output' and 'detailed_test_output'.
+#' @param show Show values for selected group of options. Possible groups are 'general','data_used','stratification','calc_diet','model_options','ALK','constants','test_output' and 'detailed_test_output'.
 #' @export
-setMethod("print", signature(x = "STOMcontrol"), function(x,show=c('general','data_used','stratification','calc_diet','model_output','constants','test_output','detailed_test_output')){
+setMethod("print", signature(x = "STOMcontrol"), function(x,show=c('general','data_used','stratification','calc_diet','model_options','ALK','constants','test_output','detailed_test_output','bootstrapping')){
 
-  shows<-c('general','data_used','stratification','calc_diet','model_output','constants','test_output','detailed_test_output')
+  shows<-c('general','data_used','stratification','calc_diet','model_options','ALK','constants','test_output','detailed_test_output','bootstrapping')
 
   a<-slotNames(new("STOMcontrol"))
 
-  b<-c(rep(shows[1],2),rep(shows[2],5),rep(shows[3],5),rep(shows[4],5), rep(shows[5],1),rep(shows[6],4),
-   rep(shows[7],3) ,rep(shows[8],3))
+  b<-c(rep(shows[1],2),rep(shows[2],5),rep(shows[3],5),rep(shows[4],5), rep(shows[5],1),rep(shows[6],1),rep(shows[7],4),
+   rep(shows[8],3) ,rep(shows[9],3),rep(shows[10],1))
 
   names(b)<-a
 

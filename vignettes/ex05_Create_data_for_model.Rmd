@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 The transformation of population diet into model data is highly dependent on the receiving model. In this case the data is made for the model SMS (REF).
 
-Fist diet data are loaded and options for model data are checked.
+First diet data are loaded and options for model data are checked.
 
 ```{r ex05_01}
 library(FishStomachs)
@@ -28,7 +28,7 @@ load(file=file.path(system.file( package = "FishStomachs"),"extdata","ex03d.Rdat
 d
 
 control<-attr(d,'control')
-print(control,show=c('model_output','constants'))
+print(control,show=c('model_options','constants'))
 
 # in this case the default setting are fine, however 
 # they could be changed by a call to edit_control(), see example 3
@@ -39,7 +39,7 @@ The options are mainly how to handle missing values ("wholes") for prey sizes. I
 
 
 
-The function for converting data ("model_output") reqires two input files; one for specfifyingn length classes and one file for intenal MS numbering and naming of species. Data and call are shown below.
+The function for converting data ("model_output") requires two input files; one for specifying length classes and one file for internal MS numbering and naming of species. Data and call are shown below.
 
 ```{r ex05_02}
 

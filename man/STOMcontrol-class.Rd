@@ -3,12 +3,12 @@
 \docType{class}
 \name{STOMcontrol-class}
 \alias{STOMcontrol-class}
-\title{An s4 class for Control object for stomach compilation}
+\title{An s4 class for Control object for stomach compilation.}
 \value{
 a control object
 }
 \description{
-An s4 class for Control object for stomach compilation
+An s4 class for Control object for stomach compilation.
 }
 \section{Slots}{
 
@@ -55,7 +55,18 @@ For more details on exchange format see the vignette: \code{vignette("Database_f
 
 \item{\code{mis_size_class}}{integer. Number for size class where the size is unknown, e.g. 0L}
 
-\item{\code{model_options}}{list. Options for producing input values to multi species models as SMS.}
+\item{\code{model_options}}{list. Options for producing input values to multi species models as SMS.
+\preformatted{The list must include the names:
+ "delete_small" logical, delete input with relative stomach contents weight lower than "min_value".
+                if FALSE values lower than "min_value" are increased to "min_value".
+ "min_value", minimum relative stomach contents weight (see above)
+ "insert_mid_value" logical, insert dummy value ("mid_value") where observations for a prey  within a size range are missing
+ "mid_value" value used for missing mid-values.
+ "insert_tails", logical for insertion of dummy values("tail_value") for the prey size class which are lower and higher than the observed size range for a prey
+ "tail_value",  value used for missing tail-values.
+ }}
+
+\item{\code{ALK_options}}{list, options used for creating Age Length Keys}
 
 \item{\code{do_test_output}}{logical.}
 
@@ -68,6 +79,10 @@ For more details on exchange format see the vignette: \code{vignette("Database_f
 \item{\code{detailed_tst_file}}{character.}
 
 \item{\code{detailed_tst_criteria}}{list.}
+
+\item{\code{boots_haul}}{\code{expression} for defining sampling unit (haul) from STOMobs variables.}
+
+\item{\code{boots_sample}}{\code{expression} for defining sampling unit (haul).}
 }}
 
 \examples{

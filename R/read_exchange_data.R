@@ -132,7 +132,7 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
         dplyr::filter(n_sample_id > 1)
     if (dim(a1)[[1]] > 0) {
         a3 <- dplyr::left_join(a1, PRED)
-        cat("the following records do not have a uninique combination of sample_id and fish_id\n")
+        cat("the following records do not have a unique combination of sample_id and fish_id\n")
         print(a3)
         stop()
         a3

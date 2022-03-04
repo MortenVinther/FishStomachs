@@ -87,7 +87,7 @@ read_strata_weighting<-function(stom,strata=c('sub_strata','strata','total')[1])
   if (strata=='sub_strata') file_n<-control@calc_sub_strata$weigthing_factor_file
   if (strata=='strata') file_n<-control@calc_strata$weigthing_factor_file
   if (strata=='total')  file_n<-control@calc_total$weigthing_factor_file
-  w<-read_csv(file=file_n,progress = FALSE,col_types = cols()) %>% dplyr::distinct()
+  w<-read_csv(file=file_n,progress = FALSE,col_types = readr::cols()) %>% dplyr::distinct()
   return(w)
 }
 
@@ -421,8 +421,6 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
 
   control<-attr(d,'control')
   # calculate year and quarter from specifications
-  d[['PRED']]<-d[['PRED']] %>% dplyr::mutate(year=as.integer(eval(control@strata_year_back)),quarter=as.integer(eval(control@strata_quarter_back)))
-
   x<-as.data.frame(d) %>% dplyr::mutate(year=as.integer(eval(control@strata_year_back)),quarter=as.integer(eval(control@strata_quarter_back)))
 
   x<-x %>%  dplyr::group_by(key) %>% dplyr::mutate(prey_w=prey_w/sum(prey_w)*100) %>% dplyr::ungroup() %>%
@@ -454,7 +452,6 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
   if (show_plot) return() else return(out)
 }
 
-
 #' Plot diet data.
 #'
 #' @param d Diet data set of class STOMdiet.
@@ -472,8 +469,8 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
 #' @importFrom rlang .data
 #' @export
 plotSize<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=90,
-                             Strip.position = c("top", "bottom", "left", "right")[1],Colours,otherCol='grey',refac_prey=FALSE,
-                             byVar=c('year-quarter','year','quarter','none')[1]) {
+                   Strip.position = c("top", "bottom", "left", "right")[1],Colours,otherCol='grey',refac_prey=FALSE,
+                   byVar=c('year-quarter','year','quarter','none')[1]) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-quarter<-year<-NULL
   if (missing(Colours)) Colours<-c('red','green','plum','blue','cyan','yellow','coral','skyblue','purple','magenta','limegreen','pink' )
 
@@ -485,8 +482,6 @@ plotSize<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=
 
   control<-attr(d,'control')
   # calculate year and quarter from specifications
-  d[['PRED']]<-d[['PRED']] %>% dplyr::mutate(year=as.integer(eval(control@strata_year_back)),quarter=as.integer(eval(control@strata_quarter_back)))
-
   x<-as.data.frame(d) %>% dplyr::mutate(year=as.integer(eval(control@strata_year_back)),quarter=as.integer(eval(control@strata_quarter_back)))
   if (byVar=='year-quarter') {x$key<-paste(x$year,x$quarter,x$pred_name,x$pred_size); x$stratum_time<-paste(x$year,x$quarter,sep='_') }
   if (byVar=='year')         {x$key<-paste(x$year,x$pred_name,x$pred_size); x$stratum_time<-paste(x$year,sep='_') }
@@ -512,6 +507,77 @@ plotSize<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=
 }
 
 
+#' Plot difference between two diet data set.
+#'
+#' @param d1 Diet data set of class STOMdiet.
+#' @param d2 Diet data set of class STOMdiet.
+#' @param relative Logical, relative weight difference is used if TRUE, else absolute weight difference
+#' @param cut_pred_size From to in substring of predator size
+#' @param cut_prey_size From to in substring of prey size
+#' @param show_plot Show the resulting graphs on screen (or save the results for later processing)
+#' @param addTitle Add predator name on top of the plot.
+#' @param tAngle Angle X-axis text.
+#' @param Colours Colours for positive and negative difference (d1-d2)
+#' @param refac_prey Reorder preys
+#' @param maxDif maximum difference to be shown
+#' @param WeightedMean logical, use number of stomachs as weighting factor when data from more strata are combined.
+#' @param byVar Make individual plots by combinations of 'year-quarter','year' or 'quarter' or lump all data together ('none').
+#' @return nothing (if show_plot=TRUE) or a list of plots.
+#' @importFrom ggplot2 ggplot facet_grid geom_col labs theme  scale_color_manual aes element_text element_line geom_point
+#' @export
+plotdif<-function(d1,d2,relative=TRUE,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(1,10),addTitle=FALSE,tAngle=90,
+                  Colours=c('green','red','blue'),refac_prey=FALSE,maxDif=5,size_NA=4,
+                  byVar=c('year-quarter','year','quarter','none')[1]) {
+
+   key<<-pred_name<-pred_size<-prey_w<-prey_w1<-prey_w2<-size_w<-col<-quarter<-year<-NULL
+
+  #if (refac_prey) d<-refac_prey(d)
+  control<-get_control(d1)
+  x1<-as.data.frame(d1) %>%
+    dplyr::mutate(year=as.integer(eval(control@strata_year_back)),quarter=as.integer(eval(control@strata_quarter_back))) %>%
+    dplyr::mutate(pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2])) %>%
+    dplyr::mutate(prey_size=substr(prey_size,cut_prey_size[1],cut_prey_size[2])) %>%
+    dplyr::mutate(pp=paste(prey_name,prey_size)) %>% dplyr::mutate(prey_w1=prey_w) %>%
+    dplyr::select(year,quarter,pred_name, pred_size,pp,prey_w1)
+
+  control<-get_control(d2)
+  x2<-as.data.frame(d2) %>%
+    dplyr::mutate(year=as.integer(eval(control@strata_year_back)),quarter=as.integer(eval(control@strata_quarter_back))) %>%
+    dplyr::mutate(pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2])) %>%
+    dplyr::mutate(prey_size=substr(prey_size,cut_prey_size[1],cut_prey_size[2])) %>%
+    dplyr::mutate(pp=paste(prey_name,prey_size)) %>% dplyr::mutate(prey_w2=prey_w) %>%
+    dplyr::select(year,quarter,pred_name, pred_size,pp,prey_w2)
+
+  x<-dplyr::full_join(x1,x2, by = c("year","quarter", "pred_name", "pred_size", "pp")) %>%
+    dplyr::mutate(stratum_time=paste(year,quarter,sep='-Q'),dif_w=prey_w1-prey_w2)
+
+  if (relative) x<-mutate(x,dif_w2=prey_w1/prey_w2) else x<-mutate(x,dif_w2=dif_w)
+  x<-mutate(x,dif_w2=if_else(dif_w2>maxDif,maxDif,dif_w2))
+
+  if (byVar=='year-quarter') {x$key<-paste(x$pred_name,x$year,x$quarter)}
+  if (byVar=='year')         {x$key<-paste(x$pred_name,x$year)}
+  if (byVar=='quarter')      {x$key<-paste(x$pred_name,x$quarter,x$pred_name)}
+  if (byVar=='none')         {x$key<-paste(x$pred_name) }
+
+  x<-  dplyr::mutate(x,size_w=if_else(is.na(dif_w),sqrt(size_NA),sqrt(abs(dif_w2))),
+                     col=if_else(is.na(dif_w),'mis',if_else(dif_w>0,'pos','neg'))) %>%
+    dplyr::mutate(col=factor(col,levels=c('pos','neg','mis'))) %>%
+    dplyr::select(key,stratum_time,pred_name, pred_size,pp,size_w,col)
+
+  out<-by(x,list(x$key),function(x) {
+    if (addTitle) tit<- as.character(x$pred_name)[1] else tit<-NULL
+    a<- ggplot(x, aes(pred_size, pp))+
+      geom_point(aes(size = size_w, colour = col))+
+      #scale_color_manual(values=c('#999999','#E69F00', '#56B4E9'))+
+      scale_color_manual(values=Colours)+
+      facet_grid( cols=vars(stratum_time),scales = "free_x", drop = TRUE)+
+      labs(x='Predator size',y='Prey',title=tit)+
+      theme(axis.text.x = element_text(angle = tAngle, vjust = 0.5 ),legend.position = 'none')
+    if (show_plot) print(a) else return(a)
+  })
+  if (show_plot) return() else return(out)
+}
+
 
 #' Change predator or prey names.
 #'
@@ -526,7 +592,7 @@ from_to_species_diet<-function(d,pred_from_to=c("xcode","xshort"),prey_from_to=c
 
   oth<-attr(d,'control')@other
   dd<-as.data.frame(d)
-  a<- readr::read_csv(file= sp_info_file,col_types = cols())
+  a<- readr::read_csv(file= sp_info_file,col_types = readr::cols())
 
   if (pred_from_to[1] %in%  names(a) & pred_from_to[1] %in%  names(a)) {
     aa<- a %>% dplyr::mutate(pred_name=get(pred_from_to[1]),new_pred_name=get(pred_from_to[2])) %>%

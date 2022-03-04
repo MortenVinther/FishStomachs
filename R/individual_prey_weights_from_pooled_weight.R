@@ -283,7 +283,7 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
   # re-factor$sample_id
   bb<-bb %>% dplyr::mutate(sample_id=factor(sample_id,levels=levels(stom[['PRED']]$sample_id)),fish_id=factor(fish_id,levels=levels(stom[['PRED']]$fish_id)))
 
-    stom[['PREY']]<-bb
-  #attr(stom,all_stom_attributes()["prey_w_id"])<-TRUE
+  stom[['PREY']]<-bb
+  attr(stom,all_stom_attributes()["prey_w_id"])<-TRUE
   return(stom)
 }

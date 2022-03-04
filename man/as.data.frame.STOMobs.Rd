@@ -19,5 +19,8 @@ Method to convert an object of class STOMobs into a data frame (and tibble).
 Information on sampling and predators are copied to each record of prey information.
 }
 \examples{
-\dontrun{a<-as.data.frame(stom); a}
+\dontrun{a<-as.data.frame(stom); a; as_STOMobs(a)}
+}
+\seealso{
+\code{\link[FishStomachs]{as_STOMobs}}
 }

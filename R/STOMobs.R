@@ -7,8 +7,9 @@
 #' @param add_empty Insert prey "other" with prey weight (prey_w) =0 for samples with only empty stomachs.
 #' @return STOMobs object transformed to a "flat" data frame.
 #' @method as.data.frame STOMobs
+#' @seealso  \code{\link[FishStomachs]{as_STOMobs}}
 #' @exportS3Method
-#' @examples \dontrun{a<-as.data.frame(stom); a}
+#' @examples \dontrun{a<-as.data.frame(stom); a; as_STOMobs(a)}
 as.data.frame.STOMobs <- function(stom,add_empty=TRUE){
 
    a<-dplyr::left_join(stom[['PRED']],stom[['PREY']],by = c("sample_id", "fish_id"))
