@@ -10,7 +10,6 @@ plotSize(
   cut_pred_size = c(1, 10),
   addTitle = FALSE,
   tAngle = 90,
-  Strip.position = c("top", "bottom", "left", "right")[1],
   Colours,
   otherCol = "grey",
   refac_prey = FALSE,
@@ -27,8 +26,6 @@ plotSize(
 \item{addTitle}{Add predator name on top of the plot.}
 
 \item{tAngle}{Angle X-axis text.}
-
-\item{Strip.position}{strip.position: "top" | "bottom" | "left" | "right"}
 
 \item{Colours}{vector of colours for preys.}
 

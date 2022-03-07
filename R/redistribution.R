@@ -40,13 +40,14 @@
 #' @param do_only Do only redistribution for the selected steps.
 #' @param selected_pred Predators for which redistribution is done. All predators are included,if \code{selected_pred value} is missing.
 #' @param by_prey_size Do the allocation by prey and prey size (\code{by_prey_size=TRUE}) or just by prey (\code{by_prey_size=FALSE}).
+#' @param verbose Logical, show details
 #' @param remains_to_other Convert not fully identified prey species to prey 'other' where no species allocation key can be found.
 #' @return Stomach contents data of class STOMobs.
 #' @export
 #' @examples \dontrun{x=2}
 #'
 redist_unidentified_prey_sp <- function(s, dist_time = stratum_time, dist_area = stratum_area, dist_pred_size = pred_size, from_to_species, do_only, selected_pred, remains_to_other = TRUE,
-    by_prey_size = TRUE) {
+    by_prey_size = TRUE,verbose=FALSE) {
     # test s=b; from_to_species=from_to;remains_to_other = FALSE; selected_pred<-sort(unique(s[['PRED']]$pred_name)); do_only=c(1,2); by_prey_size<-FALSE
   fish_id<-from_prey_name<-pred_name<-pred_size<-prey_name<-prey_w<-proportion<-sample_id<-stratum_area<-stratum_time<-to_species<-NULL
   pred_size_class<-prey_size<-NULL
@@ -151,12 +152,12 @@ redist_unidentified_prey_sp <- function(s, dist_time = stratum_time, dist_area =
         }
 
         s <- dplyr::select(dplyr::bind_rows(remains, found, not_found), -row)
-        cat("Redist. ", as.character(from_species), " Records to be dis.:", to_be_dist)
+        if (verbose) cat("Redist. ", as.character(from_species), " Records to be dis.:", to_be_dist)
         if (to_be_dist >0) {
-          cat(",  found:", l_found_rows, "  ")
-          if ( remains_to_other)  cat("as other:", dim(not_found)[[1]]) else cat("un-allocated:", dim(not_found)[[1]])
+          if (verbose) cat(",  found:", l_found_rows, "  ")
+          if ( remains_to_other) if (verbose) cat("as other:", dim(not_found)[[1]]) else {if (verbose) cat("un-allocated:", dim(not_found)[[1]])}
         }
-        cat("\n")
+        if (verbose) cat("\n")
     }
 
     s <- dplyr::bind_rows(s, unchanged)
@@ -186,9 +187,10 @@ redist_unidentified_prey_sp <- function(s, dist_time = stratum_time, dist_area =
 #' @param selected_pred Predators for which redistribution is done. All predators included in s is selected if selected_pred value is missing.
 #' @param remains_to_other Convert not fully identified prey species to prey 'other' where no species allocation key cannot be found.
 #' @param others_to_other Convert not species not included in \code{selected_pred} to prey 'other'.
+#' @param verbose, Logical, show delatils
 #' @export
 #' @return s Stomach contents data of class STOMobs.
-redist_unidentified_prey_lengths <- function(s, dist_time = stratum_time, dist_area = stratum_area, dist_pred_size = pred_size, selected_pred, remains_to_other = TRUE,others_to_other=TRUE) {
+redist_unidentified_prey_lengths <- function(s, dist_time = stratum_time, dist_area = stratum_area, dist_pred_size = pred_size, selected_pred, remains_to_other = TRUE,others_to_other=TRUE,verbose=FALSE) {
     # test s=b; from_to_species=from_to;remains_to_other = FALSE; selected_pred<-sort(unique(s[['PRED']]$pred_name))
     fish_id<-pred_name<-pred_size<-prey_name<-prey_size<-prey_size_class<-prey_w<-proportion<-sample_id<-stratum_area<-stratum_time<-NULL
 
@@ -212,7 +214,7 @@ redist_unidentified_prey_lengths <- function(s, dist_time = stratum_time, dist_a
     dist_area <- enquo(dist_area)
     dist_pred_size <- enquo(dist_pred_size)
 
-    cat("Prey size will be allocated for species:", paste(sel_prey, collate = ", "), "\n")
+    if (verbose) cat("Prey size will be allocated for species:", paste(sel_prey, collate = ", "), "\n")
     # add strata definitions to s
     s <- dplyr::mutate(s, dist_time = !!dist_time, dist_area = !!dist_area, dist_pred_size = !!dist_pred_size)
     # test s<-dplyr::mutate(s,dist_time=stratum_time, dist_area=stratum_area, dist_pred_size=pred_size)
@@ -269,7 +271,7 @@ redist_unidentified_prey_lengths <- function(s, dist_time = stratum_time, dist_a
     }
 
     s <- dplyr::select(dplyr::bind_rows(remains, found, not_found), -row)
-    cat("Records to be distributed:", to_be_dist, ",  found:", l_found_rows, "  Un-allocated:", dim(not_found)[[1]], "\n")
+    if (verbose) cat("Records to be distributed:", to_be_dist, ",  found:", l_found_rows, "  Un-allocated:", dim(not_found)[[1]], "\n")
 
 
     s <- dplyr::bind_rows(s, unchanged)

@@ -159,12 +159,13 @@ read_strata_weighting<-function(stom,strata=c('sub_strata','strata','total')[1])
 #' @param s Stomach data set of class STOMobs. It is assumed that the stomach contents weight correspond to the
 #' number of stomachs, i.e. the stomach contents for a single predator, or the sum of preys if the sample includes more than one
 #' predator (stomach).
+#' @param verbose Logical, show details
 #'
 #' @return Diet data set of class STOMdiet
 #' @export
 #'
 #'
-calc_population_stom<-function(s) {
+calc_population_stom<-function(s,verbose=FALSE) {
   #  s<-tst2
   fish_id<-key<-mean_cpue<-n_tot<-pred_cpue<-pred_l_mean<-pred_name<-pred_size<-pred_size_class<-prey_name<-prey_size<-prey_size_class<-prey_w<-sample_id<-stratum_area<-stratum_sub_area<-stratum_time<-sum_lw<-sum_w<-sum_w_fac<-w_fac_area<-w_fac_sample<-w_fac_sub_area<-NULL
   options(dplyr.summarise.inform = FALSE)
@@ -211,7 +212,7 @@ calc_population_stom<-function(s) {
     w<-read_strata_weighting(stom=s,strata=c('sub_strata','strata','total')[1])
     pred<-dplyr::left_join(pred,w, by = c("sample_id", "pred_name", "pred_size", "stratum_time", "stratum_area", "stratum_sub_area"))  %>%
       dplyr::filter(!is.na(w_fac_sample)) %>% dplyr::filter(w_fac_sample>0)
-    cat('Using weighting factors from file',sc$weigthing_factor_file,'\n')
+    if (verbose) cat('Using weighting factors from file',sc$weigthing_factor_file,'\n')
   } else {
      tt<-try(pred<-pred %>% dplyr::mutate(w_fac_sample=eval(control@calc_sub_strata$weighting_factor)),TRUE)
      if (class(tt)[[1]]=="try-error") {cat(tt[1]);stop('Error found.')}
@@ -328,7 +329,7 @@ calc_population_stom<-function(s) {
     w<-read_strata_weighting(stom=s,strata=c('sub_strata','strata','total')[3])
     pred<-dplyr::left_join(pred,w ,by = c("stratum_area", "stratum_time", "pred_name", "pred_size")) %>%
       dplyr::filter(!is.na(w_fac_area)) %>% dplyr::filter(w_fac_area>0)
-    cat('Using weighting factors from file',sc$weigthing_factor_file,'\n')
+    if (verbose) cat('Using weighting factors from file',sc$weigthing_factor_file,'\n')
   } else {
     tt<-try(pred<-pred %>% dplyr::mutate(w_fac_area=eval(control@calc_total$weighting_factor)),TRUE)
     if (class(tt)[[1]]=="try-error") {cat(tt[1]);stop('Error found.')}
@@ -459,7 +460,6 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
 #' @param show_plot Show the resulting graphs on screen (or save the results for later processing)
 #' @param addTitle Add predator name on top of the plot.
 #' @param tAngle Angle X-axis text.
-#' @param Strip.position strip.position: "top" | "bottom" | "left" | "right"
 #' @param Colours vector of colours for preys.
 #' @param otherCol Colour for "other prey"
 #' @param refac_prey Reorder preys
@@ -469,7 +469,7 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
 #' @importFrom rlang .data
 #' @export
 plotSize<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=90,
-                   Strip.position = c("top", "bottom", "left", "right")[1],Colours,otherCol='grey',refac_prey=FALSE,
+                   Colours,otherCol='grey',refac_prey=FALSE,
                    byVar=c('year-quarter','year','quarter','none')[1]) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-quarter<-year<-NULL
   if (missing(Colours)) Colours<-c('red','green','plum','blue','cyan','yellow','coral','skyblue','purple','magenta','limegreen','pink' )
