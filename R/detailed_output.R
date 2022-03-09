@@ -89,12 +89,12 @@ do_detailed_output <-function(stom,append=TRUE,to_screen=FALSE,label,digits=1,re
 #' Make detailed summary output from a STOMdiet object using a subset of data defined in the control attributes.
 #'
 #' @title Show a subset from test criteria
-#' @param stom data set of class STOMdiet.
+#' @param diet data set of class STOMdiet.
 #' @param append logical, append to output file?
 #' @param to_screen logical, write results on the screen.
 #' @param label text included in output.
 #' @param digits number of significant digits in output.
-#'@param rel_weight logical for relative or absolute weight.
+#' @param rel_weight logical for relative or absolute weight.
 #' @param write_criteria logical, write criteria for sub-setting.
 #' @param transpose Transpose output table.
 #' @return test output.

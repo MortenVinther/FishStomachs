@@ -141,7 +141,7 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
     prey <- subset(b, PREY == TRUE, select = field)$field
     incl <- intersect(cols, prey)
     PREY <- a %>%
-        dplyr::select(all_of(incl)) %>%
+        dplyr::select(dplyr::all_of(incl)) %>%
         dplyr::arrange(sample_id, fish_id)
     a <- list(PRED = PRED, PREY = PREY)
 

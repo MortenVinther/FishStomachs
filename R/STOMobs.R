@@ -316,7 +316,7 @@ c.STOMobs <- function(...){
   # is not necessary !, already done by test Unique_sample_id
   b <- check_unique_sample_id(ans)
   if (dim(b)[[1]] > 0) {
-    b<-b %>% arrange(sample_id,fish_id)
+    b<-b %>% dplyr::arrange(sample_id,fish_id)
     print(data.frame(b))
     stop("Duplicated combinations of sample_id and fish_id have been found, please check!")
   }

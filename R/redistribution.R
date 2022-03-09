@@ -71,9 +71,9 @@ redist_unidentified_prey_sp <- function(s, dist_time = stratum_time, dist_area =
 
     s <- as.data.frame(s)
 
-    dist_time <- enquo(dist_time)
-    dist_area <- enquo(dist_area)
-    dist_pred_size <- enquo(dist_pred_size)
+    dist_time <- rlang::enquo(dist_time)
+    dist_area <- rlang::enquo(dist_area)
+    dist_pred_size <- rlang::enquo(dist_pred_size)
 
     # add strata definitions to s
     s <- dplyr::mutate(s, dist_time = !!dist_time, dist_area = !!dist_area, dist_pred_size = !!dist_pred_size)
@@ -83,7 +83,7 @@ redist_unidentified_prey_sp <- function(s, dist_time = stratum_time, dist_area =
     s <- dplyr::filter(s, pred_name %in% selected_pred)
 
     sptof_all <- from_to_species %>%
-        transmute(order = order, from_prey_name = factor(from_species, levels = levels(s$prey_name)), prey_name = factor(to_species, levels = levels(s$prey_name))) %>%
+        dplyr::transmute(order = order, from_prey_name = factor(from_species, levels = levels(s$prey_name)), prey_name = factor(to_species, levels = levels(s$prey_name))) %>%
         dplyr::filter(!(is.na(from_prey_name) | is.na(prey_name)))
 
     iter <- sort(unique(from_to_species$order))
@@ -210,9 +210,9 @@ redist_unidentified_prey_lengths <- function(s, dist_time = stratum_time, dist_a
 
     s <- as.data.frame(s)
 
-    dist_time <- enquo(dist_time)
-    dist_area <- enquo(dist_area)
-    dist_pred_size <- enquo(dist_pred_size)
+    dist_time <- rlang::enquo(dist_time)
+    dist_area <- rlang::enquo(dist_area)
+    dist_pred_size <- rlang::enquo(dist_pred_size)
 
     if (verbose) cat("Prey size will be allocated for species:", paste(sel_prey, collate = ", "), "\n")
     # add strata definitions to s

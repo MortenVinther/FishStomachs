@@ -228,6 +228,8 @@ print.STOMdiet <- function(x){
 #' @export
 summary.STOMdiet <- function(diet, level=1,digits=1,drop.unused.levels = FALSE){
 
+  key<-prey_name<-prey_size<-prey_size_class<-prey_w<-NULL
+
   control<-attr(diet,'control')
 
   # calculate year and quarter from specifications
@@ -244,7 +246,7 @@ summary.STOMdiet <- function(diet, level=1,digits=1,drop.unused.levels = FALSE){
     a<-by(d,list(d$key),function(x) {
       x<-x %>% dplyr::group_by(key,prey_name,prey_size,prey_size_class) %>%
         dplyr::mutate(prey_w=sum(prey_w)) %>% dplyr::ungroup()
-      xx<- x %>% mutate(across(where(is.factor), as.character))
+      xx<- x %>% dplyr::mutate(dplyr::across(where(is.factor), as.character))
       cat('Absolute weight:\n')
       cat(paste0('\n',xx[1,'pred_name'],', ',xx[1,'pred_size'],', ',xx[1,'year'],
                  ', Q:',xx[1,'quarter'],', n stomachs:',xx[1,'n_tot'],'\n'))
@@ -253,7 +255,7 @@ summary.STOMdiet <- function(diet, level=1,digits=1,drop.unused.levels = FALSE){
   } else if (level==4) {
     a<-by(d,list(d$key),function(x) {
       x<-x %>%  dplyr::group_by(key) %>% dplyr::mutate(prey_w=prey_w/sum(prey_w)) %>% dplyr::ungroup()
-      xx<- x %>% mutate(across(where(is.factor), as.character))
+      xx<- x %>% dplyr::mutate(dplyr::across(where(is.factor), as.character))
       cat('Relative weight in percentages:\n')
       cat(paste0('\n',xx[1,'pred_name'],', ',xx[1,'pred_size']
                   ,', ',x[1,'year'],', Q:',x[1,'quarter'],', n stomachs:',x[1,'n_tot'],'\n'))
@@ -269,8 +271,10 @@ summary.STOMdiet <- function(diet, level=1,digits=1,drop.unused.levels = FALSE){
 #' Sum diet data
 #' @param diet Diet data of class STOMdiet.
 #' @return Diet data of class STOMdiet summed for each combination of prey species and prey size.
+#'
  diet_sum<-function(diet){
-  diet[['PREY']]<- diet[['PREY']] %>% dplyr::group_by(key,prey_name,prey_size,prey_size_class) %>% dplyr::mutate(prey_w=sum(prey_w)) %>% dplyr::ungroup()
+   key<-prey_name<-prey_size<-prey_size_class<-prey_w<-NULL
+    diet[['PREY']]<- diet[['PREY']] %>% dplyr::group_by(key,prey_name,prey_size,prey_size_class) %>% dplyr::mutate(prey_w=sum(prey_w)) %>% dplyr::ungroup()
   return(diet)
  }
 

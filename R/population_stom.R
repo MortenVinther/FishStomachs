@@ -386,6 +386,8 @@ calc_population_stom<-function(s,verbose=FALSE) {
   return(a)
 }
 
+#' close open devices
+#' @importFrom grDevices dev.list dev.off
 cleanup<-function(){for(i in dev.list()) if (names(dev.off())=='null device') break()}
 
 
@@ -426,7 +428,8 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
 
   x<-x %>%  dplyr::group_by(key) %>% dplyr::mutate(prey_w=prey_w/sum(prey_w)*100) %>% dplyr::ungroup() %>%
     dplyr::mutate(pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2])) %>%
-    dplyr::group_by(stratum_time,pred_name, pred_size,n_tot,year,quarter,prey_name) %>% dplyr::summarise(prey_w=sum(prey_w)) %>% ungroup() %>%
+    dplyr::group_by(stratum_time,pred_name, pred_size,n_tot,year,quarter,prey_name) %>% dplyr::summarise(prey_w=sum(prey_w)) %>%
+    dplyr::ungroup() %>%
     dplyr::select(stratum_time,pred_name, pred_size,n_tot,year,quarter,prey_name,prey_w)
 
 
@@ -471,7 +474,10 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
 plotSize<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=90,
                    Colours,otherCol='grey',refac_prey=FALSE,
                    byVar=c('year-quarter','year','quarter','none')[1]) {
+
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-quarter<-year<-NULL
+  prey_name<-prey_size<-stratum_time<-NULL
+
   if (missing(Colours)) Colours<-c('red','green','plum','blue','cyan','yellow','coral','skyblue','purple','magenta','limegreen','pink' )
 
   if (refac_prey) d<-refac_prey(d)
@@ -520,7 +526,7 @@ plotSize<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=
 #' @param Colours Colours for positive and negative difference (d1-d2)
 #' @param refac_prey Reorder preys
 #' @param maxDif maximum difference to be shown
-#' @param WeightedMean logical, use number of stomachs as weighting factor when data from more strata are combined.
+#' @param size_NA Size of missing observation
 #' @param byVar Make individual plots by combinations of 'year-quarter','year' or 'quarter' or lump all data together ('none').
 #' @return nothing (if show_plot=TRUE) or a list of plots.
 #' @importFrom ggplot2 ggplot facet_grid geom_col labs theme  scale_color_manual aes element_text element_line geom_point
@@ -530,6 +536,7 @@ plotdif<-function(d1,d2,relative=TRUE,show_plot=TRUE,cut_pred_size=c(1,10),cut_p
                   byVar=c('year-quarter','year','quarter','none')[1]) {
 
    key<<-pred_name<-pred_size<-prey_w<-prey_w1<-prey_w2<-size_w<-col<-quarter<-year<-NULL
+   dif_w<-dif_w2<-key<-pp<-prey_name<-prey_size<-stratum_time<-NULL
 
   #if (refac_prey) d<-refac_prey(d)
   control<-get_control(d1)
@@ -562,7 +569,7 @@ plotdif<-function(d1,d2,relative=TRUE,show_plot=TRUE,cut_pred_size=c(1,10),cut_p
   x<-  dplyr::mutate(x,size_w=if_else(is.na(dif_w),sqrt(size_NA),sqrt(abs(dif_w2))),
                      col=if_else(is.na(dif_w),'mis',if_else(dif_w>0,'pos','neg'))) %>%
     dplyr::mutate(col=factor(col,levels=c('pos','neg','mis'))) %>%
-    dplyr::select(key,stratum_time,pred_name, pred_size,pp,size_w,col)
+    dplyr::select(key,stratum_time,pred_name, pred_size,pp,size_w,col,prey_w1,prey_w2)
 
   out<-by(x,list(x$key),function(x) {
     if (addTitle) tit<- as.character(x$pred_name)[1] else tit<-NULL
@@ -590,6 +597,8 @@ plotdif<-function(d1,d2,relative=TRUE,show_plot=TRUE,cut_pred_size=c(1,10),cut_p
 #' @export from_to_species_diet
 from_to_species_diet<-function(d,pred_from_to=c("xcode","xshort"),prey_from_to=c("xSMS_species","xshort"),sp_info_file=file.path(config_dir,'species_info.csv'),refactor=TRUE){
 
+  config_dir<-new_pred_name<-new_prey_name<-number<-pred_name<-prey_name<-NULL
+
   oth<-attr(d,'control')@other
   dd<-as.data.frame(d)
   a<- readr::read_csv(file= sp_info_file,col_types = readr::cols())
@@ -597,7 +606,7 @@ from_to_species_diet<-function(d,pred_from_to=c("xcode","xshort"),prey_from_to=c
   if (pred_from_to[1] %in%  names(a) & pred_from_to[1] %in%  names(a)) {
     aa<- a %>% dplyr::mutate(pred_name=get(pred_from_to[1]),new_pred_name=get(pred_from_to[2])) %>%
       dplyr::select(pred_name,new_pred_name,number)
-    dd<-left_join(dd,aa,by='pred_name') %>% mutate(pred_name=NULL) %>%
+    dd<-dplyr::left_join(dd,aa,by='pred_name') %>% mutate(pred_name=NULL) %>%
       rename(pred_name=new_pred_name,pred_id_number=number)
 
     if (refactor) {
@@ -613,7 +622,7 @@ from_to_species_diet<-function(d,pred_from_to=c("xcode","xshort"),prey_from_to=c
   if (prey_from_to[1] %in% names(a) & prey_from_to[1] %in% names(a)) {
     aa<- a %>% dplyr::mutate(prey_name=get(prey_from_to[1]),new_prey_name=get(prey_from_to[2])) %>%
       dplyr::select(prey_name,new_prey_name,number)
-    dd<-left_join(dd,aa,by='prey_name') %>% mutate(prey_name=NULL) %>%
+    dd<-dplyr::left_join(dd,aa,by='prey_name') %>% mutate(prey_name=NULL) %>%
       rename(prey_name=new_prey_name,prey_id_number=number)
 
     if (refactor) {

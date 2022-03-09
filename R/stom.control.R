@@ -34,20 +34,19 @@ validSTOMcontrol <- function(object) {
 #' @slot dataSets File name or file names for data on exchange format.
 #' @slot years Year or years of data to be used.
 #' @slot quarters Quarters of the year ( or similar time split) to be used.
+#' @slot predators Predator name or names.
 #' @slot strata_area_exp  \code{expression} for defining strata area.
 #' @slot strata_sub_area_exp  \code{expression} for defining sub_area.
 #' @slot strata_time_exp \code{expression} for defining temporal strata.
 #' @slot strata_year_back \code{expression} for getting year information out of diet data, e.g. \code{expression(as.numeric(substr(stratum_time,1,4)))}.
 #' @slot strata_quarter_back \code{expression} for getting quarter information out of diet data.
-#' @slot sel_preys vector.
+#' @slot sel_preys Selected prey names for diet calculation.
+#' @slot min_prey_length Minimum prey length (or included in other food) \code{integer}.
+#' @slot calc_strata Specification of strata
+#' @slot weighting_factor Weighting factor for weighted mean
 #' @slot year_quarter_strata vector.
 #' @slot weighting_by_nstom logical.
 #' @slot combine_starta_from_relative_stomach_content logical.
-#' @slot min_prey_length integer.
-#' @slot max_l integer. Number used for the maximum length, e.g. 9998L
-#' @slot mis_l integer. Number used for missing length, e.g. 9999L
-#' @slot other character. Name for the "Other food", which is prey items not considered as individual prey species for further analysis, e.g. "other".
-#' @slot mis_size_class integer. Number for size class where the size is unknown, e.g. 0L
 #' @slot model_options list. Options for producing input values to multi species models as SMS.
 #' \preformatted{The list must include the names:
 #'  "delete_small" logical, delete input with relative stomach contents weight lower than "min_value".
@@ -58,6 +57,11 @@ validSTOMcontrol <- function(object) {
 #'  "insert_tails", logical for insertion of dummy values("tail_value") for the prey size class which are lower and higher than the observed size range for a prey
 #'  "tail_value",  value used for missing tail-values.
 #'  }
+#' @slot max_l integer. Number used for the maximum length, e.g. 9998L
+#' @slot mis_l integer. Number used for missing length, e.g. 9999L
+#' @slot other character. Name for the "Other food", which is prey items not considered as individual prey species for further analysis, e.g. "other".
+#' @slot mis_size_class integer. Number for size class where the size is unknown, e.g. 0L
+
 #' @slot ALK_options list, options used for creating Age Length Keys
 #' @slot do_test_output logical.
 #' @slot do_test_output_file logical.
@@ -65,10 +69,10 @@ validSTOMcontrol <- function(object) {
 #' @slot detailed_tst_output logical.
 #' @slot detailed_tst_file character.
 #' @slot detailed_tst_criteria list.
-#' @slot boots_haul \code{expression} for defining sampling unit (haul) from STOMobs variables.
-#' @slot boots_sample \code{expression} for defining sampling unit (haul).
+#' @slot boots_id list of \code{expression} for defining sampling unit (haul) from STOMobs variables.
+#' @slot boots_strata list \code{expression} for defining strata (haul).
 #' @export
-#' @return a control object
+#' @return  object of class STOMcontrol
 #'
 #' @examples \dontrun{control<-new("STOMcontrol",
 #'       name='Baltic cod',
