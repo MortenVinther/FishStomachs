@@ -28,11 +28,11 @@ bootstrap_data<-function(s,nfac=1,replace=TRUE,seed=0,rep_id=1) {
    samp<-data.frame(boots_id=samples) %>% dplyr::group_by(boots_id) %>%
      dplyr::mutate(i=1:n()) %>% dplyr::ungroup()
    x<-dplyr::inner_join(x,samp,by = "boots_id") %>%
-      dplyr::mutate(sample_id=factor(paste(sample_id,i)),fish_id=factor(paste(fish_id,i)),rep_id=rep_id)
+      dplyr::mutate(sample_id=factor(paste(sample_id,i)),fish_id=factor(paste(fish_id,i)),rep_id=rep_id,n_boot=n)
  })
 
   x<-do.call(rbind,a);
-  as_STOMobs(x,new_pred_var='rep_id')
+  as_STOMobs(x,new_pred_var=c('rep_id','n_boot'))
 }
 
 #' Show stratification specified by control object, see (   ).

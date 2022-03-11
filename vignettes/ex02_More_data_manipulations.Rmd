@@ -37,7 +37,7 @@ A series of data manipulations, with addition of new variables, are needed befor
 
 ### Bias correct, energy contents, arament etc.
 
-Bias correction of stomach evacuation rate and thereby stomach content due to different energy contents, armament of the prey items can optional be done by the function  \code{bias_correct_energy_etc}. The function call uses several extra information kept on files for the bias correction, see the help for bias_correct_energy_etc(). In this example, these input files a supplied with the FishStomachs. 
+Bias correction of stomach evacuation rate and thereby stomach content due to different energy contents, armament of the prey items can optional be done by the function bias_correct_energy_etc(), based on the work by Andersen and Beyer, xxx. The function call uses several extra information kept on files for the bias correction, see the help for bias_correct_energy_etc(). In this example, these input files a supplied with the FishStomachs. 
 
 
 ```{r ex02_01}
@@ -100,6 +100,8 @@ do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE)
 The detailed output show that the the size class 100-150 now include the 100 and the 120 mm size classes as the 1981 size class have been used.  
 
 ### Bias correct regurgitated stomachs.
+
+Regurgitated stomachs are from feeding fish, but their actual absolute stomach contents (in the sea) are not known. Stomach contents from regurgitated stomach are not analysed or included as data, however the number of regurgitated stomachs (n_regur) should be noted together with the number of stomachs with skeletal remains only (n_nskel) and the number of empty stomachs (n_empty). The bias correction assumes that the regurgitated stomachs have had a the same stomach contents as the observed feeding fish (n_food). See the help(bias_correct_regurgitated) for more details.
 
 ```{r ex02_05}
 #overview of number of stomachs

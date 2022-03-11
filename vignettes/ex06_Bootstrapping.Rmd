@@ -15,33 +15,38 @@ knitr::opts_chunk$set(
    fig.width=7, fig.height=8
 )
 ```
+FishStomachs provide functions for estimating the mean and variance of the contents from bootstrapping. 
+First, data from Example 03 are loaded.
 
-```{r ex06_01}
+```{r ex06_00}
 library(FishStomachs)
 suppressMessages(library(dplyr))
 suppressMessages(library(readr))
 
 load(file=file.path(system.file( package = "FishStomachs"),"extdata","ex03half.Rdata"),verbose=TRUE)
+```
 
+Options for bootstrapping are provided by the bootstrapping control (see below). It is a list, where  boots_strata defines the strata for bootstrapping, in this case data are made for each combination of year, quarter and predator. Within such stratum, bootstrap samples are drawn from the pool of boots_id, in this case defined as individual trawl hauls. The variable predator_size is not used for boots_strata to reflect that several predator lengths are often sampled at the same haul. If you want to draw replicates from the pool of samples (haul, predator and predator size) for each predator size, the boots_strata should include the predator size as well (boots_strata = expression(paste(year,quarter,pred_name, pred_size,sep='-')).
 
-print(get_control(s),'bootstrapping')
-
+```{r ex06_01}
 ############### add variables for bootstrapping
 s<-edit_control(s, bootstrapping = list(
         boots_id = expression(paste(ship,rectangle,year,quarter,station,haul,sep='_')),
-        boots_strata= expression(paste(year,quarter,pred_name))
+        boots_strata = expression(paste(year,quarter,pred_name,sep='-'))
         ))
 
 print(get_control(s),'bootstrapping')
 
 ```
 
+The resulting stratification is shown below.
 ```{r ex06_02}
 
 head(bootstrap_show(s,show=c("strata",'sample')[1]))
 
 ```
-
+The tables above shows that e.g. cod in quarter 1 has 42 "hauls" with stomach data for predator size 0100-0149. 
+The table below show each "haul" include a number of stomachs from a vrious predator sizes.
 
 ```{r ex06_03}
 
@@ -50,7 +55,8 @@ head(bootstrap_show(s,show=c("strata",'sample')[2]))
 ```
 
 
-Creation of one set of data for bootstrapping
+The bootstrapping stata and id are added to the STOMobs data by a call to bootstrap_data().
+
 ```{r ex06_04}
 
 sb<-bootstrap_data(s)
@@ -58,8 +64,8 @@ sb<-bootstrap_data(s)
 ```
 
 
+We are now ready to do the bootstrapping, however to speed up, task common for all replicates are done first. That is the definition of the included prey species and the specification of stratifications for calculation population diet.
 
-Invariants for bootstrapping
 
 ```{r ex06_05}
 
@@ -100,11 +106,14 @@ s<-edit_control(s,
 ```
 
   
-Functions for processing observations to population diet. The code is copied from Example 03 and put into the function "do_boots".
+The processing of observations into population diet is put into a function, do_boots, which is user defined. In this case the code included in do_boots is copied from Example 03.
+
 ```{r ex06_06}
 
 do_boots<-function(s) {
 
+# cat('*') # to show that something is happening  
+  
 # to keep information on bootstrap replicate  
 rep_id<-unlist(s[['PRED']][1,'rep_id'])
 

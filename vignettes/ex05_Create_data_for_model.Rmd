@@ -35,7 +35,7 @@ print(control,show=c('model_options','constants'))
 
 ```
 
-The options are mainly how to handle missing values ("wholes") for prey sizes. If for example, there are information for prey herring 5-7 cm and 10-15 cm (but no 7-10 cm), the option insert_mid_value=TRUE will insert a low weight proportion  "mid_value" for the herring size 7-10 cm. The option "insert_tails" is for adding low weight proportions with a size smaller (and higher) than the observed size range.
+The options are mainly how to handle missing values ("holes") for prey sizes. If for example, there are information for prey herring 5-7 cm and 10-15 cm (but no 7-10 cm), the option insert_mid_value=TRUE will insert a low weight proportion  "mid_value" for the herring size 7-10 cm. The option "insert_tails" is for adding low weight proportions with a size smaller (and higher) than the observed size range.
 
 
 

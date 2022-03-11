@@ -154,7 +154,8 @@ plotSize(subset(d2,!(pred_size %in% c("0100-0149","0150-0199"))),
  a<-xtabs(~ prey_name+identified,data=s);b<-rbind(a,all=apply(a,2,sum));cbind(b,all=apply(b,1,sum))
  
  # prey weight of records, with fully identified prey items 
- a<-xtabs(prey_w~ prey_name+identified,data=s);b<-rbind(a,all=apply(a,2,sum));round(cbind(b,all=apply(b,1,sum))/1000)
+ a<-xtabs(prey_w~ prey_name+identified,data=s);b<-rbind(a,all=apply(a,2,sum));
+ round(cbind(b,all=apply(b,1,sum))/1000)
  
  # move not fully identified preys to "other"
  s<-mutate(s,prey_name=if_else(identified,prey_name,factor('other')),
@@ -200,10 +201,11 @@ d_simple
 
 # Change names into English names
 d_simple<-from_to_species_diet(d_simple,pred_from_to=c("species","short"),prey_from_to=c("species","short"),
-                         sp_info_file=file.path(system.file( package = "FishStomachs"),"extdata",'species_info.csv'))
+                sp_info_file=file.path(system.file( package = "FishStomachs"),"extdata",'species_info.csv'))
 
 #Relative stomach contents
-d_simple[['PREY']]<- d_simple[['PREY']] %>% dplyr::group_by(key) %>% dplyr::mutate(prey_w=prey_w/sum(prey_w)) %>% dplyr::ungroup()
+d_simple[['PREY']]<- d_simple[['PREY']] %>% dplyr::group_by(key) %>% 
+   dplyr::mutate(prey_w=prey_w/sum(prey_w)) %>% dplyr::ungroup()
 
 ```
 
@@ -215,7 +217,8 @@ a<-xtabs(prey_w~prey_name+key,data=d_simple[['PREY']]);
 
 d1<-d2
 #Relative stomach contents
-d1[['PREY']]<- d1[['PREY']] %>% dplyr::group_by(key) %>% dplyr::mutate(prey_w=prey_w/sum(prey_w)) %>% dplyr::ungroup()
+d1[['PREY']]<- d1[['PREY']] %>% dplyr::group_by(key) %>% 
+  dplyr::mutate(prey_w=prey_w/sum(prey_w)) %>% dplyr::ungroup()
 
 b<-xtabs(prey_w~prey_name+key,data=d1[['PREY']]);
 # round(rbind(b,apply(b,2,sum)),3)

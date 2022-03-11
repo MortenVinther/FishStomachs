@@ -64,8 +64,8 @@ The NODC_split data includes the named preys (named=TRUE) that is included in th
 
 - "other" contains the NODC range for invertebrate preys that that will part of the "other food" group in SMS.
 - "other fish" contains the NODC range for fish preys that is not a names species and not a special group.  
-- "Clupeidae"  includes herring like species (e.g. herring and sprat) that could not be estimated at species level. 
-- "Gadidae"  includes cod like species (e.g. cod, whiting) that could not be estimated at species level. 
+- "Clupeidae"  includes herring like species (e.g. herring and sprat) that could not be identified at species level. 
+- "Gadidae"  includes cod like species (e.g. cod, whiting) that could not be identified at species level. 
 - "unknown"  includes unidentified remains, both invertebrates and vertebrates.
 
 
@@ -155,7 +155,7 @@ from_to <-make_from_to_species(inp_file=
         file.path(system.file( package = "FishStomachs"),"extdata","from_to_species.csv"))
 from_to
 ```
-The from_to data specify that first (order=1) preys identified as the group "Clupeidae" must be split into the proportionally to the known prey species *Clupea harengus* and	 *Sprattus sprattus* (if such are identified in the sample). Next (order=2) "Gadidae" is spilt into a range of gadoids. As the third step, "unknown" prey item are split into a range of prey groups, which includes bot named and not named preys. This splitting og preys can be done at different strata level, starting with sample level, sub_area level and area level. 
+The from_to data specify that first (order=1) preys identified as the group "Clupeidae" must be split into the proportionally to the known prey species *Clupea harengus* and	 *Sprattus sprattus* (if such are identified in the sample). Next (order=2) "Gadidae" is spilt into a range of gadoids. As the third step, "unknown" prey item are split into a range of prey groups, which includes both named and not named preys. This splitting og preys can be done at different strata level, starting with sample level, sub_area level and area level. 
 
 
 
@@ -178,7 +178,7 @@ do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE,use_criteria=FALSE,rel_we
 
 ```
 
-The call to do_detailed_output() is changed such that it shows the full data set (use_criteria=FALSE), all data are aggregated rrespective of predator size and year and quarter ( by_sample_id=TRUE). This setting makes limited sense, however it is made just to follow what happens.
+The call to do_detailed_output() is changed such that it shows the full data set (use_criteria=FALSE), all data are aggregated irrespective of predator size and year and quarter ( by_sample_id=TRUE). This setting makes limited sense, however it is made just to follow what happens.
 
 The call to redist_unidentified_prey_sp() is quite complex, so please see help (?redist_unidentified_prey_sp). 
 

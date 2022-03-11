@@ -45,7 +45,7 @@ print(control,show=c('general','data_used'))
 
 ```
 
-The stomach_format: in the control shows where to find the format and for the input file. In this case it is the default value that is used, which is the file included in FishStomachs, but another specification file can be specified, see vignette Database_format.
+The stomach_format: in the control shows where to find the format and for the input file. In this case it is the default value that is used, which is the file included in FishStomachs, but another specification file can be specified, see vignette FishStomachs.
 
 Data are read in using the read_exchange_data function.
 ```{r ex01_02}
@@ -131,7 +131,7 @@ do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE,rel_weight = TRUE,label='
 
 
 ### Change and edit stomach data
-The function  change_data() gives the opportunities to make changes often used in the stomach data compilation and to add additional.  See the full documentation change_data() for details.
+The function  change_data() gives the opportunities to make changes often used in the stomach data compilation and to add additional fields.  See the full documentation change_data() for details.
 In this example, change_data() is run with default parameters. This will in  this case include the two values n_tot (total number of stomachs) and record_type (flag for single or pooled stomachs). After the Change_data() is executed, the "Changes done" is set to TRUE. 
 
 ```{r ex01_08}
@@ -167,15 +167,18 @@ s[['PRED']]<- s[['PRED']] %>% mutate(box17=if_else(rectangle %in% c('40F6','40F7
 
 ```
 
-Another way of doing it, which is preferable when both data from both predator and preys are used, is to transform data into a data.frame, where changes can be made, and afterwards transform data back again to a STOMobs object. In the example below, the variables "cannibal" and "large_prey" requires input from both PRED and PREY.  
+Another way of doing it, which is preferable when both data from both predator and preys are used, is to transform data into a data.frame, where changes can be made, and afterwards transform data back again to a STOMobs object. In the example below, the variables "cannibal" and "large_prey" require input from both PRED and PREY.  
 
 
 ```{r ex01_11}
 
-as.data.frame(s) %>% 
+tst<-as.data.frame(s) %>% 
         mutate(cannibal=as.character(pred_name) == as.character(prey_name), 
                large_prey=prey_l> pred_l*0.3,box17=NULL) %>% 
-        as_STOMobs(new_pred_var='cannibal',new_prey_var='large_prey')
+        as_STOMobs(new_pred_var='cannibal',new_prey_var='large_prey') 
+names(tst[['PRED']])
+names(tst[['PREY']])
+rm(tst)
 
 ```
 
