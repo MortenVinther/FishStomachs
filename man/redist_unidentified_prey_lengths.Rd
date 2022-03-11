@@ -11,7 +11,8 @@ redist_unidentified_prey_lengths(
   dist_pred_size = pred_size,
   selected_pred,
   remains_to_other = TRUE,
-  others_to_other = TRUE
+  others_to_other = TRUE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ redist_unidentified_prey_lengths(
 \item{remains_to_other}{Convert not fully identified prey species to prey 'other' where no species allocation key cannot be found.}
 
 \item{others_to_other}{Convert not species not included in \code{selected_pred} to prey 'other'.}
+
+\item{verbose, }{Logical, show delatils}
 }
 \value{
 s Stomach contents data of class STOMobs.

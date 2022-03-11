@@ -101,21 +101,23 @@ add_missing_boots<-function(bt,mis_value=0) {
 #' @param show_plot Show the resulting graphs on screen (or save the results for later processing)
 #' @param addTitle Add predator name on top of the plot.
 #' @param tAngle Angle X-axis text.
-#' @param Colours Colours for frequncy.
+#' @param Colours Colours for frequency.
+#' @param maxbins maximum number of bins in plot.
 #' @return nothing (if show_plot=TRUE) or a list of plots.
 #' @importFrom ggplot2 ggplot facet_grid geom_histogram labs geom_text theme_minimal scale_fill_manual aes element_text element_line
 #' @importFrom rlang .data
 #' @export
 plotboots.size<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(1,10),addTitle=FALSE,tAngle=90,
-                   Colours='red') {
+                   Colours='red',maxbins=50) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-quarter<-year<-NULL
   allNames<-prey_name<-prey_size<-stratum_time<-NULL
 
   control<-attr(b[[1]],'control')
   # to one data frame
   x<-do.call(rbind,lapply(b,as.data.frame))
-  reps<-as.integer(max(x$rep_id))
-  bins<-as.integer(min(reps/20,25)); if (bins<reps) bins=reps
+  reps<-max(x$rep_id)
+  if (reps<maxbins) bins=reps else bins<-maxbins
+
   # calculate year and quarter from specifications
   x<-x %>%
     dplyr::mutate(year=as.integer(eval(control@strata_year_back)),
@@ -148,28 +150,28 @@ plotboots.size<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(
 #' @param addTitle Add predator name on top of the plot.
 #' @param tAngle Angle X-axis text.
 #' @param Colours Colours for frequncy.
+#' @param maxbins maximum number of bins in plot.
 #' @return nothing (if show_plot=TRUE) or a list of plots.
 #' @importFrom ggplot2 ggplot facet_grid geom_histogram labs geom_text theme_minimal scale_fill_manual aes element_text element_line
 #' @importFrom rlang .data
 #' @export
 plotboots<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=90,
-                         Colours='red') {
+                         Colours='red',maxbins=50) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-quarter<-year<-NULL
   allNames<-prey_name<-prey_size<-stratum_time<-NULL
 
   control<-attr(b[[1]],'control')
   # to one data frame
   x<-do.call(rbind,lapply(b,as.data.frame))
-  reps<-as.integer(max(x$rep_id))
-  bins<-as.integer(min(reps/20,25)); if (bins<reps) bins=reps
-
+  reps<-max(x$rep_id)
+  if (reps<maxbins) bins=reps else bins<-maxbins
   # calculate year and quarter from specifications, and sum up by prey
   x<-x %>%
     dplyr::mutate(year=as.integer(eval(control@strata_year_back)),
                   quarter=as.integer(eval(control@strata_quarter_back)),
                   pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2])) %>%
-                  dplyr::group_by(key,stratum_time,pred_name, pred_size,n_tot,prey_name,rep_id) %>%
-                       dplyr::mutate(prey_w=sum(prey_w)) %>%
+                  dplyr::group_by(stratum_time,pred_name, pred_size,n_tot,prey_name,rep_id) %>%
+                       dplyr::summarise(prey_w=sum(prey_w)) %>%
                   dplyr::ungroup()
 
   out<-by(x,list(x$pred_name,x$stratum_time),function(x) {

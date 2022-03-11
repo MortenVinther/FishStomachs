@@ -13,7 +13,8 @@ redist_unidentified_prey_sp(
   do_only,
   selected_pred,
   remains_to_other = TRUE,
-  by_prey_size = TRUE
+  by_prey_size = TRUE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ redist_unidentified_prey_sp(
 \item{remains_to_other}{Convert not fully identified prey species to prey 'other' where no species allocation key can be found.}
 
 \item{by_prey_size}{Do the allocation by prey and prey size (\code{by_prey_size=TRUE}) or just by prey (\code{by_prey_size=FALSE}).}
+
+\item{verbose}{Logical, show details}
 }
 \value{
 Stomach contents data of class STOMobs.

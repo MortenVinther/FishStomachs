@@ -5,7 +5,7 @@
 \alias{STOMcontrol-class}
 \title{An s4 class for Control object for stomach compilation.}
 \value{
-a control object
+object of class STOMcontrol
 }
 \description{
 An s4 class for Control object for stomach compilation.
@@ -27,6 +27,8 @@ For more details on exchange format see the vignette: \code{vignette("Database_f
 
 \item{\code{quarters}}{Quarters of the year ( or similar time split) to be used.}
 
+\item{\code{predators}}{Predator name or names.}
+
 \item{\code{strata_area_exp}}{\code{expression} for defining strata area.}
 
 \item{\code{strata_sub_area_exp}}{\code{expression} for defining sub_area.}
@@ -37,23 +39,19 @@ For more details on exchange format see the vignette: \code{vignette("Database_f
 
 \item{\code{strata_quarter_back}}{\code{expression} for getting quarter information out of diet data.}
 
-\item{\code{sel_preys}}{vector.}
+\item{\code{sel_preys}}{Selected prey names for diet calculation.}
+
+\item{\code{min_prey_length}}{Minimum prey length (or included in other food) \code{integer}.}
+
+\item{\code{calc_strata}}{Specification of strata}
+
+\item{\code{weighting_factor}}{Weighting factor for weighted mean}
 
 \item{\code{year_quarter_strata}}{vector.}
 
 \item{\code{weighting_by_nstom}}{logical.}
 
 \item{\code{combine_starta_from_relative_stomach_content}}{logical.}
-
-\item{\code{min_prey_length}}{integer.}
-
-\item{\code{max_l}}{integer. Number used for the maximum length, e.g. 9998L}
-
-\item{\code{mis_l}}{integer. Number used for missing length, e.g. 9999L}
-
-\item{\code{other}}{character. Name for the "Other food", which is prey items not considered as individual prey species for further analysis, e.g. "other".}
-
-\item{\code{mis_size_class}}{integer. Number for size class where the size is unknown, e.g. 0L}
 
 \item{\code{model_options}}{list. Options for producing input values to multi species models as SMS.
 \preformatted{The list must include the names:
@@ -65,6 +63,14 @@ For more details on exchange format see the vignette: \code{vignette("Database_f
  "insert_tails", logical for insertion of dummy values("tail_value") for the prey size class which are lower and higher than the observed size range for a prey
  "tail_value",  value used for missing tail-values.
  }}
+
+\item{\code{max_l}}{integer. Number used for the maximum length, e.g. 9998L}
+
+\item{\code{mis_l}}{integer. Number used for missing length, e.g. 9999L}
+
+\item{\code{other}}{character. Name for the "Other food", which is prey items not considered as individual prey species for further analysis, e.g. "other".}
+
+\item{\code{mis_size_class}}{integer. Number for size class where the size is unknown, e.g. 0L}
 
 \item{\code{ALK_options}}{list, options used for creating Age Length Keys}
 
@@ -80,9 +86,9 @@ For more details on exchange format see the vignette: \code{vignette("Database_f
 
 \item{\code{detailed_tst_criteria}}{list.}
 
-\item{\code{boots_haul}}{\code{expression} for defining sampling unit (haul) from STOMobs variables.}
+\item{\code{boots_id}}{list of \code{expression} for defining sampling unit (haul) from STOMobs variables.}
 
-\item{\code{boots_sample}}{\code{expression} for defining sampling unit (haul).}
+\item{\code{boots_strata}}{list \code{expression} for defining strata (haul).}
 }}
 
 \examples{

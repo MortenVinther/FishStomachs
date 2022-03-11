@@ -4,7 +4,7 @@
 \alias{bootstrap_data}
 \title{Check if data are ready for aggregation.}
 \usage{
-bootstrap_data(s, nfac = 1, replace = TRUE, seed = 0)
+bootstrap_data(s, nfac = 1, replace = TRUE, seed = 0, rep_id = 1)
 }
 \arguments{
 \item{s}{Stomach data set of class STOMobs.}
@@ -14,12 +14,14 @@ bootstrap_data(s, nfac = 1, replace = TRUE, seed = 0)
 \item{replace}{Logical for bootstrapping with replacement.}
 
 \item{seed}{Random seed value.}
+
+\item{rep_id}{Replicate identifier}
 }
 \value{
 s Bootstrapped stomach data set of class STOMobs.
 }
 \description{
-Make bootstrap data from stratification specified by control object, see (   ).
+Extract bootstrap data from stratification specified by control object, see (   ).
 }
 \examples{
 \dontrun{check_for_missing_info_before_strata_aggregation(stom)}

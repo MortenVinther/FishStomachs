@@ -43,9 +43,9 @@ plotdif(
 
 \item{maxDif}{maximum difference to be shown}
 
-\item{byVar}{Make individual plots by combinations of 'year-quarter','year' or 'quarter' or lump all data together ('none').}
+\item{size_NA}{Size of missing observation}
 
-\item{WeightedMean}{logical, use number of stomachs as weighting factor when data from more strata are combined.}
+\item{byVar}{Make individual plots by combinations of 'year-quarter','year' or 'quarter' or lump all data together ('none').}
 }
 \value{
 nothing (if show_plot=TRUE) or a list of plots.

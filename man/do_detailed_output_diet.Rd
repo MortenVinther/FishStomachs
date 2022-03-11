@@ -16,6 +16,8 @@ do_detailed_output_diet(
 )
 }
 \arguments{
+\item{diet}{data set of class STOMdiet.}
+
 \item{append}{logical, append to output file?}
 
 \item{to_screen}{logical, write results on the screen.}
@@ -29,8 +31,6 @@ do_detailed_output_diet(
 \item{write_criteria}{logical, write criteria for sub-setting.}
 
 \item{transpose}{Transpose output table.}
-
-\item{stom}{data set of class STOMdiet.}
 }
 \value{
 test output.

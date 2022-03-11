@@ -196,23 +196,23 @@ The next calls to redist_unidentified_prey_sp() show how to widen the selection 
 # by sub_area (rectangel)                                                         
 s<-redist_unidentified_prey_sp(s,dist_time=stratum_time,dist_area=stratum_sub_area,
         dist_pred_size=pred_size, do_only=c(1,2),from_to_species=from_to,
-        by_prey_size=FALSE,remains_to_other = FALSE)
+        by_prey_size=FALSE,remains_to_other = FALSE, verbose=TRUE)
 
 # by area (=roundfish area)                                                               
 s<-redist_unidentified_prey_sp(s,dist_time=stratum_time,dist_area=stratum_area,
         dist_pred_size=pred_size, do_only=c(1,2,3),from_to_species=from_to,
-        by_prey_size=FALSE,remains_to_other = FALSE)
+        by_prey_size=FALSE,remains_to_other = FALSE, verbose=TRUE)
 
 # all areas                                                               
 s<-redist_unidentified_prey_sp(s,dist_time=stratum_time,dist_area='All',
         dist_pred_size=pred_size, do_only=c(1,2,3),from_to_species=from_to,
-        by_prey_size=FALSE,remains_to_other = FALSE)
+        by_prey_size=FALSE,remains_to_other = FALSE, verbose=TRUE)
 
 
 # all areas and half-year (dist_time is changed)                                                             
 s<-redist_unidentified_prey_sp(s,dist_time=paste(year,ifelse(quarter %in% c(1,2),'S1','S2')),
         dist_area='All',dist_pred_size=pred_size, do_only=c(1,2,3),from_to_species=from_to,
-        by_prey_size=FALSE,remains_to_other = FALSE)
+        by_prey_size=FALSE,remains_to_other = FALSE, verbose=TRUE)
 
 ```
 
@@ -233,7 +233,7 @@ The problem seems to be a small cod  (0150-0199) which has eaten "Gadidae". Othe
 # the same as above, but unallocated remains to "other food".                                                             
 s<-redist_unidentified_prey_sp(s,dist_time=paste(year,ifelse(quarter %in% c(1,2),'S1','S2')),
         dist_area='All',dist_pred_size=pred_size, do_only=c(1,2,3),from_to_species=from_to,
-        by_prey_size=FALSE,remains_to_other = TRUE)
+        by_prey_size=FALSE,remains_to_other = TRUE, verbose=TRUE)
 
 do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE,use_criteria=FALSE,rel_weight=TRUE,
         label="After reallocation of unindentified preys")
@@ -271,20 +271,21 @@ We can now do the re-allocation of missing size classes.
 s<-redist_unidentified_prey_lengths(s,dist_time=stratum_time,dist_area=stratum_area,
       dist_pred_size=pred_size,
       remains_to_other = FALSE, # do not add records with missing length allocation to "other food"
-      others_to_other=TRUE      # do add other species that selected prey species to "other food"
+      others_to_other=TRUE,      # do add other species that selected prey species to "other food"
+      verbose=TRUE
       )
 
 # within all areas                                                     
 s<-redist_unidentified_prey_lengths(s,dist_time=stratum_time,dist_area='All',
-      dist_pred_size=pred_size,remains_to_other = FALSE)
+      dist_pred_size=pred_size,remains_to_other = FALSE, verbose=TRUE)
 
 #  within all areas, and year (ignoring quarter)                                                   
 s<-redist_unidentified_prey_lengths(s=s,dist_time=substr(stratum_time,1,4),dist_area='All',
-      dist_pred_size=pred_size,remains_to_other = FALSE)
+      dist_pred_size=pred_size,remains_to_other = FALSE, verbose=TRUE)
 
 # as above, but with conversion of unallocated into "other"
 s<-redist_unidentified_prey_lengths(s=s,dist_time=substr(stratum_time,1,4),dist_area='All',
-      dist_pred_size=pred_size,remains_to_other = TRUE)
+      dist_pred_size=pred_size,remains_to_other = TRUE, verbose=TRUE)
 
 do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE,use_criteria=FALSE,rel_weight=TRUE)
 

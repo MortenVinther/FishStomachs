@@ -2,7 +2,7 @@
 % Please edit documentation in R/bootstrapping.R
 \name{bootstrap_show}
 \alias{bootstrap_show}
-\title{Show bootrap stratification.}
+\title{Show bootstrap stratification.}
 \usage{
 bootstrap_show(s, show = c("strata", "sample")[1])
 }
@@ -12,7 +12,7 @@ bootstrap_show(s, show = c("strata", "sample")[1])
 \item{show}{Show either number of stomachs per strata or number of stomachs per samples available for bootstrapping.}
 }
 \value{
-table Information og data available for bootstrapping
+table Information on data available for bootstrapping
 }
 \description{
 Show stratification specified by control object, see (   ).

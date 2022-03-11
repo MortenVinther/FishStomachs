@@ -4,12 +4,14 @@
 \alias{calc_population_stom}
 \title{Compilation of observed stomach contents into population diet}
 \usage{
-calc_population_stom(s)
+calc_population_stom(s, verbose = FALSE)
 }
 \arguments{
 \item{s}{Stomach data set of class STOMobs. It is assumed that the stomach contents weight correspond to the
 number of stomachs, i.e. the stomach contents for a single predator, or the sum of preys if the sample includes more than one
 predator (stomach).}
+
+\item{verbose}{Logical, show details}
 }
 \value{
 Diet data set of class STOMdiet

@@ -209,16 +209,18 @@ d_simple[['PREY']]<- d_simple[['PREY']] %>% dplyr::group_by(key) %>% dplyr::muta
 
 
 ```{r ex04_09}
-
-a<-xtabs(prey_w~prey_name+key,data=d_simple[['PREY']]);round(rbind(a,apply(a,2,sum)),3)
+# table of differences
+a<-xtabs(prey_w~prey_name+key,data=d_simple[['PREY']]);
+# round(rbind(a,apply(a,2,sum)),3)
 
 d1<-d2
 #Relative stomach contents
 d1[['PREY']]<- d1[['PREY']] %>% dplyr::group_by(key) %>% dplyr::mutate(prey_w=prey_w/sum(prey_w)) %>% dplyr::ungroup()
 
-b<-xtabs(prey_w~prey_name+key,data=d1[['PREY']]);round(rbind(b,apply(b,2,sum)),3)
+b<-xtabs(prey_w~prey_name+key,data=d1[['PREY']]);
+# round(rbind(b,apply(b,2,sum)),3)
 
-round((a-b)*1000)
+# round((a-b)*1000)
 
 
 plotdif(d1=d1,d2=d_simple,show_plot=TRUE,cut_pred_size=c(1,4),cut_prey_size=c(2,4),addTitle=TRUE,tAngle=90,
