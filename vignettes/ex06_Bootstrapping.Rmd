@@ -36,38 +36,33 @@ s<-edit_control(s, bootstrapping = list(
         ))
 
 print(get_control(s),'bootstrapping')
+s<-bootstrap_addVar(s)
+names(s[['PRED']])
 
 ```
+The call to bootstrap_addVar() adds the variables for bootstrapping to data.
 
 The resulting stratification is shown below.
 ```{r ex06_02}
 
-head(bootstrap_show(s,show=c("strata",'sample')[1]))
+head(bootstrap_show(s,show=c("strata",'sample')[1],vari=c("stomach","sample")[1]))
+head(bootstrap_show(s,show=c("strata",'sample')[1],vari=c("stomach","sample")[2]))
 
 ```
-The tables above shows that e.g. cod in quarter 1 has 42 "hauls" with stomach data for predator size 0100-0149. 
-The table below show each "haul" include a number of stomachs from a vrious predator sizes.
+The tables above shows that e.g. cod in quarter 1 has 18 "hauls" with in total 42 stomachs for predator size 0100-0149. 
+The table below show each "haul" include a number of stomachs from various predator sizes.
 
 ```{r ex06_03}
 
-head(bootstrap_show(s,show=c("strata",'sample')[2]))
+
+head(bootstrap_show(s,show=c("strata",'sample')[2],vari=c("stomach","sample")[1]))
 
 ```
-
-
-The bootstrapping stata and id are added to the STOMobs data by a call to bootstrap_data().
-
-```{r ex06_04}
-
-sb<-bootstrap_data(s)
-
-```
-
 
 We are now ready to do the bootstrapping, however to speed up, task common for all replicates are done first. That is the definition of the included prey species and the specification of stratifications for calculation population diet.
 
 
-```{r ex06_05}
+```{r ex06_04}
 
 # a very complex way of getting a list of prey names!
 keep_prey <-(read_csv(file.path(system.file( package = "FishStomachs"),"extdata","species_info.csv"),
@@ -108,7 +103,7 @@ s<-edit_control(s,
   
 The processing of observations into population diet is put into a function, do_boots, which is user defined. In this case the code included in do_boots is copied from Example 03.
 
-```{r ex06_06}
+```{r ex06_05}
 
 do_boots<-function(s) {
 
@@ -175,33 +170,57 @@ return(d)
 ```
 
 
-  
+The creation of data for bootstrapping is done by the function bootstrap_data(), which create a new STOMobs object including the bootstrap replicate data.
+The result of the call, bd, is a list wit STOMobs object.
+
+```{r ex06_06}
+
+n_boot<-1:3  # make 3 bootstrap replicates
+bd<-lapply(n_boot,function(x) bootstrap_data(s,seed=x,rep_id=x))
+
+print(bd[[1]],show_attributes=FALSE)
+
+print(bd[[2]],show_attributes=FALSE)
+
+```
+The calculation of the population diet is done for each STOMobs object as shown below. The result is a list of STOMdiet objects.
 
 ```{r ex06_07}
 
-n_boot<-1:3  # make 3 bootstrap replicates
-b<-lapply(n_boot,function(x) bootstrap_data(s,seed=x,rep_id=x))
-
 #convert observations into population diet
-bt<-lapply(b,do_boots)
+bt<-lapply(bd,do_boots)
+
+bt[[1]] # STOMdiet object 
+
+bt[[2]] # STOMdiet object 
+
 
 ```
 
-
-
+The STOMdiet can be changed. In this case predator and prey names are changed into English names and prey weights into relative weights
 
 ```{r ex06_08}
 
-# Change predator and prey names into English names and weights into relative weights
-
 bt2<-lapply(bt,function(x){
  x<-from_to_species_diet(x,pred_from_to=c("species","short"),prey_from_to=c("species","short"),
-                               sp_info_file=file.path(system.file( package = "FishStomachs"),"extdata",'species_info.csv'))
+      sp_info_file=file.path(system.file( package = "FishStomachs"),"extdata",'species_info.csv'))
  #Relative stomach contents
- x[['PREY']]<- x[['PREY']] %>% dplyr::group_by(key) %>% dplyr::mutate(prey_w=prey_w/sum(prey_w)*100) %>% dplyr::ungroup()
+ x[['PREY']]<- x[['PREY']] %>% dplyr::group_by(key) %>% 
+   dplyr::mutate(prey_w=prey_w/sum(prey_w)*100) %>% dplyr::ungroup()
  return(x)
 
 })
+
+# change to English names in the source data for bootstrap, for a later merge
+ source<-from_to_species_diet(s,pred_from_to=c("species","short"),prey_from_to=c("species","short"),
+    sp_info_file=file.path(system.file( package = "FishStomachs"),"extdata",'species_info.csv'))
+
+
+```
+The estimated diets for each bootstrap replicates are different as shown below, where the two first replicates are compared.
+The size of the bubbles indicate the difference, d1-d2,  between the two diets. Red is negative, green is positive and blue shows that data are missing in one of the two sets.
+
+```{r ex06_09}
 
 # comparison of two replicates
 plotdif(d1=bt2[[1]],d2=bt2[[2]],show_plot=TRUE,cut_pred_size=c(1,4),cut_prey_size=c(2,4),addTitle=TRUE,
@@ -211,10 +230,10 @@ plotdif(d1=bt2[[1]],d2=bt2[[2]],show_plot=TRUE,cut_pred_size=c(1,4),cut_prey_siz
 ```
 
 
-```{r ex06_09}
+Missing prey and prey size combination in the bootstrap replicates can be filled in with a selected value, in this case with zero.
+```{r ex06_10}
 
-# add zero prey weight for the combinations of prey species and prey sizes that may be missing from some replicates
-bt3<-add_missing_boots(bt2)
+bt3<-add_missing_boots(bt2, mis_value=0)
 
 plotdif(d1=bt3[[1]],d2=bt3[[2]],show_plot=TRUE,cut_pred_size=c(1,4),cut_prey_size=c(2,4),addTitle=TRUE,
         tAngle=90, relative=FALSE, maxDif=3,
@@ -222,28 +241,42 @@ plotdif(d1=bt3[[1]],d2=bt3[[2]],show_plot=TRUE,cut_pred_size=c(1,4),cut_prey_siz
 
 ```
 
-
-```{r ex06_10}
+Plots of the bootstrapped diet are available. In the case below, a subset of data the replicates are first made, and the distribution of the individual replicates are shown, by prey species and their size.
+```{r ex06_11}
 
 # sub set for plot
 bt4<-lapply(bt3,function(x){
   subset(x,pred_name=='Cod' &  pred_size=='0400-0499' & stratum_time=='1991-Q1')
 })
 
-
 plotboots.size(b=bt4,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(2,4),addTitle=TRUE,tAngle=90)
 
 ```
 
+In another plot, prey sizes are combined, and the plot show the distribution of prey weight by prey species and predator size.
 
-```{r ex06_11}
+
+```{r ex06_12}
 # sub set for plot
 bt4<-lapply(bt3,function(x){
-  subset(x,pred_name=='Cod' & stratum_time=='1991-Q1' & !(pred_size %in% c('0100-0149','0150-0249')))
+  subset(x,pred_name=='Cod' & stratum_time=='1991-Q1' & !(pred_size %in% c('0100-0149','0150-0199')))
 })
 
 
-plotboots(b=bt4,show_plot=TRUE,cut_pred_size=c(2,4),addTitle=TRUE,tAngle=90)
+plotboots(b=bt4,show_plot=TRUE,cut_pred_size=c(1,4),addTitle=TRUE,tAngle=90)
+
+```
+
+
+
+The bootstrap mean and variance from replicates are calculated by a call to bootsMean(). See help(bootsMean) for more information.
+```{r ex06_13}
+
+bb<-bootsMean(b=bt3,min_prey=0.01,source=source,by_prey_size=FALSE)
+head(bb)
+
+bb<-bootsMean(b=bt3,min_prey=0.01,source=source,by_prey_size=TRUE)
+head(bb)
 
 ```
 

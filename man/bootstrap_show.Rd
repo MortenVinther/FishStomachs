@@ -4,12 +4,18 @@
 \alias{bootstrap_show}
 \title{Show bootstrap stratification.}
 \usage{
-bootstrap_show(s, show = c("strata", "sample")[1])
+bootstrap_show(
+  s,
+  show = c("strata", "sample")[1],
+  vari = c("stomach", "sample")[1]
+)
 }
 \arguments{
 \item{s}{Stomach data set of class STOMobs.}
 
 \item{show}{Show either number of stomachs per strata or number of stomachs per samples available for bootstrapping.}
+
+\item{vari}{Variable, number of stomachs or number of samples}
 }
 \value{
 table Information on data available for bootstrapping

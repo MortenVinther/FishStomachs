@@ -35,22 +35,39 @@ bootstrap_data<-function(s,nfac=1,replace=TRUE,seed=0,rep_id=1) {
   as_STOMobs(x,new_pred_var=c('rep_id','n_boot'))
 }
 
+
+#' Add variables for bootstrapping stratification.
+#'
+#' @title Add bootstrap stratification variables.
+#' @param s Stomach data set of class STOMobs.
+#' @param show Show either number of stomachs per strata or number of stomachs per samples available for bootstrapping.
+#' @param vari Variable, number of stomachs or number of samples
+#' @return Stomach data set of class STOMobs with added variable boots_strata and boots_id.
+#' @export
+#' @examples \dontrun{bootstrap_addVar(stom)}
+bootstrap_addVar<-function(s) {
+  control<-get_control(s)
+  s[['PRED']]<- s[['PRED']] %>%
+    dplyr::mutate(boots_id=eval(control@bootstrapping$boots_id),
+                  boots_strata=eval(control@bootstrapping$boots_strata))
+  update.STOMobs(s)
+}
+
+
 #' Show stratification specified by control object, see (   ).
 #'
 #' @title Show bootstrap stratification.
 #' @param s Stomach data set of class STOMobs.
 #' @param show Show either number of stomachs per strata or number of stomachs per samples available for bootstrapping.
+#' @param vari Variable, number of stomachs or number of samples
 #' @return table Information on data available for bootstrapping
 #' @export
 #' @examples \dontrun{check_for_missing_info_before_strata_aggregation(stom)}
-bootstrap_show<-function(s,show=c("strata",'sample')[1]) {
-  control<-get_control(s)
-  a<- s[['PRED']] %>%
-    dplyr::mutate(boots_id=eval(control@bootstrapping$boots_id),
-                  boots_strata=eval(control@bootstrapping$boots_strata))
-  if ("pred_l" %in% names(a)) a$size<-a$pred_l else a$size<-a$pred_size
- if (show=="strata") return(xtabs(n_tot ~boots_strata+pred_size+pred_name,data=a ))
- if (show=="sample") return(xtabs(n_tot ~boots_id+pred_size+pred_name,data=a ))
+bootstrap_show<-function(s,show=c("strata",'sample')[1],vari=c("stomach","sample")[1]) {
+  if (show=="strata" & vari=="stomach") return(xtabs(n_tot ~boots_strata+pred_size+pred_name,data=s[['PRED']])) else
+  if (show=="sample" & vari=="stomach") return(xtabs(n_tot ~boots_id+pred_size+pred_name,data=s[['PRED']])) else
+  if (show=="strata" & vari=="sample")  return(xtabs(      ~boots_strata+pred_size+pred_name,data=s[['PRED']])) else
+  if (show=="sample" & vari=="sample")  return(xtabs(      ~boots_id+pred_size+pred_name,data=s[['PRED']]))
 }
 
 
@@ -170,7 +187,7 @@ plotboots<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle
     dplyr::mutate(year=as.integer(eval(control@strata_year_back)),
                   quarter=as.integer(eval(control@strata_quarter_back)),
                   pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2])) %>%
-                  dplyr::group_by(stratum_time,pred_name, pred_size,n_tot,prey_name,rep_id) %>%
+                  dplyr::group_by(stratum_time,pred_name, pred_size,prey_name,rep_id) %>%
                        dplyr::summarise(prey_w=sum(prey_w)) %>%
                   dplyr::ungroup()
 
@@ -181,11 +198,141 @@ plotboots<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle
       scale_fill_manual(  values = allNames,name='Prey')+
       geom_histogram(col=Colours,bins=bins)+
      # geom_histogram(col=Colours,binwidth = function(x) 2 * IQR(x) / (length(x)^(1/3)))+
-
       labs(x='Prey weight %',y='Freqency',title=tit)+
       theme(axis.text.x = element_text(angle = tAngle, vjust = 0.5 ),legend.position = 'none')
     if (show_plot) suppressWarnings(print(a)) else return(a)
   })
   if (show_plot) return() else return(out)
+}
+
+
+#' Statistics from bootstrap replicates.
+#'
+#' @param b Bootstrap diet data set of class STOMdiet.
+#' @param min_prey prey weight value for missing combination of preys and prey sizes.
+#' @param by_prey_size Logical for calculating mean and variance by prey size. FALSE provides statistics by prey species.
+#' @return Data set with mean and variance of diets and fit to Dirichlet distribution.
+#' \preformatted{Output includes the variables
+#'    nboots    Number of bootstrap replicates.
+#'    year      Year
+#'    quarter   Quarter of the year
+#'    pred_name Predator name
+#'    pred_size Predator size
+#'    prey      Prey, prey name and size, if used
+#'    prey_name Prey name
+#'    prey_size Prey size
+#'    n_prey_sp Number of "preys" observed
+#'    param     Estimated parameters assuming a Dirichlet distribution of bootstrap replicates
+#'    phi       Estimated precision parameter (sum of param from the Dirichlet distribution)
+#'    mu        Estimated mean value from the Dirichlet distribution
+#'    mean_w    Mean value of prey weights (proportions)
+#'    sd_w      Standard deviation of prey weights (proportions)
+#'    boots_strata  Strata used for bootstrap
+#'    n_stom    Number of stomachs available before bootstrap ( from the \code{source} data)
+#'    n_sample  Number of samples available before bootstrap
+#'  }
+#' @export
+bootsMean<-function(b,min_prey=0.01,source,by_prey_size=FALSE) {
+  key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-year<-NULL
+  allNames<-prey_name<-prey_size<-stratum_time<-NULL
+
+  #adapted from package Compositional
+  dirichlet<-function (x) {
+    n <- dim(x)[1]
+    z <- log(x)
+    loglik <- function(param, z, n) {
+      param <- exp(param)
+      -n * lgamma(sum(param)) + n * sum(lgamma(param)) - sum(z %*% (param - 1))
+    }
+    diriphi <- function(param, z, n) {
+      phi <- exp(param[1])
+      b <- c(1, exp(param[-1]))
+      b <- b/sum(b)
+      -n * lgamma(phi) + n * sum(lgamma(phi * b)) - sum(z %*% (phi * b - 1))
+    }
+
+    oop <- options(warn = -1)
+    on.exit(options(oop))
+    da <- nlm(diriphi, c(10, Rfast::colmeans(x)[-1]), z = z, n = n, iterlim = 5000)
+    da <- optim(da$estimate, diriphi, z = z, n = n, control = list(maxit = 5000), hessian = TRUE)
+    phi <- exp(da$par[1])
+    a <- c(1, exp(da$par[-1]))
+    a <- a/sum(a)
+    result <- list(loglik = -da$value, phi = phi, mu = a,
+                   param = phi * a)
+
+    result
+  }
+
+
+  control<-attr(b[[1]],'control')
+  # to one data frame
+  x<-do.call(rbind,lapply(b,as.data.frame))
+  if (by_prey_size) x$prey_name<-as.factor(paste( x$prey_name,x$prey_size,sep=':::') )
+
+  # calculate year and quarter from specifications, and sum up by prey if required
+  x<-x %>%
+    dplyr::mutate(year=as.integer(eval(control@strata_year_back)),
+                  quarter=as.integer(eval(control@strata_quarter_back))) %>%
+    dplyr::group_by(year,quarter,pred_name, pred_size,prey_name,rep_id) %>%
+    dplyr::summarise(prey_w=sum(prey_w),.groups="keep") %>%
+    dplyr::ungroup() %>% filter(!is.na(prey_w))
+
+  out<-by(x,list(x$pred_name,x$pred_size,x$year,x$quarter),function(x) {
+    x[x$prey_w==0,'prey_w']<-min_prey
+    #rescale to 1.00
+    x<-x %>% group_by(year,quarter,pred_name, pred_size,rep_id) %>%
+      dplyr::mutate(prey_w=prey_w/sum(prey_w))
+
+    x<-droplevels(x)
+    preys<-levels(x$prey_name)
+
+    xm<- x %>% dplyr::group_by(year,quarter,pred_name, pred_size,prey_name) %>%
+      dplyr::summarise(mean_w=mean(prey_w),sd_w=sd(prey_w),n=n(),.groups="keep") %>%  dplyr::ungroup()
+
+    xx<-tidyr::pivot_wider(x,values_from=prey_w,names_from=prey_name)  %>% dplyr::ungroup()
+    xx<-dplyr::select(xx,all_of(preys))
+    xx<-as.matrix(xx)
+    a<-try(dirichlet(xx),silent=TRUE)
+    a<-append(a,list(preys=preys))
+    a<-append(a,list(empirical=xm))
+  })
+
+  b<-lapply(out,function(x) if (is.null(x$loglik))
+    data.frame(nboots=x$empirical$n,year=x$empirical$year,quarter=x$empirical$quarter,
+               pred_name=x$empirical$pred_name,pred_size=x$empirical$pred_size,
+               prey=x$preys,n_prey_sp=length(x$preys),phi=NA,param=NA,mu=NA,
+               mean_w=x$empirical$mean_w,sd_w=x$empirical$sd_w) else
+
+     data.frame(nboots=x$empirical$n,year=x$empirical$year,quarter=x$empirical$quarter,
+                pred_name=x$empirical$pred_name,pred_size=x$empirical$pred_size,
+                prey=x$preys,n_prey_sp=length(x$preys),phi=x$phi,param=x$param,mu=x$mu,
+                mean_w=x$empirical$mean_w,sd_w=x$empirical$sd_w)
+  )
+  out<-do.call(rbind,b)
+  if (missing(source)) stop('A source (STOMobs object) must be be provided')
+
+   samp<-left_join(
+    bootstrap_show(source,show=c("strata",'sample')[1],vari=c("stomach","sample")[1]) %>%
+      as.data.frame() %>% filter(Freq>0) %>% rename(n_stom=Freq),
+    bootstrap_show(source,show=c("strata",'sample')[1],vari=c("stomach","sample")[2]) %>%
+      as.data.frame() %>% filter(Freq>0) %>% rename(n_sample=Freq),
+    by = c("boots_strata", "pred_size", "pred_name")
+   )
+   aaa<-right_join(select(source[["PRED"]],boots_strata,pred_size,pred_size_class,year,quarter)%>%
+                    unique(),samp,by=c("boots_strata","pred_size"))
+   out<-left_join(out,aaa,by = c("year", "quarter", "pred_name", "pred_size"))
+
+  if (by_prey_size) {
+    xx<-matrix(unlist(strsplit(out$prey,':::')),ncol=2,byrow=TRUE)
+    out$prey_name<-xx[,1]
+    out$prey_name<-factor(out$prey_name,levels=levels(source[['PREY']]$prey_name))
+    out$prey_size<-xx[,2]
+    out$prey_size<-factor(out$prey_size,levels=levels(source[['PREY']]$prey_size))
+  } else  {
+    out$prey_name<-factor(out$prey,levels=levels(source[['PREY']]$prey_name))
+    out$prey_size<-'All'
+  }
+ return(dplyr::as_tibble(out))
 }
 
