@@ -1,24 +1,24 @@
+#' Transform diet data (of class STOMdiet) into data used for the SMS model.
 #' @title  Produce input for the SMS model.
 #'
-#' Transform diet data (of class STOMdiet) into data used for the SMS model.
-#'
+#' @param diet Object of class STOMdiet.
 #' The transformation uses values provided by the list \code{control@model_options}
-#' \preformatted{The list must include the names:
-#'  "delete_small": logical, delete input with relative stomach contents weight lower than "min_value".
+#' The list must include the names
+#' \preformatted {
+#'   "delete_small": logical, delete input with relative stomach contents weight lower than "min_value".
 #'                 If TRUE values smaller than "min_values" are deleted.
 #'                 If FALSE values lower than "min_value" are increased to "min_value".
-#'  "min_value": minimum relative stomach contents weight (see above)
-#'  "insert_mid_value": logical, insert dummy value ("mid_value") where observations for a prey
+#'   "min_value": minimum relative stomach contents weight (see above)
+#'   "insert_mid_value": logical, insert dummy value ("mid_value") where observations for a prey
 #'                 within a size range are missing
-#'  "mid_value": value used for missing mid-values.
-#'  "insert_tails", logical for insertion of dummy values("tail_value") for the prey size class
+#'   "mid_value": value used for missing mid-values.
+#'   "insert_tails", logical for insertion of dummy values("tail_value") for the prey size class
 #'                which are lower and higher than the observed size range for a prey
-#'  "tail_value":  value used for missing tail-values.
-#'
+#'   "tail_value":  value used for missing tail-values.
+#' }
 #'  In addition a number for each predator and prey species is added (and later used for ordering of species).
 #'  data for that is included in the CSV file sp_info_file.
-#'  }
-#' @param diet Object of class STOMdiet.
+#'
 #' @param length_classes_file bla
 #' @param sp_info_file CSV file with the fields used arranging order of predator and prey.
 #' The file must include two fields \code{code} (predator and prey names used in input)

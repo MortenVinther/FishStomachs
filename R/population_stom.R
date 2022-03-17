@@ -4,8 +4,8 @@
 #' @param stom Stomach data set of class STOMobs.
 #' @return logical
 #' @export
-#' @examples \dontrun{check_for_missing_info_before_strata_aggregation(stom)}
-check_for_missing_info_before_strata_aggregation<-function(stom) {
+#' @examples \dontrun{check_before_strata_aggregation(stom)}
+check_before_strata_aggregation<-function(stom) {
 
   control<-attr(stom,'control')
   mis_l <- control@mis_l
@@ -169,7 +169,7 @@ calc_population_stom<-function(s,verbose=FALSE) {
   #  s<-tst2
   fish_id<-key<-mean_cpue<-n_tot<-pred_cpue<-pred_l_mean<-pred_name<-pred_size<-pred_size_class<-prey_name<-prey_size<-prey_size_class<-prey_w<-sample_id<-stratum_area<-stratum_sub_area<-stratum_time<-sum_lw<-sum_w<-sum_w_fac<-w_fac_area<-w_fac_sample<-w_fac_sub_area<-NULL
   options(dplyr.summarise.inform = FALSE)
-  stopifnot(check_for_missing_info_before_strata_aggregation(s))
+  stopifnot(check_before_strata_aggregation(s))
   control<-attr(s,'control')
   min_prey_length<-control@min_prey_length
   mis_l<-control@mis_l

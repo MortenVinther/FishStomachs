@@ -61,9 +61,9 @@ update.STOMobs <- function(stom){
 #'
 #' @title Convert a data.frame into a STOMobs object
 #' @param d Stomach data set on data.frame format. d must have been created from a call to of class as.data.frame().
-#' @param new_pred_var Variable names to be added to the Predator data set in STOMobs.
+#' @param new_pred_var Variable names to be added to the predator (PRED) data set in STOMobs.
 #'  which were added the call to as.data.frame()
-#' @param new_prey_var Variable names to be added to the prey data set in STOMobs
+#' @param new_prey_var Variable names to be added to the prey (PREY) data set in STOMobs
 #' @return STOMobs object
 #' @export
 #' @examples \dontrun{a<-as_STOMobs(df); a}
@@ -214,6 +214,7 @@ length.STOMobs <- function(x)nrow(x[['PRED']])
 #' @method summary STOMobs
 #' @param x Diet data of class STOMdiet.
 #' @param level Level of details.
+#' @examples \dontrun{summary(s,level=2)}
 #' @export
 summary.STOMobs <- function(x, level=1){
   stopifnot('n_tot' %in% names(x[['PRED']]))
@@ -244,6 +245,7 @@ summary.STOMobs <- function(x, level=1){
 #' @title Combine multiple STOMobs objects
 #' @param ... STOMobs objects to put together.
 #' @return Combined dataset of class STOMobs.
+#' @examples \dontrun{ab<-c(a,b)}
 #' @method c STOMobs
 #' @export
 ## ---------------------------------------------------------------------------

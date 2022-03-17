@@ -1,12 +1,12 @@
-#' Add WoRMS Aphia Id where missing
-#' @title Add WoRMS Aphia Id to predator or prey species where missing
+#' @title  Add WoRMS Aphia Id
+#' Add WoRMS Aphia Id to predator or prey species where missing.
 #' @param stom Stomach data set of class STOMobs, from e.g. \link{read_exchange_data}).
 #' @param Worms_Aphia_ID File Name including WoRMS Aphia ID by latin (or other) predator or prey name.file 'WoRM_AphiaID.csv' in the package /inst directory is used as default.
 #' @param predator_or_prey Add missing Aphia ID for predator | prey.
 #' @param stop_if_errror Logical for stopping if AphiaID is not found for all.
 #' @param delete_first Delete all existing WoRMS Aphia Id before adding new
 #' @param verbose Show information on progress
-#' @param match_item Variable name in WoRM_AphiaID.csv ("item" | "scientific') used to assign WoRMS Aphia ID.
+#' @param match_item Variable name in WoRM_AphiaID.csv ("item" or "scientific') used to assign WoRMS Aphia ID.
 #' @return Stomach data on on internal format.
 #' @export
 #' @examples \dontrun{add_Aphia_ID(X)}

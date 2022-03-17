@@ -1,6 +1,5 @@
 #' Method to convert an object of class STOMdiet into a data.frame (and tibble).
-#' Information on sampling and predators are copied to each record of prey information.
-#' @title Convert a STOMdiet into a data.frame
+#' @title Convert STOMdiet into a data.frame
 #' @param diet Diet dataset of class STOMdiet.
 #' @method as.data.frame STOMdiet
 #' @exportS3Method
@@ -26,7 +25,7 @@ as.data.frame.STOMdiet <- function(diet){
 #' @param new_prey_var Variable names to be added to the prey data set in STOMdiet
 #' @return STOMdiet object
 #' @export
-#' @examples \dontrun{a<-as_STOMdiet(df); a}
+#' @examples \dontrun{a<-as_STOMdiet(df); head(a)}
 as_STOMdiet <- function(d,new_pred_var,new_prey_var){
 
   pn<-names(d)
@@ -131,6 +130,7 @@ subset.STOMdiet <- function(x,...,na_rm=TRUE){
 #' @title Combine multiple STOMdiet objects
 #' @param ... STOMdiet objects to put together.
 #' @return Combined dataset of class STOMdiet.
+#' @examples \dontrun{ab<-c(a,b)}
 #' @method c STOMdiet
 #' @export
 # ---------------------------------------------------------------------------

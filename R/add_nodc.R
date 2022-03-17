@@ -1,5 +1,6 @@
-#' Add NODC Id where missing
-#' @description Add NODC 10 digit numeric Id to predator or prey species where missing.
+#' @title Add NODC Id where missing
+#'
+#' Add NODC 10 digit numeric Id to predator or prey species where missing.
 #' The NODC Taxonomic Code was based on 12 digit "intelligent" code numbers.
 #' By "intelligent" code numbers we mean that information about taxonomy was built
 #' into the codes through the use of 2-digit couplets to represent one or more levels
@@ -8,15 +9,14 @@
 #' The numerical hierarchy of the code numbers therefore reflected taxonomic hierarchy as
 #' well, and his hierarchy is useful for grouping species with e.g. similar energy contents,
 #' or within taxonomic model groups.
+
 #' @param stom Stomach data set of class STOMobs, from e.g. \link{read_exchange_data}.
-#' @param NODC_ID File Name including latin (or other) predator or prey name
-#'  (column species and column NODC).
-#' File 'NODC_latin.csv' in the package /inst directory is used as default.
-#' @param predator_or_prey Add missing NODC for "predator" | "prey".
-#' @param stop_if_errror  Logical for stopping if NODC is not found for all.
+#' @param NODC_ID File Name including latin (or other) predator or prey name (column species and column NODC). File 'NODC_latin.csv' in the package /inst directory is used as default.
+#' @param predator_or_prey Add missing NODC for "predator" or "prey".
+#' @param stop_if_errror  Logical for stopping if NODC is not found.
 #' @param delete_first Logical for deleting exiting predator or prey NODC.
 #' @param verbose Show inserted NODC values.
-#' @return Stomach data on on internal format.
+#' @return Stomach data of class STOMobs with added \code{pred_nodc} or code{pred_nodc} variables.
 #' @export
 #' @examples \dontrun{add_NODC_ID(s)}
 add_NODC_ID <- function(stom, NODC_ID, predator_or_prey = c("predator", "prey")[2], stop_if_errror = FALSE,delete_first=FALSE,verbose=FALSE) {
