@@ -272,11 +272,28 @@ plotboots(b=bt4,show_plot=TRUE,cut_pred_size=c(1,4),addTitle=TRUE,tAngle=90)
 The bootstrap mean and variance from replicates are calculated by a call to bootsMean(). See help(bootsMean) for more information.
 ```{r ex06_13}
 
-bb<-bootsMean(b=bt3,min_prey=0.01,source=source,by_prey_size=FALSE)
+bb<-bootsMean(b=bt4,min_prey=0.01,source=source,by_prey_size=FALSE)
 head(bb)
 
-bb<-bootsMean(b=bt3,min_prey=0.01,source=source,by_prey_size=TRUE)
-head(bb)
+plotboots(b=bt4,show_plot=TRUE,cut_pred_size=c(1,4),addTitle=TRUE,tAngle=90)
+
+
+bb<-bootsMean(b=bt4,min_prey=0.01,source=source,by_prey_size=TRUE)
+plotboots(b=bt4,show_plot=TRUE,cut_pred_size=c(1,4),addTitle=TRUE,tAngle=90)
+
+
+```
+
+With more replicates, loaded from data set. 
+
+```{r ex06_14}
+
+load(file=file.path(system.file( package = "FishStomachs"),"extdata","bt4.Rdata"),verbose=TRUE)
+
+bb<-bootsMean(b=bt4,min_prey=0.01,source=source,by_prey_size=FALSE,do_Diri=TRUE)
+head(select(bb,prey_name, phi,param,mu,n_sample))
+
+plotboots(b=bt4,show_plot=TRUE,cut_pred_size=c(1,4),addTitle=TRUE,tAngle=90,statistics=bb,freq=FALSE)
 
 ```
 

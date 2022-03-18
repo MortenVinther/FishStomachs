@@ -2,7 +2,7 @@
 % Please edit documentation in R/bootstrapping.R
 \name{bootstrap_data}
 \alias{bootstrap_data}
-\title{Check if data are ready for aggregation.}
+\title{Make bootstrap replicates.}
 \usage{
 bootstrap_data(s, nfac = 1, replace = TRUE, seed = 0, rep_id = 1)
 }
@@ -18,11 +18,11 @@ bootstrap_data(s, nfac = 1, replace = TRUE, seed = 0, rep_id = 1)
 \item{rep_id}{Replicate identifier}
 }
 \value{
-s Bootstrapped stomach data set of class STOMobs.
+Bootstrapped stomach data (replicate) of class STOMobs.
 }
 \description{
-Extract bootstrap data from stratification specified by control object, see (   ).
+Make bootstrap replicates of STOMobs object from stratification specified by control object, see (\link{STOMcontrol-class}  ).
 }
 \examples{
-\dontrun{check_for_missing_info_before_strata_aggregation(stom)}
+\dontrun{b<-bootstrap_data(s)}
 }

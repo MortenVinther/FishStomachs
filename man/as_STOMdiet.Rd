@@ -21,5 +21,5 @@ STOMdiet object
 Method to convert an object of class data.frame into an object of class STOMdiet.
 }
 \examples{
-\dontrun{a<-as_STOMdiet(df); a}
+\dontrun{a<-as_STOMdiet(df); head(a)}
 }

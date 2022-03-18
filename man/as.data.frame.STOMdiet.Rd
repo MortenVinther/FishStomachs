@@ -2,7 +2,7 @@
 % Please edit documentation in R/STOMdiet.R
 \name{as.data.frame.STOMdiet}
 \alias{as.data.frame.STOMdiet}
-\title{Convert a STOMdiet into a data.frame}
+\title{Convert STOMdiet into a data.frame}
 \usage{
 \method{as.data.frame}{STOMdiet}(diet)
 }
@@ -14,5 +14,4 @@ STOMdiet object transformed to a "flat" data.frame.
 }
 \description{
 Method to convert an object of class STOMdiet into a data.frame (and tibble).
-Information on sampling and predators are copied to each record of prey information.
 }

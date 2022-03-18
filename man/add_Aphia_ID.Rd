@@ -2,7 +2,8 @@
 % Please edit documentation in R/add_aphia.R
 \name{add_Aphia_ID}
 \alias{add_Aphia_ID}
-\title{Add WoRMS Aphia Id to predator or prey species where missing}
+\title{Add WoRMS Aphia Id
+Add WoRMS Aphia Id to predator or prey species where missing.}
 \usage{
 add_Aphia_ID(
   stom,
@@ -27,13 +28,14 @@ add_Aphia_ID(
 
 \item{verbose}{Show information on progress}
 
-\item{match_item}{Variable name in WoRM_AphiaID.csv ("item" | "scientific') used to assign WoRMS Aphia ID.}
+\item{match_item}{Variable name in WoRM_AphiaID.csv ("item" or "scientific') used to assign WoRMS Aphia ID.}
 }
 \value{
 Stomach data on on internal format.
 }
 \description{
-Add WoRMS Aphia Id where missing
+Add WoRMS Aphia Id
+Add WoRMS Aphia Id to predator or prey species where missing.
 }
 \examples{
 \dontrun{add_Aphia_ID(X)}

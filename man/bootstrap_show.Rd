@@ -24,5 +24,5 @@ table Information on data available for bootstrapping
 Show stratification specified by control object, see (   ).
 }
 \examples{
-\dontrun{check_for_missing_info_before_strata_aggregation(stom)}
+\dontrun{bootstrap_show(s)}
 }

@@ -14,3 +14,6 @@
 \description{
 Summary of number of stomachs
 }
+\examples{
+\dontrun{summary(s,level=2)}
+}

@@ -37,13 +37,13 @@ This function makes length classes defined from a lower and an upper value of le
 The definition of length classes is given in an input file \code{inp_file},
 
 see this table
-|  l  | Species | y1   | y2   | q1 |  q2 |
-| --- | ------- | ---- | ---- | -- | --- |
-|  50 | ALL     | 1991 | 2013 | 1  |   4 |
-|  60 | ALL     | 1991 | 2013 | 1  |   4 |
-|  70 | ALL     | 1991 | 2013 | 1  |   4 |
-|  80 | ALL     | 1991 | 2013 | 1  |   4 |
-
+\tabular{rrrrrr}{
+\strong{l} \tab \strong{Species} \tab \strong{y1} \tab \strong{y2} \tab \strong{q1} \tab \strong{q2} \cr
+50 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
+60 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
+70 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
+b   80 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
+}
 where
 l is the length used to define length classes, e.g. the first two lines will produce the sizes "050-059" and "060-69".
 Species is the species name for the length classes. If Species=ALL, all the species will get the same lenngth classes

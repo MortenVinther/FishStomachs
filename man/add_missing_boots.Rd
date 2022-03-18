@@ -2,7 +2,7 @@
 % Please edit documentation in R/bootstrapping.R
 \name{add_missing_boots}
 \alias{add_missing_boots}
-\title{Add missing prey, prey size combination}
+\title{Add missing prey and prey size combination for bootstrap replicates}
 \usage{
 add_missing_boots(bt, mis_value = 0)
 }
@@ -12,11 +12,11 @@ add_missing_boots(bt, mis_value = 0)
 \item{mis_value}{Value for missing prey weights.}
 }
 \value{
-Bootstrapped diet data with inserted value for missing prey, prey size combinations
+Bootstrapped diet data with inserted value for missing prey and prey size combinations
 }
 \description{
-Add missing prey, prey size combination
+Add missing prey and prey size combination for bootstrap replicates
 }
 \examples{
-\dontrun{check_for_missing_info_before_strata_aggregation(stom)}
+\dontrun{s<-add_missing(boots(s,value=NA))}
 }

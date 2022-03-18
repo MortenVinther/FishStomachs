@@ -2,7 +2,17 @@
 % Please edit documentation in R/add_nodc.R
 \name{add_NODC_ID}
 \alias{add_NODC_ID}
-\title{Add NODC Id where missing}
+\title{Add NODC Id where missing
+
+Add NODC 10 digit numeric Id to predator or prey species where missing.
+The NODC Taxonomic Code was based on 12 digit "intelligent" code numbers.
+By "intelligent" code numbers we mean that information about taxonomy was built
+into the codes through the use of 2-digit couplets to represent one or more levels
+of the taxonomic hierarchy. For example, a species assigned a 10-digit code would
+belong to the genus represented by the first 8 digits of the code.
+The numerical hierarchy of the code numbers therefore reflected taxonomic hierarchy as
+well, and his hierarchy is useful for grouping species with e.g. similar energy contents,
+or within taxonomic model groups.}
 \usage{
 add_NODC_ID(
   stom,
@@ -16,22 +26,22 @@ add_NODC_ID(
 \arguments{
 \item{stom}{Stomach data set of class STOMobs, from e.g. \link{read_exchange_data}.}
 
-\item{NODC_ID}{File Name including latin (or other) predator or prey name
-(column species and column NODC).
-File 'NODC_latin.csv' in the package /inst directory is used as default.}
+\item{NODC_ID}{File Name including latin (or other) predator or prey name (column species and column NODC). File 'NODC_latin.csv' in the package /inst directory is used as default.}
 
-\item{predator_or_prey}{Add missing NODC for "predator" | "prey".}
+\item{predator_or_prey}{Add missing NODC for "predator" or "prey".}
 
-\item{stop_if_errror}{Logical for stopping if NODC is not found for all.}
+\item{stop_if_errror}{Logical for stopping if NODC is not found.}
 
 \item{delete_first}{Logical for deleting exiting predator or prey NODC.}
 
 \item{verbose}{Show inserted NODC values.}
 }
 \value{
-Stomach data on on internal format.
+Stomach data of class STOMobs with added \code{pred_nodc} or code{pred_nodc} variables.
 }
 \description{
+Add NODC Id where missing
+
 Add NODC 10 digit numeric Id to predator or prey species where missing.
 The NODC Taxonomic Code was based on 12 digit "intelligent" code numbers.
 By "intelligent" code numbers we mean that information about taxonomy was built

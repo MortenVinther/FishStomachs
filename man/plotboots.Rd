@@ -7,11 +7,13 @@
 plotboots(
   b,
   show_plot = TRUE,
+  freq = TRUE,
   cut_pred_size = c(1, 10),
   addTitle = FALSE,
   tAngle = 90,
-  Colours = "red",
-  maxbins = 50
+  Colours = c("red", "green", "blue"),
+  maxbins = 75,
+  statistics
 )
 }
 \arguments{
@@ -19,15 +21,19 @@ plotboots(
 
 \item{show_plot}{Show the resulting graphs on screen (or save the results for later processing)}
 
+\item{freq}{Logical, show frequency (or density).}
+
 \item{cut_pred_size}{From to in substring of predator size}
 
 \item{addTitle}{Add predator name on top of the plot.}
 
 \item{tAngle}{Angle X-axis text.}
 
-\item{Colours}{Colours for frequncy.}
+\item{Colours}{Colours for frequency.}
 
 \item{maxbins}{maximum number of bins in plot.}
+
+\item{add_expect}{Logical, add density from Dirichlet.}
 }
 \value{
 nothing (if show_plot=TRUE) or a list of plots.

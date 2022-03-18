@@ -25,3 +25,6 @@ added to the remaining datasets (filled with NA) and a warning will be triggered
 The control attributes from the first STOMobs will be used for the resulting combined STOMobs
 The R-Code is modified from the DATRAS R-package (Thanks to Casper Berg)
 }
+\examples{
+\dontrun{ab<-c(a,b)}
+}

@@ -4,7 +4,7 @@
 #' @param diet Object of class STOMdiet.
 #' The transformation uses values provided by the list \code{control@model_options}
 #' The list must include the names
-#' \preformatted {
+#' \preformatted{
 #'   "delete_small": logical, delete input with relative stomach contents weight lower than "min_value".
 #'                 If TRUE values smaller than "min_values" are deleted.
 #'                 If FALSE values lower than "min_value" are increased to "min_value".

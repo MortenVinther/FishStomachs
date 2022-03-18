@@ -9,10 +9,10 @@ as_STOMobs(d, new_pred_var, new_prey_var)
 \arguments{
 \item{d}{Stomach data set on data.frame format. d must have been created from a call to of class as.data.frame().}
 
-\item{new_pred_var}{Variable names to be added to the Predator data set in STOMobs.
+\item{new_pred_var}{Variable names to be added to the predator (PRED) data set in STOMobs.
 which were added the call to as.data.frame()}
 
-\item{new_prey_var}{Variable names to be added to the prey data set in STOMobs}
+\item{new_prey_var}{Variable names to be added to the prey (PREY) data set in STOMobs}
 }
 \value{
 STOMobs object
