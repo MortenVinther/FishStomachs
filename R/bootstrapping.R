@@ -163,13 +163,13 @@ plotboots.size<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(
 #' @param cut_pred_size From to in substring of predator size
 #' @param show_plot Show the resulting graphs on screen (or save the results for later processing)
 #' @param freq Logical, show frequency (or density).
-#' @para add_expect Logical, add density from Dirichlet.
+#' @param add_expect Logical, add density from Dirichlet.
 #' @param addTitle Add predator name on top of the plot.
 #' @param tAngle Angle X-axis text.
 #' @param Colours Colours for frequency.
 #' @param maxbins maximum number of bins in plot.
 #' @return nothing (if show_plot=TRUE) or a list of plots.
-#' @importFrom ggplot2 ggplot facet_grid geom_histogram labs geom_text theme_minimal scale_fill_manual aes element_text element_line
+#' @importFrom ggplot2 ggplot facet_grid geom_histogram geom_line geom_vline labs geom_text theme_minimal after_stat scale_fill_manual aes element_text element_line
 #' @importFrom rlang .data
 #' @export
 plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=90,
@@ -179,12 +179,12 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 
   control<-attr(b[[1]],'control')
   if (!missing(statistics)) {
-    stat<-statistics %>% select(year, quarter,pred_name,pred_size,prey,prey_name,n_prey_sp,phi,mu,param,mean_w,sd_w) %>%
+    stat<-statistics %>% select(year, quarter,pred_name,pred_size,prey,prey_name,n_prey_sp,phi,mu,param,mean_w) %>%
       mutate(pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2]))
     addStat<-TRUE
   } else addStat<-FALSE
 
-  if (addStat) freq=FALSE
+  if (addStat) freq<-FALSE
 
   # to data frame
   x<-do.call(rbind,lapply(b,as.data.frame))
@@ -196,8 +196,7 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
                   quarter=as.integer(eval(control@strata_quarter_back)),
                   pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2])) %>%
     dplyr::group_by(stratum_time,year,quarter,pred_name, pred_size,prey_name,rep_id) %>%
-    dplyr::summarise(prey_w=sum(prey_w)/100) %>%
-    dplyr::ungroup()
+    dplyr::summarise(prey_w=sum(prey_w)/100) %>% dplyr::ungroup()
   if (addStat) {
     x<-left_join(x,stat,by = c("year", "quarter", "pred_name", "pred_size", "prey_name"))
   }
@@ -205,12 +204,12 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
   out<-by(x,list(x$pred_name,x$stratum_time),function(x) {
 
     if (addStat) {
-      df<- x %>% select(pred_size,prey_name,mu,phi,param) %>% unique() %>%
-          mutate(spl=factor(paste(pred_size,prey_name)))
-      xx<-seq(0.001,1,by=0.001)
-      df2 <- do.call("rbind", lapply(split(df, df$spl), function(x) {
-      data.frame(prey_w=xx,y=dbeta(xx, shape1 = x$param, shape2 = x$phi-x$param),pred_size=x$pred_size,prey_name=x$prey_name)
-      }))
+      df<- x %>% group_by(pred_size,prey_name,mu,phi,param) %>%
+        summarize(minPw=min(prey_w),maxPw=max(prey_w)) %>% ungroup()
+
+      df2<- df %>% group_by(pred_size,prey_name,mu,phi,param) %>%
+        summarize(prey_w=seq(from=max(0.001,minPw*0.9),to=min(0.99,maxPw*1.05),length.out=100),
+                  y=dbeta(prey_w, shape1 = param, shape2 = phi-param))  %>% ungroup()
     }
 
     if (addTitle) tit<- paste(as.character(x$stratum_time)[1] ,as.character(x$pred_name)[1]) else tit<-NULL
