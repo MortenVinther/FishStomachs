@@ -64,7 +64,7 @@ make_template_strata_weighting<-function(stom,strata=c('sub_strata','strata','to
    st_names<-c("pred_name","stratum_time","pred_size", "stratum_area","stratum_sub_area","sample_id")
    if (strata=='strata') {st_names <-head(st_names,-1);  file_n<-control@calc_strata$weigthing_factor_file }
    if (strata=='total')  {st_names <-head(st_names,-2) ; file_n<-control@calc_total$weigthing_factor_file}
-   stom <- stom[['PRED']] %>% dplyr::select(st_names) %>% dplyr::distinct()
+   stom <- stom[['PRED']] %>% dplyr::select(dplyr::all_of(st_names)) %>% dplyr::distinct()
 
   if (strata=='sub_strata') stom<-dplyr::mutate(stom,w_fac_sample=1)
   if (strata=='strata') stom<-dplyr::mutate(stom,w_fac_sub_area=1)
@@ -166,7 +166,7 @@ read_strata_weighting<-function(stom,strata=c('sub_strata','strata','total')[1])
 #'
 #'
 calc_population_stom<-function(s,verbose=FALSE) {
-  #  s<-tst2
+
   fish_id<-key<-mean_cpue<-n_tot<-pred_cpue<-pred_l_mean<-pred_name<-pred_size<-pred_size_class<-prey_name<-prey_size<-prey_size_class<-prey_w<-sample_id<-stratum_area<-stratum_sub_area<-stratum_time<-sum_lw<-sum_w<-sum_w_fac<-w_fac_area<-w_fac_sample<-w_fac_sub_area<-NULL
   options(dplyr.summarise.inform = FALSE)
   stopifnot(check_before_strata_aggregation(s))
@@ -202,9 +202,7 @@ calc_population_stom<-function(s,verbose=FALSE) {
   pred<-s[['PRED']]  %>% dplyr::mutate_if(is.factor,as.character)
   prey<-s[['PREY']]  %>% dplyr::mutate_if(is.factor,as.character)
 
-  #dplyr::filter(pred,stratum_time=='1981-Q2' & pred_size=='0150-0200')
-  #dplyr::left_join(dplyr::select(dplyr::filter(pred,stratum_time=='1981-Q2' & pred_size=='0150-0200'),sample_id,fish_id),prey)
-  # dplyr::filter(prey,is.na(prey_w))
+  n_samples<-pred %>% dplyr::group_by(stratum_time, pred_name,pred_size) %>% dplyr::summarize(n_sample=n()) %>% dplyr::ungroup()
 
   sc<-control@calc_sub_strata
   check_sc(sc,strata=c('sub_strata','strata','total')[1])
@@ -226,7 +224,6 @@ calc_population_stom<-function(s,verbose=FALSE) {
 
     #contents per stomach and include empty stomachs
   prey<-dplyr::left_join(pred,prey, by = c("sample_id", "fish_id"))
- # dplyr::filter(prey,stratum_time=='1981-Q2' & pred_size=='0150-0200')
   prey<-empty_stom(prey)  %>% dplyr::mutate(prey_w=prey_w/n_tot)
 
   prey<- dplyr::group_by(prey,stratum_sub_area, stratum_area, stratum_time,pred_name,pred_size,w_fac_sample,sample_id, fish_id, prey_name, prey_size_class,prey_size) %>%
@@ -374,9 +371,11 @@ calc_population_stom<-function(s,verbose=FALSE) {
   p<-dplyr::inner_join(pred,prey,by = c("stratum_time", "pred_name", "pred_size", "stratum_area")) %>% dplyr::ungroup() %>%
      dplyr::mutate(key=paste(stratum_area,pred_name,stratum_time,pred_size,sep='_')) %>% dplyr::filter(!is.na(prey_name))
 
+  p<-left_join(p,n_samples,by = c("stratum_time", "pred_name", "pred_size"))
+
   p<- p %>% dplyr::mutate_if(is.character,as.factor)
 
-  a <- list(PRED = dplyr::select(p,stratum_area,stratum_time,pred_name, pred_size, pred_size_class, n_tot, pred_l_mean,key) %>% dplyr::distinct() %>% arrange(key) ,
+  a <- list(PRED = dplyr::select(p,stratum_area,stratum_time,pred_name, pred_size, pred_size_class, n_tot, n_sample, pred_l_mean,key) %>% dplyr::distinct() %>% arrange(key) ,
             PREY = dplyr::select(p,key,prey_name, prey_size, prey_size_class, prey_w )  %>% arrange(key))
 
 

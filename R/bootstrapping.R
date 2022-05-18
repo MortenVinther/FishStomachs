@@ -146,7 +146,6 @@ plotboots.size<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(
     if (addTitle) tit<- paste(as.character(x$stratum_time)[1] ,as.character(x$pred_name)[1],as.character(x$pred_size)[1],sep=', ') else tit<-NULL
     a<-ggplot(x,aes(prey_w)) +
       facet_grid(vars(prey_name), vars(prey_size),scales = "free", drop = TRUE)+
-      scale_fill_manual(  values = allNames,name='Prey')+
       geom_histogram(col=Colours,bins=bins)+
       labs(x='Prey weight %',y='Freqency',title=tit)+
       theme(axis.text.x = element_text(angle = tAngle, vjust = 0.5 ),legend.position = 'none')
@@ -235,11 +234,12 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 
 #' Statistics from bootstrap replicates.
 #'
-#' @param b Bootstrap diet data set of class STOMdiet.
+#' @param b Bootstrap diet data set. List of elements of class STOMdiet.
 #' @param min_prey prey weight value for missing combination of preys and prey sizes.
+#' @param pointEst Diet data estimated without bootstrapping (point estimates ogf prey weights)
 #' @param by_prey_size Logical for calculating mean and variance by prey size. FALSE provides statistics by prey species.
 #' @param n_rep Selected replicates used. If n_rep is a number, 1:n_rep are used, If n_rep is a vector the provided replica numbers are used in the statistics
-#' @param do_Diri Logical for performing statistisc assuming the replicates are Dirichlet distributed.
+#' @param do_Diri Logical for performing statistics assuming the replicates are Dirichlet distributed.
 #' @return Data set with mean and variance of diets and fit to Dirichlet distribution. Output includes
 #' \tabular{ll}{
 #' \strong{Variable} \tab \strong{Contents} \cr
@@ -258,20 +258,21 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 #'  p_value   \tab p-value for Log-likelihood ratio test for the estimated Dirichlet \cr \tab mean vector describe the bootstrap data well.\cr
 #'  mean_w    \tab Mean value of prey weights (proportions).\cr
 #'  sd_w      \tab Standard deviation of prey weights (proportions).\cr
+#'  prey_w    \tab Point estimate of prey weight (proportions). \cr
 #'  strata    \tab Strata used for bootstrap.\cr
-#'  n_stom    \tab Number of stomachs available before bootstrap ( from the \code{source} data).\cr
+#'  n_stom    \tab Number of stomachs available before bootstrap ( from the \code{pointEst} data).\cr
 #'  n_sample  \tab Number of samples available before bootstrap.\cr
 #' }
 #' @importFrom Compositional diri.est dirimean.test
 #' @export
-bootsMean<-function(b,min_prey=0.01,source,by_prey_size=FALSE,n_rep=10000,do_Diri=FALSE) {
+bootsMean<-function(b,min_prey=0.01,pointEst,by_prey_size=FALSE,n_rep,do_Diri=FALSE) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-year<-NULL
   allNames<-prey_name<-prey_size<-stratum_time<-NULL
 
   control<-attr(b[[1]],'control')
   # to data frame
   x<-do.call(rbind,lapply(b,as.data.frame))
-  x<-subset(x,rep_id<=n_rep)
+  if (!missing(n_rep))  {if (length(n_rep)==1) x<-subset(x,rep_id<=n_rep) else  x<-subset(x,rep_id %in% n_rep)}
   if (by_prey_size) x$prey_name<-as.factor(paste( x$prey_name,x$prey_size,sep=':::') )
 
   # calculate year and quarter from specifications, and sum up by prey if required
@@ -317,27 +318,35 @@ bootsMean<-function(b,min_prey=0.01,source,by_prey_size=FALSE,n_rep=10000,do_Dir
   }
   )
   out<-do.call(rbind,b)
-  if (missing(source)) stop('A source (STOMobs object) must be be provided')
-    samp<-left_join(
-    bootstrap_show(source,show=c("strata",'sample')[1],vari=c("stomach","sample")[1]) %>%
-      as.data.frame() %>% filter(Freq>0) %>% rename(n_stom=Freq),
-    bootstrap_show(source,show=c("strata",'sample')[1],vari=c("stomach","sample")[2]) %>%
-      as.data.frame() %>% filter(Freq>0) %>% rename(n_sample=Freq),
-    by = c("boots_strata", "pred_size", "pred_name")
-   )
-   aaa<-right_join(select(source[["PRED"]],boots_strata,pred_size,pred_size_class,year,quarter)%>%
-                    unique(),samp,by=c("boots_strata","pred_size"))
-   out<-left_join(out,aaa,by = c("year", "quarter", "pred_name", "pred_size")) %>%
-        rename(strata=boots_strata)
+  if (missing(pointEst)) stop('A data set wth a point estimate of diet must be be provided')
+ # samp<-left_join(
+#    bootstrap_show(source,show=c("strata",'sample')[1],vari=c("stomach","sample")[1]) %>%
+#      as.data.frame() %>% filter(Freq>0) %>% rename(n_stom=Freq),
+#   bootstrap_show(source,show=c("strata",'sample')[1],vari=c("stomach","sample")[2]) %>%
+#      as.data.frame() %>% filter(Freq>0) %>% rename(n_sample=Freq),
+#    by = c("boots_strata", "pred_size", "pred_name")
+ #  )
+  pc<-get_control(pointEst)
+  p<-as.data.frame(pointEst)
+  if (by_prey_size) p$prey<-paste(p$prey_name,p$prey_size,sep=':::') else p$prey<-p$prey_name
+
+  p<-p %>% mutate(year=as.integer(eval(pc@strata_year_back)),
+                     quarter=as.integer(eval(pc@strata_quarter_back))) %>%
+    group_by(year,quarter,pred_name,pred_size,n_tot,n_sample,prey) %>% summarize(prey_w=sum(prey_w)) %>%
+    group_by(year,quarter,pred_name,pred_size,n_tot,n_sample) %>% mutate(prey_w=prey_w/sum(prey_w)) %>%
+    rename(n_stom=n_tot) %>% ungroup()
+
+
+   out<-left_join(out,p, by = c("year", "quarter", "pred_name", "pred_size", "prey"))
 
   if (by_prey_size) {
     xx<-matrix(unlist(strsplit(out$prey,':::')),ncol=2,byrow=TRUE)
     out$prey_name<-xx[,1]
-    out$prey_name<-factor(out$prey_name,levels=levels(source[['PREY']]$prey_name))
+    out$prey_name<-factor(out$prey_name,levels=levels(pointEst[['PREY']]$prey_name))
     out$prey_size<-xx[,2]
-    out$prey_size<-factor(out$prey_size,levels=levels(source[['PREY']]$prey_size))
+    out$prey_size<-factor(out$prey_size,levels=levels(pointEst[['PREY']]$prey_size))
   } else  {
-    out$prey_name<-factor(out$prey,levels=levels(source[['PREY']]$prey_name))
+    out$prey_name<-factor(out$prey,levels=levels(pointEst[['PREY']]$prey_name))
     out$prey_size<-'All'
   }
  return(dplyr::as_tibble(out))

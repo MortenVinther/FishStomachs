@@ -7,22 +7,24 @@
 bootsMean(
   b,
   min_prey = 0.01,
-  source,
+  pointEst,
   by_prey_size = FALSE,
-  n_rep = 10000,
+  n_rep,
   do_Diri = FALSE
 )
 }
 \arguments{
-\item{b}{Bootstrap diet data set of class STOMdiet.}
+\item{b}{Bootstrap diet data set. List of elements of class STOMdiet.}
 
 \item{min_prey}{prey weight value for missing combination of preys and prey sizes.}
+
+\item{pointEst}{Diet data estimated without bootstrapping (point estimates ogf prey weights)}
 
 \item{by_prey_size}{Logical for calculating mean and variance by prey size. FALSE provides statistics by prey species.}
 
 \item{n_rep}{Selected replicates used. If n_rep is a number, 1:n_rep are used, If n_rep is a vector the provided replica numbers are used in the statistics}
 
-\item{do_Diri}{Logical for performing statistisc assuming the replicates are Dirichlet distributed.}
+\item{do_Diri}{Logical for performing statistics assuming the replicates are Dirichlet distributed.}
 }
 \value{
 Data set with mean and variance of diets and fit to Dirichlet distribution. Output includes
@@ -43,8 +45,9 @@ mu        \tab Estimated mean value from the Dirichlet distribution.\cr
 p_value   \tab p-value for Log-likelihood ratio test for the estimated Dirichlet \cr \tab mean vector describe the bootstrap data well.\cr
 mean_w    \tab Mean value of prey weights (proportions).\cr
 sd_w      \tab Standard deviation of prey weights (proportions).\cr
+prey_w    \tab Point estimate of prey weight (proportions). \cr
 strata    \tab Strata used for bootstrap.\cr
-n_stom    \tab Number of stomachs available before bootstrap ( from the \code{source} data).\cr
+n_stom    \tab Number of stomachs available before bootstrap ( from the \code{pointEst} data).\cr
 n_sample  \tab Number of samples available before bootstrap.\cr
 }
 }
