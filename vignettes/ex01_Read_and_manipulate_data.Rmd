@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This example shows the basic data structures and  how to read data on exchange data format. Further, examples on and how to make initial editing and addition of data is shown.
+This example shows the basic data structures and  how to read data on exchange data format. Further, examples are shown on and how to make initial editing and addition of data.
 
 ### Basic data structures and reading data from exchange format
 
@@ -33,7 +33,8 @@ library(FishStomachs)
 
 control<-new("STOMcontrol",
         name="Test cod",  # just a name
-        # specify where to find data on exchange format. This example uses data for cod incl. in the package
+        # Specify where to find data on exchange format. 
+        # This example uses data for cod incl. in the package
         stomach_dir=file.path(system.file( package = "FishStomachs"),"extdata"), 
         dataSets="cod_stom_1991.csv",
         predators=c("Gadus morhua"),
@@ -45,7 +46,7 @@ print(control,show=c('general','data_used'))
 
 ```
 
-The stomach_format: in the control shows where to find the format and for the input file. In this case it is the default value that is used, which is the file included in FishStomachs, but another specification file can be specified, see vignette FishStomachs.
+The stomach_format in the control shows where to find the format and for the input file. In this case it is the default value that is used, which is the file included in FishStomachs, but another specification file can be specified, see vignette FishStomachs.
 
 Data are read in using the read_exchange_data function.
 ```{r ex01_02}
@@ -54,7 +55,7 @@ s<-read_exchange_data(control,keep_just_mandatory_fields = TRUE)
 ```
 In this case we just want to keep the mandatory data fields (for illustrative purposes)  as specified by  the parameter keep_just_mandatory_fields. See the documentation for exchange format in the help for \code{read_exchange_data()}.
 
-The resulting "s" data from the \code{read_exchange_data()} is the basic structure used for stomach contents data. Technically, s is an object of the class  object, which is a list with one data set on the predator and another set with  with information of the preys (see below). One predator record may have several prey records. The two sets are linked by the variables sample_id and  fish_id. More text on the individual fields can be found in the documentation for exchange format (REF). A STOMobs object also includes some attributes about the compilation of data attached to the object, and a control object (class \code{STOMcontrol}) for providing options for compilation and documentations  
+The resulting "s" data from the \code{read_exchange_data()} is the basic structure used for stomach contents data. Technically, s is an object of the class STOMobs, which is a list with one data set on the predator and another set with information of the preys (see below). One predator record may have several prey records. The two sets are linked by the variables sample_id and  fish_id. More text on the individual fields can be found in the documentation for exchange format (REF). A STOMobs object also includes some attributes about the compilation of data attached to the object, and a control object (class \code{STOMcontrol}) for providing options for compilation and documentations  
 
 ```{r ex01_03}
 str(s)
@@ -131,7 +132,7 @@ do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE,rel_weight = TRUE,label='
 
 
 ### Change and edit stomach data
-The function  change_data() gives the opportunities to make changes often used in the stomach data compilation and to add additional fields.  See the full documentation change_data() for details.
+The function  change_data() gives the opportunities to make changes, often used in the stomach data compilation and to add additional fields.  See the full documentation change_data() for details.
 In this example, change_data() is run with default parameters. This will in  this case include the two values n_tot (total number of stomachs) and record_type (flag for single or pooled stomachs). After the Change_data() is executed, the "Changes done" is set to TRUE. 
 
 ```{r ex01_08}
@@ -143,7 +144,7 @@ s
 The next step "Prey weights by record done" is an option for some data (e.g. Baltic cod data) where the prey weight used is the weight of all sizes combined, and not by the individual prey length class. For this example data, all weights are by prey length (i.e. by record), so it is not necessary to run the function individual_prey_weights_from_pooled_weights. This is also shown in the output above where "Prey weights by record done" is set to TRUE as part of the change_data() call.
 
 
-There are also special functions to add data, which will be axplained later on . For now, NODC codes are assigned by the function add_NODC_ID for each predator and prey species. 
+There are also special functions to add data, which will be explained later on. For now, NODC codes are assigned by the function add_NODC_ID for each predator and prey species. 
 
 ```{r ex01_09}
 

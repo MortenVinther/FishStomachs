@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
    fig.width=7, fig.height=8
 )
 ```
-FishStomachs provide functions for estimating the mean and variance of the contents from bootstrapping. 
+FishStomachs provides functions for estimating the mean and variance of the stomach contents from bootstrapping. 
 First, data from Example 03 are loaded.
 
 ```{r ex06_00}
@@ -50,7 +50,7 @@ head(bootstrap_show(s,show=c("strata",'sample')[1],vari=c("stomach","sample")[2]
 
 ```
 The tables above shows that e.g. cod in quarter 1 has 18 "hauls" with in total 42 stomachs for predator size 0100-0149. 
-The table below show each "haul" include a number of stomachs from various predator sizes.
+The table below shows that  each "haul" includes a number of stomachs from various predator sizes.
 
 ```{r ex06_03}
 
@@ -171,7 +171,7 @@ return(d)
 
 
 The creation of data for bootstrapping is done by the function bootstrap_data(), which create a new STOMobs object including the bootstrap replicate data.
-The result of the call, bd, is a list wit STOMobs object.
+The result of the call, bd, is a list with STOMobs object.
 
 ```{r ex06_06}
 

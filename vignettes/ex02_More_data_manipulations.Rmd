@@ -87,7 +87,7 @@ ll<-subset(ll,year==1981); ll$year<-1991
 ```
 
 The specification file includes lower size range for a given size class, together with the span of years, quarters and species this should be applied to. The Species variable is in this case "All" which includes all species, however it could also include individual species names, which makes it possible to assign species specific size classes.
-Function \code{make_length_classess} transform the specifications into size classes by individual year and quarters.
+Function make_length_classess transforms the specifications into size classes by individual year and quarters.
 
 
 ```{r ex02_04}

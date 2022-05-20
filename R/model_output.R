@@ -30,7 +30,7 @@
 #'
 model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FALSE) {
 
- # test diet<-d2; length_classes_file=file.path(config_dir,paste0("length_classes_",sz,".csv")) ; sp_info_file<-file.path(config_dir,'species_info.csv')
+ # test diet<-d; length_classes_file=file.path(config_dir,paste0("length_classes_",sz,".csv")) ; sp_info_file<-file.path(config_dir,'species_info.csv')
   a<-area<-b<-code<-config_dir<-group<-key<-mean.weight<-n_tot<-no<-number<-pred_id_number<-pred_l_mean<-pred_name<-NULL
   pred_size<-pred_size_class<-predator<-prey<-prey_id_number<-prey_l_mean<-prey_name<-prey_size<-prey_size_class<-NULL
   prey_w<-quarter<-sampling_effort<-sl<-SMS_species<-Species<-stomcon<-stratum_area<-stratum_time<-type<-year<-NULL
@@ -96,11 +96,11 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
 
 
   bb<- bb %>% dplyr::mutate(predator=pred_name,pred_name=NULL)
-  bb<-dplyr::left_join(bb,dplyr::select(sp_info,pred_id_number=number,predator=code),by = "predator")
+  bb<-dplyr::left_join(bb,dplyr::select(sp_info,pred_id_number=number,predator=SMS_species),by = "predator")
 
 
   bb<- bb %>% dplyr::mutate(prey=prey_name,prey_name=NULL)
-  bb<-dplyr::left_join(bb,dplyr::select(sp_info,prey_id_number=number,prey=code),by = "prey")
+  bb<-dplyr::left_join(bb,dplyr::select(sp_info,prey_id_number=number,prey=SMS_species),by = "prey")
 
   bb<-dplyr::mutate(bb,prey_l_mean=rowMeans(matrix(as.numeric(unlist(strsplit(prey_size,split='-'))),ncol=2,byrow=TRUE)))
 

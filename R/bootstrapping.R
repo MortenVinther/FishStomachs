@@ -240,6 +240,7 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 #' @param by_prey_size Logical for calculating mean and variance by prey size. FALSE provides statistics by prey species.
 #' @param n_rep Selected replicates used. If n_rep is a number, 1:n_rep are used, If n_rep is a vector the provided replica numbers are used in the statistics
 #' @param do_Diri Logical for performing statistics assuming the replicates are Dirichlet distributed.
+#' @param minPreyProportion Lower level for average prey proportion to be kept as a named prey. If lower the prey weight is allocated to "other" prey.
 #' @return Data set with mean and variance of diets and fit to Dirichlet distribution. Output includes
 #' \tabular{ll}{
 #' \strong{Variable} \tab \strong{Contents} \cr
@@ -265,7 +266,7 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 #' }
 #' @importFrom Compositional diri.est dirimean.test
 #' @export
-bootsMean<-function(b,min_prey=0.01,pointEst,by_prey_size=FALSE,n_rep,do_Diri=FALSE) {
+bootsMean<-function(b,min_prey=0.001,pointEst,by_prey_size=FALSE,n_rep,do_Diri=FALSE,minPreyProportion=0.0) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-year<-NULL
   allNames<-prey_name<-prey_size<-stratum_time<-NULL
 
@@ -288,6 +289,17 @@ bootsMean<-function(b,min_prey=0.01,pointEst,by_prey_size=FALSE,n_rep,do_Diri=FA
     #rescale to 1.00
     x<-x %>% group_by(year,quarter,pred_name, pred_size,rep_id) %>%
       dplyr::mutate(prey_w=prey_w/sum(prey_w))
+
+    other<-control@other
+    meanw<-x %>% dplyr::group_by(year,quarter,pred_name, pred_size,prey_name) %>% dplyr::summarise(incl=mean(prey_w)>=minPreyProportion)
+    x<-dplyr::left_join(x,meanw,by = c("year", "quarter", "pred_name", "pred_size", "prey_name")) %>% dplyr::ungroup() %>%
+      mutate(prey_name=if_else(incl,prey_name,factor(other,levels=levels(x$prey_name)))) %>%
+      dplyr::group_by(year,quarter,pred_name, pred_size,prey_name,rep_id) %>% dplyr::summarise(prey_w=sum(prey_w))
+
+    #rescale to 1.00 again (should no be necessary)
+    x<-x %>% group_by(year,quarter,pred_name, pred_size,rep_id) %>%
+      dplyr::mutate(prey_w=prey_w/sum(prey_w))
+
 
     x<-droplevels(x)
     preys<-levels(x$prey_name)

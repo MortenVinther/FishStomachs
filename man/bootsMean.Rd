@@ -6,11 +6,12 @@
 \usage{
 bootsMean(
   b,
-  min_prey = 0.01,
+  min_prey = 0.001,
   pointEst,
   by_prey_size = FALSE,
   n_rep,
-  do_Diri = FALSE
+  do_Diri = FALSE,
+  minPreyProportion = 0
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ bootsMean(
 \item{n_rep}{Selected replicates used. If n_rep is a number, 1:n_rep are used, If n_rep is a vector the provided replica numbers are used in the statistics}
 
 \item{do_Diri}{Logical for performing statistics assuming the replicates are Dirichlet distributed.}
+
+\item{minPreyProportion}{Lower level for average prey proportion to be kept as a named prey. If lower the prey weight is allocated to "other" prey.}
 }
 \value{
 Data set with mean and variance of diets and fit to Dirichlet distribution. Output includes

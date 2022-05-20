@@ -39,13 +39,13 @@ The options are mainly how to handle missing values ("holes") for prey sizes. If
 
 
 
-The function for converting data ("model_output") requires two input files; one for specifying length classes and one file for internal MS numbering and naming of species. Data and call are shown below.
+The function for converting data ("model_output") requires two input files; one for specifying length classes and one file for internal model dependent (SMS) numbering and naming of species. Data and call are shown below.
 
 ```{r ex05_02}
 
 read_csv(system.file("extdata","length_classes.csv",package = "FishStomachs"),col_types=cols())
 read_csv(system.file("extdata","species_info.csv",package = "FishStomachs"),col_types=cols())
-
+as.data.frame(d)
 # create data for the SMS model
 SMS<-model_output(d, length_classes_file=system.file("extdata","length_classes.csv",package = "FishStomachs"),
                   sp_info_file=system.file("extdata","species_info.csv",package = "FishStomachs"),
