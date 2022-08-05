@@ -33,7 +33,7 @@ plotboots(
 
 \item{maxbins}{maximum number of bins in plot.}
 
-\item{add_expect}{Logical, add density from Dirichlet.}
+\item{statistics}{Data set (estimated by call to bootsMean) including statistics to be shown on the plot.}
 }
 \value{
 nothing (if show_plot=TRUE) or a list of plots.

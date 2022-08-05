@@ -25,25 +25,25 @@ plotdif(
 
 \item{d2}{Diet data set of class STOMdiet.}
 
-\item{relative}{Logical, relative weight difference is used if TRUE, else absolute weight difference}
+\item{relative}{Logical, relative weight difference is used if TRUE, else absolute weight difference.}
 
-\item{show_plot}{Show the resulting graphs on screen (or save the results for later processing)}
+\item{show_plot}{Show the resulting graphs on screen (or save the results for later processing).}
 
-\item{cut_pred_size}{From to in substring of predator size}
+\item{cut_pred_size}{From to in substring of predator size.}
 
-\item{cut_prey_size}{From to in substring of prey size}
+\item{cut_prey_size}{From to in substring of prey size.}
 
 \item{addTitle}{Add predator name on top of the plot.}
 
 \item{tAngle}{Angle X-axis text.}
 
-\item{Colours}{Colours for positive and negative difference (d1-d2)}
+\item{Colours}{Colours for positive and negative difference (d1-d2), and colour for missing in d1 or d2.}
 
-\item{refac_prey}{Reorder preys}
+\item{refac_prey}{Reorder preys.}
 
-\item{maxDif}{maximum difference to be shown}
+\item{maxDif}{maximum difference to be shown.}
 
-\item{size_NA}{Size of missing observation}
+\item{size_NA}{Size of missing observation.}
 
 \item{byVar}{Make individual plots by combinations of 'year-quarter','year' or 'quarter' or lump all data together ('none').}
 }

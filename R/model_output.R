@@ -19,7 +19,7 @@
 #'  In addition a number for each predator and prey species is added (and later used for ordering of species).
 #'  data for that is included in the CSV file sp_info_file.
 #'
-#' @param length_classes_file bla
+#' @param length_classes_file CSV file with definition of length classes.
 #' @param sp_info_file CSV file with the fields used arranging order of predator and prey.
 #' The file must include two fields \code{code} (predator and prey names used in input)
 #' and \code{number} (integer for arranging predator and preys).
@@ -54,7 +54,6 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
 
   p<-dplyr::inner_join(diet[['PRED']],diet[['PREY']],by = "key") %>% dplyr::select(-key)
 
-
   minl<-min(p$prey_size_class);maxl<-max(p$prey_size_class)
 
   prey_range<- p %>%  dplyr::group_by (stratum_time,year,quarter,stratum_area,pred_name,pred_size,pred_size_class,prey_name) %>%
@@ -76,9 +75,16 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
       dplyr::mutate_if(is.numeric,as.integer) %>%
       dplyr::rename(prey_name=Species,prey_size_class=no,sl=group)
 
+  if (any(lprey$prey_name=='ALL')) {
+     lprey<-dplyr::mutate(lprey,prey_name=NULL)
+     byVar<-c("year", "quarter", "prey_size_class")
+  } else {
+    byVar<-c("year", "quarter", "prey_name","prey_size_class")
+  }
 
-  if (any(lprey$prey_name=='ALL')) lprey<-dplyr::mutate(lprey,prey_name=NULL)
-  bb<-dplyr::left_join(bb,lprey,by = c("year", "quarter", "prey_size_class")) %>%
+
+  #bb<-dplyr::left_join(bb,lprey,by = c("year", "quarter", "prey_size_class")) %>%
+  bb<-dplyr::left_join(bb,lprey,by = byVar) %>%
     dplyr::mutate(prey_size=dplyr::if_else(is.na(prey_size),factor(sl,levels=levels(bb$prey_size)),prey_size)) %>%
     dplyr::filter(!is.na(prey_size)) %>% dplyr::mutate(sl=NULL)
   bb[bb$type=='mid','prey_w']<-control@model_options$mid_value
@@ -128,7 +134,7 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
      bb<- dplyr::left_join(bb,dplyr::select(sp_info,prey_id_number=number,lw_a,lw_b),by = "prey_id_number")
 
      bb<- bb %>% dplyr::mutate(mean.weight=if_else(lw_a<0,9999,lw_a*prey_l_mean**lw_b),lw_a=NULL,lw_b=NULL)
-     bb<-bb %>% dplyr::transmute(SMS_area=unclass(factor(area)),year=year,quarter=quarter,pred=predator,pred.no=pred_id_number,
+     bb<-bb %>% dplyr::transmute(SMS_area=area,year=year,quarter=quarter,pred=predator,pred.no=pred_id_number,
                                pred.size=substr(pred_size,1,4),pred.size.class=pred_size_class,
                                pred.mean.length=pred_l_mean,prey=prey,prey.no=prey_id_number,
                                prey.size=substr(prey_size,1,4),prey.size.range=prey_size,prey.size.class=prey_size_class,

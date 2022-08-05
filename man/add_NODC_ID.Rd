@@ -2,17 +2,7 @@
 % Please edit documentation in R/add_nodc.R
 \name{add_NODC_ID}
 \alias{add_NODC_ID}
-\title{Add NODC Id where missing
-
-Add NODC 10 digit numeric Id to predator or prey species where missing.
-The NODC Taxonomic Code was based on 12 digit "intelligent" code numbers.
-By "intelligent" code numbers we mean that information about taxonomy was built
-into the codes through the use of 2-digit couplets to represent one or more levels
-of the taxonomic hierarchy. For example, a species assigned a 10-digit code would
-belong to the genus represented by the first 8 digits of the code.
-The numerical hierarchy of the code numbers therefore reflected taxonomic hierarchy as
-well, and his hierarchy is useful for grouping species with e.g. similar energy contents,
-or within taxonomic model groups.}
+\title{Add NODC Id where missing}
 \usage{
 add_NODC_ID(
   stom,
@@ -40,8 +30,6 @@ add_NODC_ID(
 Stomach data of class STOMobs with added \code{pred_nodc} or code{pred_nodc} variables.
 }
 \description{
-Add NODC Id where missing
-
 Add NODC 10 digit numeric Id to predator or prey species where missing.
 The NODC Taxonomic Code was based on 12 digit "intelligent" code numbers.
 By "intelligent" code numbers we mean that information about taxonomy was built

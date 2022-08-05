@@ -4,12 +4,12 @@
 \alias{add_missing_boots}
 \title{Add missing prey and prey size combination for bootstrap replicates}
 \usage{
-add_missing_boots(bt, mis_value = 0)
+add_missing_boots(bt, mis_value)
 }
 \arguments{
-\item{bt}{Bootstrapped diet data.}
+\item{bt}{Bootstrapped diet data (list).}
 
-\item{mis_value}{Value for missing prey weights.}
+\item{mis_value}{Value used for missing prey weights in replicates. Uses control@model_options$minimum_stom as default}
 }
 \value{
 Bootstrapped diet data with inserted value for missing prey and prey size combinations
@@ -18,5 +18,5 @@ Bootstrapped diet data with inserted value for missing prey and prey size combin
 Add missing prey and prey size combination for bootstrap replicates
 }
 \examples{
-\dontrun{s<-add_missing(boots(s,value=NA))}
+\dontrun{s<-add_missing(boots(s))}
 }

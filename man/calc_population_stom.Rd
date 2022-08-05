@@ -28,7 +28,7 @@ The compilation method must be specified in the control attribute by the slots.
 \code{@calc_sub_strata, @calc_strata} and \code{@calc_total}.
 Each of the slots must include a list
 with the following names \code{relative_weight} (type=boolean), \code{weighting_factor} (type=expression)
-and \code{weigthing_factor_file} (type character). An example of such input is shown below:
+and \code{weighting_factor_file} (type character). An example of such input is shown below:
 
 \preformatted{
 hom<-edit_control(hom,
@@ -38,18 +38,18 @@ hom<-edit_control(hom,
     # use number of stomachs (n_tot) as weighting factor
    weighting_factor=expression(n_tot),
     # do not use data from external file
-   weigthing_factor_file=NA
+   weighting_factor_file=NA
  ),
  calc_strata=list(
    # weight mean stomach contents by sub_strata by the square root of the mean CPUE within the sub_strata
   relative_weight=TRUE,
   weighting_factor=expression(sqrt(pred_cpue)),
-  weigthing_factor_file=NA
+  weighting_factor_file=NA
  )
  calc_total=list(
    relative_weight=TRUE,
    weighting_factor=NA,
-   weigthing_factor_file=file.path(config_dir,'hom_weighting_total.csv')
+   weighting_factor_file=file.path(config_dir,'hom_weighting_total.csv')
 ))
 }
 

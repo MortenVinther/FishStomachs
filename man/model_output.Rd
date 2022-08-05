@@ -25,7 +25,7 @@ The list must include the names
 In addition a number for each predator and prey species is added (and later used for ordering of species).
 data for that is included in the CSV file sp_info_file.}
 
-\item{length_classes_file}{bla}
+\item{length_classes_file}{CSV file with definition of length classes.}
 
 \item{sp_info_file}{CSV file with the fields used arranging order of predator and prey.
 The file must include two fields \code{code} (predator and prey names used in input)

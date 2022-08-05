@@ -1,5 +1,3 @@
-#' @title Add NODC Id where missing
-#'
 #' Add NODC 10 digit numeric Id to predator or prey species where missing.
 #' The NODC Taxonomic Code was based on 12 digit "intelligent" code numbers.
 #' By "intelligent" code numbers we mean that information about taxonomy was built
@@ -9,7 +7,8 @@
 #' The numerical hierarchy of the code numbers therefore reflected taxonomic hierarchy as
 #' well, and his hierarchy is useful for grouping species with e.g. similar energy contents,
 #' or within taxonomic model groups.
-
+#' @title Add NODC Id where missing
+#'
 #' @param stom Stomach data set of class STOMobs, from e.g. \link{read_exchange_data}.
 #' @param NODC_ID File Name including latin (or other) predator or prey name (column species and column NODC). File 'NODC_latin.csv' in the package /inst directory is used as default.
 #' @param predator_or_prey Add missing NODC for "predator" or "prey".

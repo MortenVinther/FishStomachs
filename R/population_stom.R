@@ -51,19 +51,21 @@ refac_prey<-function(d){
 #' @examples \dontrun{make_template_strata_weighting(stom)}
 make_template_strata_weighting<-function(stom,strata=c('sub_strata','strata','total')[1],write_CSV=FALSE){
   # check that strata are added
-  if (!attr(stom,"Temporal and spatial strata added")) stop('Spatial and temporal strata variables have not been addde. Please use "add_strata"')
+  if (!attr(stom,"Temporal and spatial strata added")) stop('Spatial and temporal strata variables have not been addde. Please use "add_strata".')
   control<-attr(stom,'control')
 
-  if (strata=='sub_strata') file_n<-control@calc_sub_strata$weigthing_factor_file
-  if (strata=='strata') file_n<-control@calc_strata$weigthing_factor_file
-  if (strata=='total')  file_n<-control@calc_total$weigthing_factor_file
+  file_n<-NA
+  if (strata=='sub_strata') file_n<-control@calc_sub_strata$weighting_factor_file
+  if (strata=='strata')     file_n<-control@calc_strata$weighting_factor_file
+  if (strata=='total')      file_n<-control@calc_total$weighting_factor_file
+
   if (is.na(file_n)) {
      cont<-c("calc_sub_strata","calc_sub_strata","calc_total") ;names(cont)<-  c('sub_strata','strata','total')
     stop('A file name must be given in the control slot ',cont[strata], ' variable weighting_factor_file \n')
   }
    st_names<-c("pred_name","stratum_time","pred_size", "stratum_area","stratum_sub_area","sample_id")
-   if (strata=='strata') {st_names <-head(st_names,-1);  file_n<-control@calc_strata$weigthing_factor_file }
-   if (strata=='total')  {st_names <-head(st_names,-2) ; file_n<-control@calc_total$weigthing_factor_file}
+   if (strata=='strata') {st_names <-head(st_names,-1);  file_n<-control@calc_strata$weighting_factor_file }
+   if (strata=='total')  {st_names <-head(st_names,-2) ; file_n<-control@calc_total$weighting_factor_file}
    stom <- stom[['PRED']] %>% dplyr::select(dplyr::all_of(st_names)) %>% dplyr::distinct()
 
   if (strata=='sub_strata') stom<-dplyr::mutate(stom,w_fac_sample=1)
@@ -84,9 +86,9 @@ read_strata_weighting<-function(stom,strata=c('sub_strata','strata','total')[1])
   if (!attr(stom,"Temporal and spatial strata added")) stop('Spatial and temporal strata variables have not beeb addde. Please use "add_strata"')
   control<-attr(stom,'control')
 
-  if (strata=='sub_strata') file_n<-control@calc_sub_strata$weigthing_factor_file
-  if (strata=='strata') file_n<-control@calc_strata$weigthing_factor_file
-  if (strata=='total')  file_n<-control@calc_total$weigthing_factor_file
+  if (strata=='sub_strata') file_n<-control@calc_sub_strata$weighting_factor_file
+  if (strata=='strata') file_n<-control@calc_strata$weighting_factor_file
+  if (strata=='total')  file_n<-control@calc_total$weighting_factor_file
   w<-read_csv(file=file_n,progress = FALSE,col_types = readr::cols()) %>% dplyr::distinct()
   return(w)
 }
@@ -105,7 +107,7 @@ read_strata_weighting<-function(stom,strata=c('sub_strata','strata','total')[1])
 #' \code{@calc_sub_strata, @calc_strata} and \code{@calc_total}.
 #' Each of the slots must include a list
 #' with the following names \code{relative_weight} (type=boolean), \code{weighting_factor} (type=expression)
-#' and \code{weigthing_factor_file} (type character). An example of such input is shown below:
+#' and \code{weighting_factor_file} (type character). An example of such input is shown below:
 #'
 #'\preformatted{
 #' hom<-edit_control(hom,
@@ -115,18 +117,18 @@ read_strata_weighting<-function(stom,strata=c('sub_strata','strata','total')[1])
 #'     # use number of stomachs (n_tot) as weighting factor
 #'    weighting_factor=expression(n_tot),
 #'     # do not use data from external file
-#'    weigthing_factor_file=NA
+#'    weighting_factor_file=NA
 #'  ),
 #'  calc_strata=list(
 #'    # weight mean stomach contents by sub_strata by the square root of the mean CPUE within the sub_strata
 #'   relative_weight=TRUE,
 #'   weighting_factor=expression(sqrt(pred_cpue)),
-#'   weigthing_factor_file=NA
+#'   weighting_factor_file=NA
 #'  )
 #'  calc_total=list(
 #'    relative_weight=TRUE,
 #'    weighting_factor=NA,
-#'    weigthing_factor_file=file.path(config_dir,'hom_weighting_total.csv')
+#'    weighting_factor_file=file.path(config_dir,'hom_weighting_total.csv')
 #'))
 #'}
 #'
@@ -180,9 +182,9 @@ calc_population_stom<-function(s,verbose=FALSE) {
 
   check_sc<-function(sc,strata=c('sub_strata','strata','total')[1]){
     sc_names<-names(sc)
-    if (!("relative_weight" %in% sc_names & "weighting_factor" %in% sc_names &"weigthing_factor_file" %in% sc_names)) {
+    if (!("relative_weight" %in% sc_names & "weighting_factor" %in% sc_names &"weighting_factor_file" %in% sc_names)) {
     cont<-c("calc_sub_strata","calc_sub_strata","calc_total") ;names(cont)<-  c('sub_strata','strata','total')
-      stop(cat('The control slot',cont[strata],' must include a list with the names: relative_weight, weighting_factor and weigthing_factor_file.\n',
+      stop(cat('The control slot',cont[strata],' must include a list with the names: relative_weight, weighting_factor and weighting_factor_file.\n',
                'It includes now the names:', paste(sc_names,collapse=', '),'\n' ))
     }
   }
@@ -206,11 +208,11 @@ calc_population_stom<-function(s,verbose=FALSE) {
 
   sc<-control@calc_sub_strata
   check_sc(sc,strata=c('sub_strata','strata','total')[1])
-  if (!is.na(sc$weigthing_factor_file)) {
+  if (!is.na(sc$weighting_factor_file)) {
     w<-read_strata_weighting(stom=s,strata=c('sub_strata','strata','total')[1])
     pred<-dplyr::left_join(pred,w, by = c("sample_id", "pred_name", "pred_size", "stratum_time", "stratum_area", "stratum_sub_area"))  %>%
       dplyr::filter(!is.na(w_fac_sample)) %>% dplyr::filter(w_fac_sample>0)
-    if (verbose) cat('Using weighting factors from file',sc$weigthing_factor_file,'\n')
+    if (verbose) cat('Using weighting factors from file',sc$weighting_factor_file,'\n')
   } else {
      tt<-try(pred<-pred %>% dplyr::mutate(w_fac_sample=eval(control@calc_sub_strata$weighting_factor)),TRUE)
      if (class(tt)[[1]]=="try-error") {cat(tt[1]);stop('Error found.')}
@@ -276,11 +278,11 @@ calc_population_stom<-function(s,verbose=FALSE) {
   #############  by strata area
   sc<-control@calc_strata
   check_sc(sc,strata=c('sub_strata','strata','total')[2])
-  if (!is.na(sc$weigthing_factor_file)) {
+  if (!is.na(sc$weighting_factor_file)) {
     w<-read_strata_weighting(stom=s,strata=c('sub_strata','strata','total')[2])
     pred<-dplyr::left_join(pred,w,by = c("stratum_sub_area", "stratum_area", "stratum_time", "pred_name", "pred_size"))  %>%
       dplyr::filter(!is.na(w_fac_sub_area)) %>% dplyr::filter(w_fac_sub_area>0)
-    cat('Using area weighting factors from file',sc$weigthing_factor_file,'\n')
+    cat('Using area weighting factors from file',sc$weighting_factor_file,'\n')
   } else {
     tt<-try(pred<-pred %>% dplyr::mutate(w_fac_sub_area=eval(control@calc_strata$weighting_factor)),TRUE)
     if (class(tt)[[1]]=="try-error") {cat(tt[1]);stop('Error found.')}
@@ -322,11 +324,11 @@ calc_population_stom<-function(s,verbose=FALSE) {
   ### Total
   sc<-control@calc_total
   check_sc(sc,strata=c('sub_strata','strata','total')[3])
-  if (!is.na(sc$weigthing_factor_file)) {
+  if (!is.na(sc$weighting_factor_file)) {
     w<-read_strata_weighting(stom=s,strata=c('sub_strata','strata','total')[3])
     pred<-dplyr::left_join(pred,w ,by = c("stratum_area", "stratum_time", "pred_name", "pred_size")) %>%
       dplyr::filter(!is.na(w_fac_area)) %>% dplyr::filter(w_fac_area>0)
-    if (verbose) cat('Using weighting factors from file',sc$weigthing_factor_file,'\n')
+    if (verbose) cat('Using weighting factors from file',sc$weighting_factor_file,'\n')
   } else {
     tt<-try(pred<-pred %>% dplyr::mutate(w_fac_area=eval(control@calc_total$weighting_factor)),TRUE)
     if (class(tt)[[1]]=="try-error") {cat(tt[1]);stop('Error found.')}
@@ -516,16 +518,16 @@ plotSize<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=
 #'
 #' @param d1 Diet data set of class STOMdiet.
 #' @param d2 Diet data set of class STOMdiet.
-#' @param relative Logical, relative weight difference is used if TRUE, else absolute weight difference
-#' @param cut_pred_size From to in substring of predator size
-#' @param cut_prey_size From to in substring of prey size
-#' @param show_plot Show the resulting graphs on screen (or save the results for later processing)
+#' @param relative Logical, relative weight difference is used if TRUE, else absolute weight difference.
+#' @param cut_pred_size From to in substring of predator size.
+#' @param cut_prey_size From to in substring of prey size.
+#' @param show_plot Show the resulting graphs on screen (or save the results for later processing).
 #' @param addTitle Add predator name on top of the plot.
 #' @param tAngle Angle X-axis text.
-#' @param Colours Colours for positive and negative difference (d1-d2)
-#' @param refac_prey Reorder preys
-#' @param maxDif maximum difference to be shown
-#' @param size_NA Size of missing observation
+#' @param Colours Colours for positive and negative difference (d1-d2), and colour for missing in d1 or d2.
+#' @param refac_prey Reorder preys.
+#' @param maxDif maximum difference to be shown.
+#' @param size_NA Size of missing observation.
 #' @param byVar Make individual plots by combinations of 'year-quarter','year' or 'quarter' or lump all data together ('none').
 #' @return nothing (if show_plot=TRUE) or a list of plots.
 #' @importFrom ggplot2 ggplot facet_grid geom_col labs theme  scale_color_manual aes element_text element_line geom_point

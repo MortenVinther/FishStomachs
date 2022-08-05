@@ -6,8 +6,8 @@
 \usage{
 \S4method{print}{STOMcontrol}(
   x,
-  show = c("general", "data_used", "stratification", "calc_diet", "model_options",
-    "ALK", "constants", "test_output", "detailed_test_output", "bootstrapping")
+  show = c("general", "data_used", "stratification", "calc_diet", "model_options", "ALK",
+    "constants", "test_output", "detailed_test_output", "bootstrapping")
 )
 }
 \arguments{

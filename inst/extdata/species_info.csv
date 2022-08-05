@@ -1,5 +1,5 @@
 number,code,species,SMS_species,short,predator_sp,other_predator_sp,prey_sp,nodc,first_age,last_age,lw_a,lw_b
-0,OTH,other,other,other,F,F,F,-9,1,1,,
+0,OTH,other,other,other,F,F,F,-9,1,1,-9,-9
 1,HKE,Merluccius merluccius,Merluccius merluccius,Hake,T,T,F,8791040105,1,9,6.59E-09,3.017
 2,COD,Gadus morhua,Gadus morhua,Cod,T,F,T,8791030402,0,10,2.05E-08,2.8571
 3,WHG,Merlangius merlangus,Merlangius merlangus,Whiting,T,F,T,8791031801,0,8,1.05E-08,2.9456

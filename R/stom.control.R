@@ -156,17 +156,17 @@ setClass(
     calc_sub_strata=list(
       relative_weight=FALSE,
       weighting_factor=expression(n_tot),
-      import_weigthing_factor_file=NA
+      import_weighting_factor_file=NA
     ),
     calc_strata=list(
       relative_weight=FALSE,
       weighting_factor=expression(n_tot),
-      import_weigthing_factor_file=NA
+      import_weighting_factor_file=NA
     ),
     calc_total=list(
       relative_weight=FALSE,
       weighting_factor=expression(n_tot),
-      import_weigthing_factor_file=NA
+      import_weighting_factor_file=NA
     ),
 
     ## Options for creating stomach contents file to SMS
