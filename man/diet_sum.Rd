@@ -2,7 +2,7 @@
 % Please edit documentation in R/STOMdiet.R
 \name{diet_sum}
 \alias{diet_sum}
-\title{Sum diet data}
+\title{Sum diet data with the same prey}
 \usage{
 diet_sum(diet)
 }
@@ -13,5 +13,5 @@ diet_sum(diet)
 Diet data of class STOMdiet summed for each combination of prey species and prey size.
 }
 \description{
-Sum diet data
+Sum diet data with the same prey
 }

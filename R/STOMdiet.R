@@ -268,19 +268,21 @@ summary.STOMdiet <- function(diet, level=1,digits=1,drop.unused.levels = FALSE){
 }
 
 
-#' Sum diet data
+#' Sum diet data with the same prey
 #' @param diet Diet data of class STOMdiet.
 #' @return Diet data of class STOMdiet summed for each combination of prey species and prey size.
+#' @export
 #'
  diet_sum<-function(diet){
    key<-prey_name<-prey_size<-prey_size_class<-prey_w<-NULL
-    diet[['PREY']]<- diet[['PREY']] %>% dplyr::group_by(key,prey_name,prey_size,prey_size_class) %>% dplyr::mutate(prey_w=sum(prey_w)) %>% dplyr::ungroup()
+    diet[['PREY']]<- diet[['PREY']] %>% dplyr::group_by(key,prey_name,prey_size,prey_size_class) %>% dplyr::summarise(prey_w=sum(prey_w)) %>% dplyr::ungroup()
   return(diet)
  }
 
- #' Calculate diet data as relative weight
- #' @param diet Diet data of class STOMdiet.
- #' @return Diet data of class STOMdiet.
+#' Calculate diet data as relative weight
+#' @param diet Diet data of class STOMdiet.
+#' @return Diet data of class STOMdiet.
+#' @export
   diet_relative<-function(diet){
    diet[['PREY']]<- diet[['PREY']] %>% dplyr::group_by(key) %>% dplyr::mutate(prey_w=prey_w/sum(prey_w)) %>% dplyr::ungroup()
    return(diet)
@@ -294,17 +296,17 @@ summary.STOMdiet <- function(diet, level=1,digits=1,drop.unused.levels = FALSE){
 #' @export
  diet_prey_to_other<-function(diet,preys_to_other) {
    if (missing(preys_to_other)) stop('Please provide prey names for preys_to_other')
-    control<-get_control(diet)
-    mis_prey_len<-paste0(control@mis_l,'-',control@mis_l)
-    other<-control@other
-    mis_prey_size_class<-control@mis_size_class
+   control<-get_control(diet)
+   mis_prey_len<-paste0(control@mis_l,'-',control@mis_l)
+   other<-control@other
+   mis_prey_size_class<-control@mis_size_class
 
-    change<- diet[['PREY']]$prey_name %in% preys_to_other
-    diet[['PREY']][change,'prey_name']<-other
-    diet[['PREY']][change,'prey_size']<-mis_prey_len
-    diet[['PREY']][change,'prey_size_class']<-mis_prey_size_class
-    diet[['PREY']]<-diet[['PREY']] %>% dplyr::mutate_if(is.factor,forcats::fct_drop)
-    diet<-diet_sum(diet)
-    diet<-diet_relative(diet)
+   change<- diet[['PREY']]$prey_name %in% preys_to_other
+   diet[['PREY']][change,'prey_name']<-other
+   diet[['PREY']][change,'prey_size']<-mis_prey_len
+   diet[['PREY']][change,'prey_size_class']<-mis_prey_size_class
+   diet[['PREY']]<-diet[['PREY']] %>% dplyr::mutate_if(is.factor,forcats::fct_drop)
+   diet<-diet_sum(diet)
+   diet<-diet_relative(diet)
    return(diet)
  }

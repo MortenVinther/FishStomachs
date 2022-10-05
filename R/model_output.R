@@ -40,6 +40,8 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
 
   control<-get_control(diet)
   max_l<-control@max_l
+  min_stom<-control@model_options$min_stom
+  other<-control@other
 
   #check that the right options are available
   nc<-names(control@model_options)
@@ -48,6 +50,9 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
 
   if (!all(required %in% nc)) stop('The control@model_options list does not include the names: ',paste0(required,collapse='; '),
       '\n but includes: ',paste(nc,collapse='; '))
+
+  # insert min_stom value if other food is zero
+
 
   # calculate year and quarter from specifications
   diet[['PRED']]<-diet[['PRED']] %>% dplyr::mutate(year=as.integer(eval(control@strata_year_back)),quarter=as.integer(eval(control@strata_quarter_back)))
@@ -92,10 +97,15 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
 
   if (!control@model_options$insert_tails) bb<- bb %>% dplyr::filter(type != 'tail')
 
+  bb[bb$prey_name==other & bb$prey_w==0,'prey_w']<-min_stom
+
   bb <- dplyr::select(bb,year,quarter,stratum_time, stratum_area, pred_name, pred_size,pred_size_class,pred_l_mean,n_tot, prey_name,type, prey_size,prey_size_class, prey_w) %>%
     dplyr::group_by(year,quarter,stratum_time, stratum_area, pred_name, pred_size,pred_size_class) %>%
     dplyr::mutate(prey_w=prey_w/sum(prey_w)) %>% dplyr::ungroup()
   bb<- dplyr::mutate_if(bb, is.factor,as.character)
+
+
+
 
   # add additional information
   sp_info<- read_csv(file= sp_info_file,col_types = readr::cols()) %>% dplyr::mutate(number=as.integer(number))
@@ -110,6 +120,9 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
 
   bb<-dplyr::mutate(bb,prey_l_mean=rowMeans(matrix(as.numeric(unlist(strsplit(prey_size,split='-'))),ncol=2,byrow=TRUE)))
 
+   #correct  prey_l_mean for last (plus) size class
+  pl<-grep(max_l,bb$prey_size)
+  bb[pl,'prey_l_mean']<- matrix(as.numeric(unlist(strsplit(unlist(bb[pl,'prey_size']),split='-'))),ncol=2,byrow=TRUE)[,1]
 
   bb<-bb %>% dplyr::select(
       area=stratum_area,

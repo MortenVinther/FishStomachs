@@ -48,7 +48,7 @@ validSTOMcontrol <- function(object) {
 #' @slot weighting_by_nstom logical.
 #' @slot combine_starta_from_relative_stomach_content logical.
 #' @slot model_options list. Options for producing input values to multi species models as SMS.
-#' \preformatted{The list must include the names:
+#' \preformatted{The list must as a minimum include the names :
 #'  "delete_small" logical, delete input with relative stomach contents weight lower than "min_value".
 #'                 if FALSE values lower than "min_value" are increased to "min_value".
 #'  "min_value", minimum relative stomach contents weight (see above)
@@ -59,6 +59,7 @@ validSTOMcontrol <- function(object) {
 #'  }
 #' @slot max_l integer. Number used for the maximum length, e.g. 9998L
 #' @slot mis_l integer. Number used for missing length, e.g. 9999L
+#' @slot mis_digest integer. Number used for missing digestion stage e.g. 9L
 #' @slot other character. Name for the "Other food", which is prey items not considered as individual prey species for further analysis, e.g. "other".
 #' @slot mis_size_class integer. Number for size class where the size is unknown, e.g. 0L
 
@@ -115,6 +116,7 @@ setClass(
     ## Constants used
     max_l = "integer",
     mis_l = "integer",
+    mis_digest = "integer",
     other = "character",
     mis_size_class = "integer",
 
@@ -189,6 +191,7 @@ setClass(
     ## Constants used
     max_l = 9999L,
     mis_l = 9999L,
+    mis_digest = 9L,
     other = "other",
     mis_size_class=0L,
 
@@ -238,12 +241,9 @@ setClass(
 #' @export
 setMethod("print", signature(x = "STOMcontrol"), function(x,show=c('general','data_used','stratification','calc_diet','model_options','ALK','constants','test_output','detailed_test_output','bootstrapping')){
 
-  shows<-c('general','data_used','stratification','calc_diet','model_options','ALK','constants','test_output','detailed_test_output','bootstrapping')
-
   a<-slotNames(new("STOMcontrol"))
-
-  b<-c(rep(shows[1],2),rep(shows[2],5),rep(shows[3],5),rep(shows[4],5), rep(shows[5],1),rep(shows[6],1),rep(shows[7],4),
-   rep(shows[8],3) ,rep(shows[9],3),rep(shows[10],1))
+  shows<-c('general'     ,'data_used'    ,'stratification','calc_diet'    ,'model_options' ,'ALK'           ,'constants'    ,'test_output'  ,'detailed_test_output','bootstrapping')
+  b<-   c(rep(shows[1],2),rep(shows[2],5),rep(shows[3],5) ,rep(shows[4],5), rep(shows[5],1),rep(shows[6],1) ,rep(shows[7],5),rep(shows[8],3),rep(shows[9],3)       ,rep(shows[10],1))
 
   names(b)<-a
 

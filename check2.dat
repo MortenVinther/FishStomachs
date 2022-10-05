@@ -1,0 +1,705 @@
+══ Checking ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+Setting env vars:
+• _R_CHECK_CRAN_INCOMING_REMOTE_: FALSE
+• _R_CHECK_CRAN_INCOMING_       : FALSE
+• _R_CHECK_FORCE_SUGGESTS_      : FALSE
+── R CMD build ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+             checking for file 'C:\_C_drev\FishStomachs/DESCRIPTION' ...     checking for file 'C:\_C_drev\FishStomachs/DESCRIPTION' ...  ✔  checking for file 'C:\_C_drev\FishStomachs/DESCRIPTION'
+            ─  preparing 'FishStomachs': (1.6s)
+   checking DESCRIPTION meta-information ...     checking DESCRIPTION meta-information ...     checking DESCRIPTION meta-information ...      checking DESCRIPTION meta-information ...   ✔  checking DESCRIPTION meta-information
+            ─  installing the package to build vignettes
+               creating vignettes ...     creating vignettes ...     creating vignettes ...      creating vignettes ...   ✔  creating vignettes (1m 0.6s)
+            ─  checking for LF line-endings in source and make files and shell scripts (1.2s)
+            ─  checking for empty or unneeded directories
+            ─  building 'FishStomachs_1.0.1.tar.gz'
+       
+      ── R CMD check ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+-    \  ─  using log directory 'C:/Users/movi/AppData/Local/Temp/RtmpO0GKgg/FishStomachs.Rcheck' (930ms)
+─  using R version 4.2.1 (2022-06-23 ucrt)
+|  ─  using platform: x86_64-w64-mingw32 (64-bit)
+─  using session charset: UTF-8
+/-\|/    -  ─  using options '--no-manual --as-cran' (967ms)
+\     checking for file 'FishStomachs/DESCRIPTION' ...|     checking for file 'FishStomachs/DESCRIPTION' ... /  ✔  checking for file 'FishStomachs/DESCRIPTION'
+   checking extension type ...-  ─  checking extension type ... Package
+─  this is package 'FishStomachs' version '1.0.1'
+─  package encoding: UTF-8
+\     checking package namespace information ...|     checking package namespace information ... /  ✔  checking package namespace information
+   checking package dependencies ...-\|/-\|/-\|     checking package dependencies ... /  ✔  checking package dependencies (2.2s)
+   checking if this is a source package ...-     checking if this is a source package ... \  ✔  checking if this is a source package
+   checking if there is a namespace ...|  ✔  checking if there is a namespace
+/-    \     checking for executable files ...|/-\|/-\|     checking for executable files ... /  ✔  checking for executable files (2.1s)
+   checking for hidden files and directories ...-     checking for hidden files and directories ... \  ✔  checking for hidden files and directories
+   checking for portable file names ...|     checking for portable file names ... /  ✔  checking for portable file names
+-    \     checking whether package 'FishStomachs' can be installed ...|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/     checking whether package 'FishStomachs' can be installed ... -  ✔  checking whether package 'FishStomachs' can be installed (16.6s)
+   checking installed package size ...\|     checking installed package size ... /  N  checking installed package size (362ms)
+     installed size is  5.6Mb
+-       sub-directories of 1Mb or more:
+       extdata   4.2Mb
+\|/-    \  ✔  checking package directory (766ms)
+   checking for future file timestamps ...|/-     checking for future file timestamps ... \  ✔  checking for future file timestamps (609ms)
+   checking 'build' directory ...|  ✔  checking 'build' directory
+   checking DESCRIPTION meta-information .../-     checking DESCRIPTION meta-information ... \  ✔  checking DESCRIPTION meta-information (401ms)
+   checking top-level files ...|  N  checking top-level files
+   Non-standard files/directories found at top level:
+     'check2.dat' 'cod_sample.txt' 'source.Rdata'
+   checking for left-over files .../     checking for left-over files ... -  ✔  checking for left-over files
+   checking index information ...\|     checking index information ... /  ✔  checking index information (350ms)
+   checking package subdirectories ...-\     checking package subdirectories ... |  ✔  checking package subdirectories (412ms)
+   checking R files for non-ASCII characters .../     checking R files for non-ASCII characters ... -  ✔  checking R files for non-ASCII characters
+   checking R files for syntax errors ...\|     checking R files for syntax errors ... /  ✔  checking R files for syntax errors
+   checking whether the package can be loaded ...-\|/-\|/-\|/-\|/     checking whether the package can be loaded ... -  ✔  checking whether the package can be loaded (3.2s)
+   checking whether the package can be loaded with stated dependencies ...\|/-\|/-\|/-\|/     checking whether the package can be loaded with stated dependencies ... -  ✔  checking whether the package can be loaded with stated dependencies (3s)
+   checking whether the package can be unloaded cleanly ...\|/-\|/-\|/-\|/     checking whether the package can be unloaded cleanly ... -  ✔  checking whether the package can be unloaded cleanly (3s)
+   checking whether the namespace can be loaded with stated dependencies ...\|/-\|/-\|/-\|/     checking whether the namespace can be loaded with stated dependencies ... -  ✔  checking whether the namespace can be loaded with stated dependencies (3s)
+   checking whether the namespace can be unloaded cleanly ...\|/-\|/-\|/-\|/-\     checking whether the namespace can be unloaded cleanly ... |  ✔  checking whether the namespace can be unloaded cleanly (3.4s)
+   checking loading without being on the library search path .../-\|/-\|/-\|/-\|/-\     checking loading without being on the library search path ... |  ✔  checking loading without being on the library search path (4.2s)
+   checking dependencies in R code .../-\|/-\|/-\|/-\|     checking dependencies in R code ... /  N  checking dependencies in R code (3.2s)
+   Namespaces in Imports field not imported from:
+     'ggthemes' 'graphics' 'methods'
+     All declared Imports should be used.
+   checking S3 generic/method consistency ...-\|/-\|/-\|/-\|/-\|/     checking S3 generic/method consistency ... -  W  checking S3 generic/method consistency (4.2s)
+   as.data.frame:
+     function(x, row.names, optional, ...)
+   as.data.frame.STOMdiet:
+     function(diet)
+   
+   as.data.frame:
+     function(x, row.names, optional, ...)
+   as.data.frame.STOMobs:
+     function(stom, add_empty)
+   
+   plot:
+     function(x, ...)
+   plot.STOMdiet:
+     function(d, show_plot, cut_pred_size, addTitle, tAngle, addNstom,
+              nstomAngle, Ncol, Nrow, Strip.position, Colours, otherCol,
+              refac_prey)
+   
+   print:
+     function(x, ...)
+   print.STOMdiet:
+     function(x)
+   
+   print:
+     function(x, ...)
+   print.STOMobs:
+     function(x, show_attributes)
+   
+   print:
+     function(x, ...)
+   print.STOMdiet:
+     function(x)
+   
+   print:
+     function(x, ...)
+   print.STOMobs:
+     function(x, show_attributes)
+   
+   summary:
+     function(object, ...)
+   summary.STOMdiet:
+     function(diet, level, digits, drop.unused.levels)
+   
+   summary:
+     function(object, ...)
+   summary.STOMobs:
+     function(x, level)
+   
+   update:
+     function(object, ...)
+   update.STOMobs:
+     function(stom)
+   
+   See section 'Generic functions and methods' in the 'Writing R
+   Extensions' manual.
+\     checking replacement functions ...|/-\|/-\|/-\|/-     checking replacement functions ... \  ✔  checking replacement functions (3s)
+   checking foreign function calls ...|/-\|/-\|/-\|/-\|     checking foreign function calls ... /  ✔  checking foreign function calls (3.5s)
+   checking R code for possible problems ...-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-     checking R code for possible problems ... \  N  checking R code for possible problems (22.6s)
+   add_missing_boots : <anonymous>: no visible global function definition
+     for 'all_of'
+   bias_correct_energy_etc: no visible global function definition for
+     'filter'
+   bootsMean: no visible binding for global variable 'rep_id'
+   bootsMean: no visible global function definition for 'filter'
+   bootsMean: no visible global function definition for 'group_by'
+   bootsMean: no visible global function definition for 'mutate'
+   bootsMean: no visible global function definition for 'if_else'
+   bootsMean: no visible binding for global variable 'incl'
+   bootsMean : <anonymous>: no visible global function definition for 'sd'
+   bootsMean : <anonymous>: no visible global function definition for 'n'
+   bootsMean : <anonymous>: no visible global function definition for
+     'all_of'
+   bootsMean: no visible binding for global variable 'n_sample'
+   bootsMean: no visible binding for global variable 'prey'
+   bootsMean: no visible global function definition for 'summarize'
+   bootsMean: no visible global function definition for 'rename'
+   bootsMean: no visible global function definition for 'ungroup'
+   bootsMean: no visible global function definition for 'left_join'
+   calc_population_stom: no visible global function definition for 'n'
+   calc_population_stom: no visible global function definition for
+     'left_join'
+   calc_population_stom: no visible binding for global variable 'n_sample'
+   calc_population_stom: no visible global function definition for
+     'arrange'
+   change_data: no visible global function definition for 'rename'
+   change_data: no visible global function definition for 'read.csv'
+   check_before_strata_aggregation: no visible binding for global variable
+     'prey_name'
+   check_before_strata_aggregation: no visible binding for global variable
+     'prey_size'
+   check_before_strata_aggregation: no visible binding for global variable
+     'prey_w'
+   check_unique_sample_id: no visible global function definition for
+     'read.csv'
+   convert_year_of_the_stomach: no visible global function definition for
+   '|       'read.csv'
+   convert_year_of_the_stomach : <anonymous>: no visible global function
+     definition for 'read.fwf'
+   convert_year_of_the_stomach : <anonymous>: no visible global function
+     definition for 'write_csv'
+   diet_relative: no visible binding for global variable 'key'
+   diet_relative: no visible binding for global variable 'prey_w'
+   edit_control: no visible global function definition for 'getSlots'
+   edit_control: no visible binding for '<<-' assignment to 'gem'
+   edit_control: no visible global function definition for 'slotNames'
+   edit_control: no visible global function definition for 'slot<-'
+   from_to_species_diet: no visible global function definition for
+     'mutate'
+   from_to_species_diet: no visible global function definition for
+     'rename'
+   from_to_species_diet: no visible global function definition for
+     'filter'
+   from_to_species_diet: no visible global function definition for
+     'arrange'
+   from_to_species_diet: no visible global function definition for
+     'bind_rows'
+   from_to_species_diet: no visible global function definition for 'n'
+   group_prey_species : <anonymous>: no visible global function definition
+     for 'between'
+   group_prey_species : <anonymous>: no visible binding for global
+     variable 'prey_nodc'
+   make_from_to_species: no visible global function definition for
+     'read.csv'
+   make_from_to_species: no visible global function definition for
+     'arrange'
+   make_length_classess: no visible global function definition for
+     'read.csv'
+   make_length_classess: no visible global function definition for
+     'write.csv'
+   make_template_strata_weighting: no visible global function definition
+     for 'head'
+   make_template_strata_weighting: no visible global function definition
+     for 'write_csv'
+   model_output: no visible global function definition for 'new'
+   model_output: no visible binding for global variable 'lw_a'
+   model_output: no visible binding for global variable 'lw_b'
+   model_output: no visible global function definition for 'if_else'
+plot.STOMdiet: n/     plot.STOMdiet: no visible binding for global variable 'stratum_time'
+   plot.STOMdiet: no visible binding for global variable 'prey_name'
+   plot.STOMdiet : <anonymous>: no visible binding for global variable
+     'prey_name'
+   plot.STOMdiet : <anonymous>: no visible binding for global variable '.'
+   plot.STOMdiet : <anonymous>: no visible binding for global variable
+     'stratum_time'
+   plotSize : <anonymous>: no visible global function definition for
+     'vars'
+   plotboots: no visible global function definition for 'select'
+   plotboots: no visible binding for global variable 'prey'
+   plotboots: no visible binding for global variable 'n_prey_sp'
+   plotboots: no visible binding for global variable 'phi'
+   plotboots: no visible binding for global variable 'mu'
+   plotboots: no visible binding for global variable 'param'
+   plotboots: no visible binding for global variable 'mean_w'
+   plotboots: no visible global function definition for 'mutate'
+   plotboots: no visible binding for global variable 'rep_id'
+   plotboots: no visible global function definition for 'left_join'
+   plotboots : <anonymous>: no visible global function definition for
+     'group_by'
+   plotboots : <anonymous>: no visible binding for global variable 'mu'
+   plotboots : <anonymous>: no visible binding for global variable 'phi'
+   plotboots : <anonymous>: no visible binding for global variable 'param'
+   plotboots : <anonymous>: no visible global function definition for
+     'summarize'
+   plotboots : <anonymous>: no visible global function definition for 'n'
+   plotboots : <anonymous>: no visible global function definition for
+     'mutate'
+   plotboots : <anonymous>: no visible binding for global variable 'minPw'
+   plotboots : <anonymous>: no visible binding for global variable 'maxPw'
+   plotboots : <anonymous>: no visible binding for global variable 'toD'
+   plotboots : <anonymous>: no visible binding for global variable 'fromD'
+   plotboots : <anonymous>: no visible global function definition for
+     'ungroup'
+plotboots : <anonymous>: no visible binding for glo-     plotboots : <anonymous>: no visible binding for global variable
+     'binwidth'
+   plotboots : <anonymous>: no visible global function definition for
+     'dbeta'
+   plotboots : <anonymous>: no visible global function definition for
+     'select'
+   plotboots : <anonymous>: no visible binding for global variable
+     'mean_w'
+   plotboots : <anonymous>: no visible binding for global variable
+     'density'
+   plotboots : <anonymous>: no visible binding for global variable 'count'
+   plotboots : <anonymous>: no visible binding for global variable 'y'
+   plotboots : <anonymous>: no visible global function definition for
+     'vars'
+   plotboots.size: no visible binding for global variable 'rep_id'
+   plotboots.size : <anonymous>: no visible global function definition for
+     'vars'
+   plotdif: no visible global function definition for 'mutate'
+   plotdif: no visible global function definition for 'if_else'
+   plotdif : <anonymous>: no visible global function definition for 'vars'
+   prey_w_from_pooled_weight : <anonymous>: no visible global function
+     definition for 'theme_bw'
+   prey_w_from_pooled_weight : <anonymous>: no visible binding for global
+     variable 'qlow'
+   prey_w_from_pooled_weight : <anonymous>: no visible binding for global
+     variable 'qhigh'
+   prey_w_from_pooled_weight: no visible global function definition for
+     'head'
+   read_exchange_data: no visible global function definition for
+     'read.csv'
+   read_exchange_data: no visible global function definition for 'update'
+   read_exchange_data: no visible binding for global variable 'quarter'
+   redist_unidentified_prey_lengths: no visible global function definition
+     for 'bind_rows'
+   redist_unidentified_prey_lengths: no visible global function definition
+     for 'filter'
+   redist_unidentified_prey_sp : strata_rel_dist: no visible binding for
+     global variable 'prey_size_class'
+   summary.STOMdiet : <anonymous>: no visible global function definition
+     for 'where'
+   table_strata_prey_preyl: no visible global function definition for
+     'make_criteria_strata_set'
+print,STOMcontrol: no visible global func\     print,STOMcontrol: no visible global function definition for
+     'slotNames'
+   print,STOMcontrol: no visible global function definition for 'new'
+   print,STOMcontrol: no visible global function definition for 'slot'
+   print,STOMcontrol: no visible global function definition for 'str'
+   Undefined global functions or variables:
+     . all_of arrange between bind_rows binwidth count dbeta density
+     filter fromD getSlots group_by head if_else incl key left_join lw_a
+     lw_b make_criteria_strata_set maxPw mean_w minPw mu mutate n
+     n_prey_sp n_sample new param phi prey prey_name prey_nodc prey_size
+     prey_size_class prey_w qhigh qlow quarter read.csv read.fwf rename
+     rep_id sd select slot slot<- slotNames str stratum_time summarize
+     theme_bw toD ungroup update vars where write.csv write_csv y
+   Consider adding
+     importFrom("methods", "getSlots", "new", "slot", "slot<-", "slotNames")
+     importFrom("stats", "dbeta", "density", "filter", "sd", "update")
+     importFrom("utils", "head", "read.csv", "read.fwf", "str", "write.csv")
+   to your NAMESPACE file (and ensure that your DESCRIPTION Imports field
+   contains 'methods').
+   
+   Found if() conditions comparing class() to string:
+   File 'FishStomachs/R/bootstrapping.R': if (class(aa) == "try-error") ...
+   File 'FishStomachs/R/bootstrapping.R': if (class(aa) == "try-error") ...
+   Use inherits() (or maybe is()) instead.
+|     checking Rd files .../-\|     checking Rd files ... /  ✔  checking Rd files (658ms)
+   checking Rd metadata ...-     checking Rd metadata ... \  ✔  checking Rd metadata
+   checking Rd line widths ...|/     checking Rd line widths ... -  ✔  checking Rd line widths
+   checking Rd cross-references ...\|     checking Rd cross-references ... /  ✔  checking Rd cross-references (357ms)
+   checking for missing documentation entries ...-\|/-\|/-\|/-\|/     checking for missing documentation entries ... -  ✔  checking for missing documentation entries (3.3s)
+   checking for code/documentation mismatches ...\|/-\|/-\|/-\|/-     checking for code/documentation mismatches ... \  W  checking for code/documentation mismatches (3.2s)
+   Codoc mismatches from documentation object 'plot.STOMdiet':
+   plot.STOMdiet
+     Code: function(d, show_plot = TRUE, cut_pred_size = c(1, 10),
+                    addTitle = FALSE, tAngle = 90, addNstom = FALSE,
+                    nstomAngle = 45, Ncol = 2, Nrow = NULL, Strip.position
+                    = c("top", "bottom", "left", "right"), Colours,
+                    otherCol = "grey", refac_prey = FALSE)
+     Docs: function(d, show_plot = TRUE, cut_pred_size = c(1, 10),
+                    addTitle = FALSE, tAngle = 90, addNstom = FALSE,
+                    nstomAngle = 45, Ncol = 2, Nrow = NULL, Strip.position
+                    = c("top", "bottom", "left", "right")[1], Colours,
+                    otherCol = "grey", refac_prey = FALSE)
+     Mismatches in argument default values:
+       Name: 'Strip.position' Code: c("top", "bottom", "left", "right") Docs: c("top", "bottom", "left", "right")[1]
+   
+   Codoc mismatches from documentation object 'plotSize':
+   plotSize
+     Code: function(d, show_plot = TRUE, cut_pred_size = c(1, 10),
+                    addTitle = FALSE, tAngle = 90, Colours, otherCol =
+                    "grey", refac_prey = FALSE, byVar = c("year-quarter",
+                    "year", "quarter", "none"))
+     Docs: function(d, show_plot = TRUE, cut_pred_size = c(1, 10),
+                    addTitle = FALSE, tAngle = 90, Colours, otherCol =
+                    "grey", refac_prey = FALSE, byVar = c("year-quarter",
+                    "year", "quarter", "none")[1])
+     Mismatches in argument default values:
+       Name: 'byVar' Code: c("year-quarter", "year", "quarter", "none") Docs: c("year-quarter", "year", "quarter", "none")[1]
+   
+   Codoc mismatches from documentation object 'plotdif':
+   plotdif
+     Code: function(d1, d2, relative = TRUE, show_plot = TRUE,
+                    cut_pred_size = c(1, 10), cut_prey_size = c(1, 10),
+                    addTitle = FALSE, tAngle = 90, Colours = c("green",
+                    "red", "blue"), refac_prey = FALSE, maxDif = 5,
+                  size_NA |                      size_NA = 4, byVar = c("year-quarter", "year",
+                    "quarter", "none"))
+     Docs: function(d1, d2, relative = TRUE, show_plot = TRUE,
+                    cut_pred_size = c(1, 10), cut_prey_size = c(1, 10),
+                    addTitle = FALSE, tAngle = 90, Colours = c("green",
+                    "red", "blue"), refac_prey = FALSE, maxDif = 5,
+                    size_NA = 4, byVar = c("year-quarter", "year",
+                    "quarter", "none")[1])
+     Mismatches in argument default values:
+       Name: 'byVar' Code: c("year-quarter", "year", "quarter", "none") Docs: c("year-quarter", "year", "quarter", "none")[1]
+   
+/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/     S4 class codoc mismatches from documentation object 'STOMcontrol-class':
+   Slots for class 'STOMcontrol'
+     Code: ALK_options bootstrapping calc_strata calc_sub_strata
+           calc_total dataSets detailed_tst_criteria detailed_tst_file
+           detailed_tst_output do_test_output do_test_output_file max_l
+           min_prey_length mis_l mis_size_class model_options name other
+           predators quarters sel_preys stomach_dir stomach_format
+           strata_area_exp strata_quarter_back strata_sub_area_exp
+           strata_time_exp strata_year_back tst_file years
+     Docs: ALK_options boots_id boots_strata calc_strata
+           combine_starta_from_relative_stomach_content dataSets
+           detailed_tst_criteria detailed_tst_file detailed_tst_output
+           do_test_output do_test_output_file max_l min_prey_length mis_l
+           mis_size_class model_options name other predators quarters
+           sel_preys stomach_dir stomach_format strata_area_exp
+           strata_quarter_back strata_sub_area_exp strata_time_exp
+           strata_year_back tst_file weighting_by_nstom weighting_factor
+           year_quarter_strata years
+   
+-     checking Rd \usage sections ...\|/-\|/-\|/-\|/-\|/-\|     checking Rd \usage sections ... /  ✔  checking Rd \usage sections (4.5s)
+   checking Rd contents ...-\     checking Rd contents ... |  ✔  checking Rd contents (334ms)
+   checking for unstated dependencies in examples .../-\     checking for unstated dependencies in examples ... |  ✔  checking for unstated dependencies in examples (562ms)
+/    -     checking installed files from 'inst/doc' ...\     checking installed files from 'inst/doc' ... |  ✔  checking installed files from 'inst/doc'
+   checking files in 'vignettes' .../     checking files in 'vignettes' ... -  ✔  checking files in 'vignettes'
+   checking examples ...\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/     checking examples ... -  ✔  checking examples (10.8s)
+\    |     checking for unstated dependencies in vignettes .../-     checking for unstated dependencies in vignettes ... \  ✔  checking for unstated dependencies in vignettes (390ms)
+   checking package vignettes in 'inst/doc' ...|     checking package vignettes in 'inst/doc' ... /  ✔  checking package vignettes in 'inst/doc'
+-    \     checking re-building of vignette outputs ...|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|     checking re-building of vignette outputs ... /  ✔  checking re-building of vignette outputs (40.5s)
+   checking for non-standard things in the check directory ...-  ✔  checking for non-standard things in the check directory
+✔  checking for detritus in the temp directory
+\     
+   See
+     'C:/Users/movi/AppData/Local/Temp/RtmpO0GKgg/FishStomachs.Rcheck/00check.log'
+   for details.
+   
+   
+|/-\|/-\| ── R CMD check results ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────── FishStomachs 1.0.1 ────
+Duration: 2m 36.6s
+
+❯ checking S3 generic/method consistency ... WARNING
+  as.data.frame:
+    function(x, row.names, optional, ...)
+  as.data.frame.STOMdiet:
+    function(diet)
+  
+  as.data.frame:
+    function(x, row.names, optional, ...)
+  as.data.frame.STOMobs:
+    function(stom, add_empty)
+  
+  plot:
+    function(x, ...)
+  plot.STOMdiet:
+    function(d, show_plot, cut_pred_size, addTitle, tAngle, addNstom,
+             nstomAngle, Ncol, Nrow, Strip.position, Colours, otherCol,
+             refac_prey)
+  
+  print:
+    function(x, ...)
+  print.STOMdiet:
+    function(x)
+  
+  print:
+    function(x, ...)
+  print.STOMobs:
+    function(x, show_attributes)
+  
+  print:
+    function(x, ...)
+  print.STOMdiet:
+    function(x)
+  
+  print:
+    function(x, ...)
+  print.STOMobs:
+    function(x, show_attributes)
+  
+  summary:
+    function(object, ...)
+  summary.STOMdiet:
+    function(diet, level, digits, drop.unused.levels)
+  
+  summary:
+    function(object, ...)
+  summary.STOMobs:
+    function(x, level)
+  
+  update:
+    function(object, ...)
+  update.STOMobs:
+    function(stom)
+  
+  See section 'Generic functions and methods' in the 'Writing R
+  Extensions' manual.
+
+❯ checking for code/documentation mismatches ... WARNING
+  Codoc mismatches from documentation object 'plot.STOMdiet':
+  plot.STOMdiet
+    Code: function(d, show_plot = TRUE, cut_pred_size = c(1, 10),
+                   addTitle = FALSE, tAngle = 90, addNstom = FALSE,
+                   nstomAngle = 45, Ncol = 2, Nrow = NULL, Strip.position
+                   = c("top", "bottom", "left", "right"), Colours,
+                   otherCol = "grey", refac_prey = FALSE)
+    Docs: function(d, show_plot = TRUE, cut_pred_size = c(1, 10),
+                   addTitle = FALSE, tAngle = 90, addNstom = FALSE,
+                   nstomAngle = 45, Ncol = 2, Nrow = NULL, Strip.position
+                   = c("top", "bottom", "left", "right")[1], Colours,
+                   otherCol = "grey", refac_prey = FALSE)
+    Mismatches in argument default values:
+      Name: 'Strip.position' Code: c("top", "bottom", "left", "right") Docs: c("top", "bottom", "left", "right")[1]
+  
+  Codoc mismatches from documentation object 'plotSize':
+  plotSize
+    Code: function(d, show_plot = TRUE, cut_pred_size = c(1, 10),
+                   addTitle = FALSE, tAngle = 90, Colours, otherCol =
+                   "grey", refac_prey = FALSE, byVar = c("year-quarter",
+                   "year", "quarter", "none"))
+    Docs: function(d, show_plot = TRUE, cut_pred_size = c(1, 10),
+                   addTitle = FALSE, tAngle = 90, Colours, otherCol =
+                   "grey", refac_prey = FALSE, byVar = c("year-quarter",
+                   "year", "quarter", "none")[1])
+    Mismatches in argument default values:
+      Name: 'byVar' Code: c("year-quarter", "year", "quarter", "none") Docs: c("year-quarter", "year", "quarter", "none")[1]
+  
+  Codoc mismatches from documentation object 'plotdif':
+  plotdif
+    Code: function(d1, d2, relative = TRUE, show_plot = TRUE,
+                   cut_pred_size = c(1, 10), cut_prey_size = c(1, 10),
+                   addTitle = FALSE, tAngle = 90, Colours = c("green",
+                   "red", "blue"), refac_prey = FALSE, maxDif = 5,
+                   size_NA = 4, byVar = c("year-quarter", "year",
+                   "quarter", "none"))
+    Docs: function(d1, d2, relative = TRUE, show_plot = TRUE,
+                   cut_pred_size = c(1, 10), cut_prey_size = c(1, 10),
+                   addTitle = FALSE, tAngle = 90, Colours = c("green",
+                   "red", "blue"), refac_prey = FALSE, maxDif = 5,
+                   size_NA = 4, byVar = c("year-quarter", "year",
+                   "quarter", "none")[1])
+    Mismatches in argument default values:
+      Name: 'byVar' Code: c("year-quarter", "year", "quarter", "none") Docs: c("year-quarter", "year", "quarter", "none")[1]
+  
+  S4 class codoc mismatches from documentation object 'STOMcontrol-class':
+  Slots for class 'STOMcontrol'
+    Code: ALK_options bootstrapping calc_strata calc_sub_strata
+          calc_total dataSets detailed_tst_criteria detailed_tst_file
+          detailed_tst_output do_test_output do_test_output_file max_l
+          min_prey_length mis_l mis_size_class model_options name other
+          predators quarters sel_preys stomach_dir stomach_format
+          strata_area_exp strata_quarter_back strata_sub_area_exp
+          strata_time_exp strata_year_back tst_file years
+    Docs: ALK_options boots_id boots_strata calc_strata
+          combine_starta_from_relative_stomach_content dataSets
+          detailed_tst_criteria detailed_tst_file detailed_tst_output
+          do_test_output do_test_output_file max_l min_prey_length mis_l
+          mis_size_class model_options name other predators quarters
+          sel_preys stomach_dir stomach_format strata_area_exp
+          strata_quarter_back strata_sub_area_exp strata_time_exp
+          strata_year_back tst_file weighting_by_nstom weighting_factor
+          year_quarter_strata years
+
+❯ checking installed package size ... NOTE
+    installed size is  5.6Mb
+    sub-directories of 1Mb or more:
+      extdata   4.2Mb
+
+❯ checking top-level files ... NOTE
+  Non-standard files/directories found at top level:
+    'check2.dat' 'cod_sample.txt' 'source.Rdata'
+
+❯ checking dependencies in R code ... NOTE
+  Namespaces in Imports field not imported from:
+    'ggthemes' 'graphics' 'methods'
+    All declared Imports should be used.
+
+❯ checking R code for possible problems ... NOTE
+  add_missing_boots : <anonymous>: no visible global function definition
+    for 'all_of'
+  bias_correct_energy_etc: no visible global function definition for
+    'filter'
+  bootsMean: no visible binding for global variable 'rep_id'
+  bootsMean: no visible global function definition for 'filter'
+  bootsMean: no visible global function definition for 'group_by'
+  bootsMean: no visible global function definition for 'mutate'
+  bootsMean: no visible global function definition for 'if_else'
+  bootsMean: no visible binding for global variable 'incl'
+  bootsMean : <anonymous>: no visible global function definition for 'sd'
+  bootsMean : <anonymous>: no visible global function definition for 'n'
+  bootsMean : <anonymous>: no visible global function definition for
+    'all_of'
+  bootsMean: no visible binding for global variable 'n_sample'
+  bootsMean: no visible binding for global variable 'prey'
+  bootsMean: no visible global function definition for 'summarize'
+  bootsMean: no visible global function definition for 'rename'
+  bootsMean: no visible global function definition for 'ungroup'
+  bootsMean: no visible global function definition for 'left_join'
+  calc_population_stom: no visible global function definition for 'n'
+  calc_population_stom: no visible global function definition for
+    'left_join'
+  calc_population_stom: no visible binding for global variable 'n_sample'
+  calc_population_stom: no visible global function definition for
+    'arrange'
+  change_data: no visible global function definition for 'rename'
+  change_data: no visible global function definition for 'read.csv'
+  check_before_strata_aggregation: no visible binding for global variable
+    'prey_name'
+  check_before_strata_aggregation: no visible binding for global variable
+    'prey_size'
+  check_before_strata_aggregation: no visible binding for global variable
+    'prey_w'
+  check_unique_sample_id: no visible global function definition for
+    'read.csv'
+  convert_year_of_the_stomach: no visible global function definition for
+    'read.csv'
+  convert_year_of_the_stomach : <anonymous>: no visible global function
+    definition for 'read.fwf'
+  convert_year_of_the_stomach : <anonymous>: no visible global function
+    definition for 'write_csv'
+  diet_relative: no visible binding for global variable 'key'
+  diet_relative: no visible binding for global variable 'prey_w'
+  edit_control: no visible global function definition for 'getSlots'
+  edit_control: no visible binding for '<<-' assignment to 'gem'
+  edit_control: no visible global function definition for 'slotNames'
+  edit_control: no visible global function definition for 'slot<-'
+  from_to_species_diet: no visible global function definition for
+    'mutate'
+  from_to_species_diet: no visible global function definition for
+    'rename'
+  from_to_species_diet: no visible global function definition for
+    'filter'
+  from_to_species_diet: no visible global function definition for
+    'arrange'
+  from_to_species_diet: no visible global function definition for
+    'bind_rows'
+  from_to_species_diet: no visible global function definition for 'n'
+  group_prey_species : <anonymous>: no visible global function definition
+    for 'between'
+  group_prey_species : <anonymous>: no visible binding for global
+    variable 'prey_nodc'
+  make_from_to_species: no visible global function definition for
+    'read.csv'
+  make_from_to_species: no visible global function definition for
+    'arrange'
+  make_length_classess: no visible global function definition for
+    'read.csv'
+  make_length_classess: no visible global function definition for
+    'write.csv'
+  make_template_strata_weighting: no visible global function definition
+    for 'head'
+  make_template_strata_weighting: no visible global function definition
+    for 'write_csv'
+  model_output: no visible global function definition for 'new'
+  model_output: no visible binding for global variable 'lw_a'
+  model_output: no visible binding for global variable 'lw_b'
+  model_output: no visible global function definition for 'if_else'
+  plot.STOMdiet: no visible binding for global variable 'stratum_time'
+  plot.STOMdiet: no visible binding for global variable 'prey_name'
+  plot.STOMdiet : <anonymous>: no visible binding for global variable
+    'prey_name'
+  plot.STOMdiet : <anonymous>: no visible binding for global variable '.'
+  plot.STOMdiet : <anonymous>: no visible binding for global variable
+    'stratum_time'
+  plotSize : <anonymous>: no visible global function definition for
+    'vars'
+  plotboots: no visible global function definition for 'select'
+  plotboots: no visible binding for global variable 'prey'
+  plotboots: no visible binding for global variable 'n_prey_sp'
+  plotboots: no visible binding for global variable 'phi'
+  plotboots: no visible binding for global variable 'mu'
+  plotboots: no visible binding for global variable 'param'
+  plotboots: no visible binding for global variable 'mean_w'
+  plotboots: no visible global function definition for 'mutate'
+  plotboots: no visible binding for global variable 'rep_id'
+  plotboots: no visible global function definition for 'left_join'
+  plotboots : <anonymous>: no visible global function definition for
+    'group_by'
+  plotboots : <anonymous>: no visible binding for global variable 'mu'
+  plotboots : <anonymous>: no visible binding for global variable 'phi'
+  plotboots : <anonymous>: no visible binding for global variable 'param'
+  plotboots : <anonymous>: no visible global function definition for
+    'summarize'
+  plotboots : <anonymous>: no visible global function definition for 'n'
+  plotboots : <anonymous>: no visible global function definition for
+    'mutate'
+  plotboots : <anonymous>: no visible binding for global variable 'minPw'
+  plotboots : <anonymous>: no visible binding for global variable 'maxPw'
+  plotboots : <anonymous>: no visible binding for global variable 'toD'
+  plotboots : <anonymous>: no visible binding for global variable 'fromD'
+  plotboots : <anonymous>: no visible global function definition for
+    'ungroup'
+  plotboots : <anonymous>: no visible binding for global variable
+    'binwidth'
+  plotboots : <anonymous>: no visible global function definition for
+    'dbeta'
+  plotboots : <anonymous>: no visible global function definition for
+    'select'
+  plotboots : <anonymous>: no visible binding for global variable
+    'mean_w'
+  plotboots : <anonymous>: no visible binding for global variable
+    'density'
+  plotboots : <anonymous>: no visible binding for global variable 'count'
+  plotboots : <anonymous>: no visible binding for global variable 'y'
+  plotboots : <anonymous>: no visible global function definition for
+    'vars'
+  plotboots.size: no visible binding for global variable 'rep_id'
+  plotboots.size : <anonymous>: no visible global function definition for
+    'vars'
+  plotdif: no visible global function definition for 'mutate'
+  plotdif: no visible global function definition for 'if_else'
+  plotdif : <anonymous>: no visible global function definition for 'vars'
+  prey_w_from_pooled_weight : <anonymous>: no visible global function
+    definition for 'theme_bw'
+  prey_w_from_pooled_weight : <anonymous>: no visible binding for global
+    variable 'qlow'
+  prey_w_from_pooled_weight : <anonymous>: no visible binding for global
+    variable 'qhigh'
+  prey_w_from_pooled_weight: no visible global function definition for
+    'head'
+  read_exchange_data: no visible global function definition for
+    'read.csv'
+  read_exchange_data: no visible global function definition for 'update'
+  read_exchange_data: no visible binding for global variable 'quarter'
+  redist_unidentified_prey_lengths: no visible global function definition
+    for 'bind_rows'
+  redist_unidentified_prey_lengths: no visible global function definition
+    for 'filter'
+  redist_unidentified_prey_sp : strata_rel_dist: no visible binding for
+    global variable 'prey_size_class'
+  summary.STOMdiet : <anonymous>: no visible global function definition
+    for 'where'
+  table_strata_prey_preyl: no visible global function definition for
+    'make_criteria_strata_set'
+  print,STOMcontrol: no visible global function definition for
+    'slotNames'
+  print,STOMcontrol: no visible global function definition for 'new'
+  print,STOMcontrol: no visible global function definition for 'slot'
+  print,STOMcontrol: no visible global function definition for 'str'
+  Undefined global functions or variables:
+    . all_of arrange between bind_rows binwidth count dbeta density
+    filter fromD getSlots group_by head if_else incl key left_join lw_a
+    lw_b make_criteria_strata_set maxPw mean_w minPw mu mutate n
+    n_prey_sp n_sample new param phi prey prey_name prey_nodc prey_size
+    prey_size_class prey_w qhigh qlow quarter read.csv read.fwf rename
+    rep_id sd select slot slot<- slotNames str stratum_time summarize
+    theme_bw toD ungroup update vars where write.csv write_csv y
+  Consider adding
+    importFrom("methods", "getSlots", "new", "slot", "slot<-", "slotNames")
+    importFrom("stats", "dbeta", "density", "filter", "sd", "update")
+    importFrom("utils", "head", "read.csv", "read.fwf", "str", "write.csv")
+  to your NAMESPACE file (and ensure that your DESCRIPTION Imports field
+  contains 'methods').
+  
+  Found if() conditions comparing class() to string:
+  File 'FishStomachs/R/bootstrapping.R': if (class(aa) == "try-error") ...
+  File 'FishStomachs/R/bootstrapping.R': if (class(aa) == "try-error") ...
+  Use inherits() (or maybe is()) instead.
+
+0 errors ✔ | 2 warnings ✖ | 4 notes ✖

@@ -82,19 +82,19 @@ s<-edit_control(s,
                   # use number of stomach in the sample as weighting factor
                   weighting_factor=expression(n_tot),
                   # set file to NA when weighting_factor is given
-                  weigthing_factor_file=NA
+                  weighting_factor_file=NA
                 ),
                 calc_strata=list(
                   relative_weight=FALSE,
                   weighting_factor=expression(sqrt(mean_cpue)),
-                  weigthing_factor_file=NA
+                  weighting_factor_file=NA
                 ),
                 calc_total=list(
                   relative_weight=FALSE,
                   # set to NA when input is provided in a file
                   weighting_factor=NA,
                   # use data from a specified file (in those case, a file provided by the FishStomachs)
-                  weigthing_factor_file=file.path(system.file( package = "FishStomachs"),"extdata","weighting_total.csv")
+                  weighting_factor_file=file.path(system.file( package = "FishStomachs"),"extdata","weighting_total.csv")
                 )
 )
 

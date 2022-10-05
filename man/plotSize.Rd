@@ -13,7 +13,7 @@ plotSize(
   Colours,
   otherCol = "grey",
   refac_prey = FALSE,
-  byVar = c("year-quarter", "year", "quarter", "none")[1]
+  byVar = c("year-quarter", "year", "quarter", "none")
 )
 }
 \arguments{

@@ -14,7 +14,7 @@
   nstomAngle = 45,
   Ncol = 2,
   Nrow = NULL,
-  Strip.position = c("top", "bottom", "left", "right")[1],
+  Strip.position = c("top", "bottom", "left", "right"),
   Colours,
   otherCol = "grey",
   refac_prey = FALSE

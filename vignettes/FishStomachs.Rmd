@@ -126,7 +126,7 @@ Ration (R) (per hour) of prey group (i) for pooled stomachs is
 calculated from:
 
 
-$$R = \sum_{i}^{}{(\rho*M_{i}*b_{i}*e^{\delta T}*L^{\lambda}}*E^{-\xi})*K*\left(\frac{N_{A}}{N_{F}} \right)^{\alpha - 1}*S^{\alpha}$$
+$$R = \sum_{i}^{}{(\rho*M_{i}*b_{i}*e^{\delta T}*L^{\lambda}}*E^{\xi})*K*\left(\frac{N_{A}}{N_{F}} \right)^{\alpha - 1}*S^{\alpha}$$
 
 M= armament of individual prey (group) i
 
@@ -153,7 +153,7 @@ in Table 5.
 When data exist by the individual stomachs, the ration eaten per
 (feeding) fish can be calculated as:
 
-$$R = \sum_{i}^{}{\rho * M_i* b_i* e^{\delta T} * L^{\lambda} * E^{-\xi} * S^{\alpha}}$$
+$$R = \sum_{i}^{}{\rho * M_i* b_i* e^{\delta T} * L^{\lambda} * E^{\xi} * S^{\alpha}}$$
 
 **Table 3. Parameter values of the generic cylinder model of gastric
 evacuation used for the compilation of stomachs from predators in the
@@ -174,7 +174,7 @@ outlined above can also be applied to calculate the ration of the
 individual prey item and thereby the average diet. For example, for
 individual stomachs the Ration (R) of prey item *i* becomes:
 
-$$R_{i} = \rho\ M_i *b_i * e^{\delta T} * L^\lambda * E^{-\xi}$$
+$$R_{i} = \rho\ M_i *b_i * e^{\delta T} * L^\lambda * E^{\xi}$$
 
 Based on the set of $R_{i}$ for the individual predators from e.g. a
 sampling site (trawl haul) the average Ration of the of the individual

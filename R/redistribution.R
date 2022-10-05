@@ -89,13 +89,11 @@ redist_unidentified_prey_sp <- function(s, dist_time = stratum_time, dist_area =
     iter <- sort(unique(from_to_species$order))
     if (!(missing(do_only)))
         iter <- intersect(iter, do_only)
-
     for (i in iter) {
         # test i<-1
         from_species <- unique(dplyr::filter(sptof_all, order == i)$from_prey_name)
         sptof <- dplyr::filter(sptof_all, order == i) %>%
             dplyr::select(-order)
-
         s <- dplyr::mutate(s, row = 1:nrow(s), from_prey_name = NULL)
 
         remains <- dplyr::filter(s, !(prey_name %in% from_species))

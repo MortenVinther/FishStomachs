@@ -8,7 +8,7 @@ Add WoRMS Aphia Id to predator or prey species where missing.}
 add_Aphia_ID(
   stom,
   Worms_Aphia_ID,
-  predator_or_prey = c("predator", "prey")[2],
+  predator_or_prey = c("predator", "prey"),
   stop_if_errror = FALSE,
   delete_first = FALSE,
   verbose = FALSE,

@@ -6,7 +6,6 @@
 \usage{
 prey_w_from_pooled_weight(
   stom,
-  sel_preys = c("Clupea harengus"),
   sum_other_preys = TRUE,
   do_plots = FALSE,
   quantile_lw = c(0.01, 0.99)
@@ -14,8 +13,6 @@ prey_w_from_pooled_weight(
 }
 \arguments{
 \item{stom}{input Stomach contents data of class STOMobs.}
-
-\item{sel_preys}{Vector of prey names for processing.}
 
 \item{sum_other_preys}{Flag for transforming preys not included in sel_preys into prey="other food" with no length information}
 
@@ -28,7 +25,7 @@ Stomach data, class STOMobs.
 }
 \description{
 Allocate weight to individual prey lengths from prey-pooled weights using length-weight relations by prey species
-and digestion stage from records where prey weights are recoderde by the individual record.
+and digestion stage from records where prey weights are recorded by the individual record.
 This is done for the species included in the list of species (control@sel_species).
 For other species, a total weight by species is calculated and length information is set to missing.
 }

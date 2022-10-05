@@ -10,11 +10,12 @@
 #' @return Stomach data on on internal format.
 #' @export
 #' @examples \dontrun{add_Aphia_ID(X)}
-add_Aphia_ID <- function(stom, Worms_Aphia_ID, predator_or_prey = c("predator", "prey")[2], stop_if_errror = FALSE,delete_first=FALSE,verbose=FALSE,match_item=c('item','scientific')[2]) {
+add_Aphia_ID <- function(stom, Worms_Aphia_ID, predator_or_prey = c("predator", "prey"), stop_if_errror = FALSE,delete_first=FALSE,verbose=FALSE,match_item=c('item','scientific')[2]) {
 
   item<-pred_name<-prey_name<-scientific<-WoRMS_AphiaID<-NULL
   x<-as.data.frame(stom)
 
+  predator_or_prey <- match.arg(predator_or_prey)
     if (delete_first) {
         if (predator_or_prey %in% c("pred")) x$pred_aphia<-NULL
         if (predator_or_prey %in% c("prey")) x$prey_aphia<-NULL
@@ -66,12 +67,12 @@ add_Aphia_ID <- function(stom, Worms_Aphia_ID, predator_or_prey = c("predator", 
 
         # allocate missing prey aphia where exist
         if (predator_or_prey %in% c("prey")) {
-            x <- dplyr::left_join(x = x, y = b, by = c("prey_name" = "species")) %>% mutate(prey_name=factor(prey_name))
+            x <- dplyr::left_join(x = x, y = b, by = c("prey_name" = "species")) %>% dplyr::mutate(prey_name=factor(prey_name))
             mis <- is.na(x$prey_aphia) & x$n_food >= 1
             x[mis, 'prey_aphia'] <- x[mis, "WoRMS_AphiaID"]
 
         } else if (predator_or_prey %in% c("predator")) {
-            x <- dplyr::left_join(x = x, y = b, by = c("pred_name" = "species")) %>%  mutate(pred_name=factor(pred_name))
+            x <- dplyr::left_join(x = x, y = b, by = c("pred_name" = "species")) %>%  dplyr::mutate(pred_name=factor(pred_name))
             mis <- is.na(x$pred_aphia)
             x[mis, 'pred_aphia'] <- x[mis, "WoRMS_AphiaID"]
         }

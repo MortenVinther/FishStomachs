@@ -18,11 +18,12 @@
 #' @return Stomach data of class STOMobs with added \code{pred_nodc} or code{pred_nodc} variables.
 #' @export
 #' @examples \dontrun{add_NODC_ID(s)}
-add_NODC_ID <- function(stom, NODC_ID, predator_or_prey = c("predator", "prey")[2], stop_if_errror = FALSE,delete_first=FALSE,verbose=FALSE) {
+add_NODC_ID <- function(stom, NODC_ID, predator_or_prey = c("predator", "prey"), stop_if_errror = FALSE,delete_first=FALSE,verbose=FALSE) {
 
   dup_species<-dup_species<-NODC<-NODC<-pred_name<-pred_name<-prey_name<-prey_name<-species<-species<-NULL
 
   x<-as.data.frame(stom)
+  predator_or_prey <- match.arg(predator_or_prey)
 
   if (delete_first) {
     if (predator_or_prey %in% c("pred")) x$pred_nodc<-NULL
@@ -68,12 +69,12 @@ add_NODC_ID <- function(stom, NODC_ID, predator_or_prey = c("predator", "prey")[
 
     # allocate missing prey NODC where exist
     if (predator_or_prey %in% c("prey")) {
-      x <- dplyr::left_join(x = x, y = b, by = c("prey_name" = "species")) %>% mutate(prey_name=factor(prey_name))
+      x <- dplyr::left_join(x = x, y = b, by = c("prey_name" = "species")) %>% dplyr::mutate(prey_name=factor(prey_name))
       mis <- is.na(x$prey_nodc) & x$n_food >= 1
       x[mis, 'prey_nodc'] <- x[mis, "NODC"]
 
     } else if (predator_or_prey %in% c("predator")) {
-      x <- dplyr::left_join(x = x, y = b, by = c("pred_name" = "species")) %>%  mutate(pred_name=factor(pred_name))
+      x <- dplyr::left_join(x = x, y = b, by = c("pred_name" = "species")) %>%  dplyr::mutate(pred_name=factor(pred_name))
       mis <- is.na(x$pred_nodc)
       x[mis, 'pred_nodc'] <- x[mis, "NODC"]
     }

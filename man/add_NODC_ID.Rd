@@ -7,7 +7,7 @@
 add_NODC_ID(
   stom,
   NODC_ID,
-  predator_or_prey = c("predator", "prey")[2],
+  predator_or_prey = c("predator", "prey"),
   stop_if_errror = FALSE,
   delete_first = FALSE,
   verbose = FALSE

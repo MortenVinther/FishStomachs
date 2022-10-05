@@ -17,7 +17,7 @@ plotdif(
   refac_prey = FALSE,
   maxDif = 5,
   size_NA = 4,
-  byVar = c("year-quarter", "year", "quarter", "none")[1]
+  byVar = c("year-quarter", "year", "quarter", "none")
 )
 }
 \arguments{

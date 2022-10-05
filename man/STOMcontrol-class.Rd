@@ -54,7 +54,7 @@ For more details on exchange format see the vignette: \code{vignette("Database_f
 \item{\code{combine_starta_from_relative_stomach_content}}{logical.}
 
 \item{\code{model_options}}{list. Options for producing input values to multi species models as SMS.
-\preformatted{The list must include the names:
+\preformatted{The list must as a minimum include the names :
  "delete_small" logical, delete input with relative stomach contents weight lower than "min_value".
                 if FALSE values lower than "min_value" are increased to "min_value".
  "min_value", minimum relative stomach contents weight (see above)
@@ -67,6 +67,8 @@ For more details on exchange format see the vignette: \code{vignette("Database_f
 \item{\code{max_l}}{integer. Number used for the maximum length, e.g. 9998L}
 
 \item{\code{mis_l}}{integer. Number used for missing length, e.g. 9999L}
+
+\item{\code{mis_digest}}{integer. Number used for missing digestion stage e.g. 9L}
 
 \item{\code{other}}{character. Name for the "Other food", which is prey items not considered as individual prey species for further analysis, e.g. "other".}
 

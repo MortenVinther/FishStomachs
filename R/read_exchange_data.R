@@ -34,7 +34,7 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
     # read stomach data using type definitions
     a <- lapply(exchange_file, function(x) {
         # test x<-exchange_file[1]
-        cat("\nProcessing file_", x, "\n")
+        cat("\nProcessing file_", file.path(stom_dir, x), "\n")
         a <- readr::read_csv(file = file.path(stom_dir, x), n_max = 1, col_types = readr::cols())
         name_in <- colnames(a)
 

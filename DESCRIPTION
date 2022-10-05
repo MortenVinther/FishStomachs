@@ -44,6 +44,7 @@ Collate:
     'bias_correct_energy_etc.R'
     'model_output.R'
     'bootstrapping.R'
+    'combine_years.R'
 Suggests: 
     knitr,
     rmarkdown
@@ -60,4 +61,5 @@ Imports:
     tidyr,
     readr,
     ggplot2,
-    ggthemes
+    ggthemes,
+    Compositional

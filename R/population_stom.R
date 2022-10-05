@@ -180,6 +180,7 @@ calc_population_stom<-function(s,verbose=FALSE) {
   mis_ll<-paste(mis_l,mis_l,sep='-')
   do_details <- control@detailed_tst_output
 
+
   check_sc<-function(sc,strata=c('sub_strata','strata','total')[1]){
     sc_names<-names(sc)
     if (!("relative_weight" %in% sc_names & "weighting_factor" %in% sc_names &"weighting_factor_file" %in% sc_names)) {
@@ -224,7 +225,7 @@ calc_population_stom<-function(s,verbose=FALSE) {
 
   pred <-dplyr::select(pred,stratum_time, stratum_area, stratum_sub_area, pred_name, pred_size_class, pred_size,sample_id, fish_id, n_tot, pred_l_mean, pred_cpue, w_fac_sample)
 
-    #contents per stomach and include empty stomachs
+  #contents per stomach and include empty stomachs
   prey<-dplyr::left_join(pred,prey, by = c("sample_id", "fish_id"))
   prey<-empty_stom(prey)  %>% dplyr::mutate(prey_w=prey_w/n_tot)
 
@@ -343,7 +344,6 @@ calc_population_stom<-function(s,verbose=FALSE) {
   }
 
   # weighted mean prey_w by area
-  # dplyr::filter(prey,stratum_time=='1981-Q3')
   prey<- prey %>% dplyr::mutate(prey_w=prey_w*w_fac_area) %>% dplyr::group_by(stratum_time,pred_name,pred_size,prey_name,prey_size,prey_size_class)  %>%
     dplyr::summarise(prey_w=sum(prey_w))
   fac<- pred %>%  dplyr::group_by( stratum_time,pred_name,pred_size) %>% dplyr::summarise(w_fac_area=sum(w_fac_area))
@@ -413,9 +413,10 @@ cleanup<-function(){for(i in dev.list()) if (names(dev.off())=='null device') br
 #' @method  plot STOMdiet
 #' @export
 plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=90,addNstom=FALSE,nstomAngle=45,Ncol=2,Nrow=NULL,
-                    Strip.position = c("top", "bottom", "left", "right")[1],Colours,otherCol='grey',refac_prey=FALSE) {
+                    Strip.position = c("top", "bottom", "left", "right"),Colours,otherCol='grey',refac_prey=FALSE) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-quarter<-year<-NULL
   if (missing(Colours)) Colours<-c('red','green','plum','blue','cyan','yellow','coral','skyblue','purple','magenta','limegreen','pink' )
+  Strip.position <- match.arg(Strip.position)
 
   if (refac_prey) d<-refac_prey(d)
   Colours[nlevels(d[['PREY']]$prey_name)]<-otherCol
@@ -474,12 +475,13 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
 #' @export
 plotSize<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=90,
                    Colours,otherCol='grey',refac_prey=FALSE,
-                   byVar=c('year-quarter','year','quarter','none')[1]) {
+                   byVar=c('year-quarter','year','quarter','none')) {
 
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-quarter<-year<-NULL
   prey_name<-prey_size<-stratum_time<-NULL
 
   if (missing(Colours)) Colours<-c('red','green','plum','blue','cyan','yellow','coral','skyblue','purple','magenta','limegreen','pink' )
+  byVar <- match.arg(byVar)
 
   if (refac_prey) d<-refac_prey(d)
   Colours[nlevels(d[['PREY']]$prey_name)]<-otherCol
@@ -534,10 +536,12 @@ plotSize<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=
 #' @export
 plotdif<-function(d1,d2,relative=TRUE,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(1,10),addTitle=FALSE,tAngle=90,
                   Colours=c('green','red','blue'),refac_prey=FALSE,maxDif=5,size_NA=4,
-                  byVar=c('year-quarter','year','quarter','none')[1]) {
+                  byVar=c('year-quarter','year','quarter','none')) {
 
    key<<-pred_name<-pred_size<-prey_w<-prey_w1<-prey_w2<-size_w<-col<-quarter<-year<-NULL
    dif_w<-dif_w2<-key<-pp<-prey_name<-prey_size<-stratum_time<-NULL
+
+    byVar <- match.arg(byVar)
 
   #if (refac_prey) d<-refac_prey(d)
   control<-get_control(d1)

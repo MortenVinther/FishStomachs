@@ -1,10 +1,9 @@
 #' Allocate weight to individual prey lengths from prey-pooled weights using length-weight relations by prey species
-#' and digestion stage from records where prey weights are recoderde by the individual record.
+#' and digestion stage from records where prey weights are recorded by the individual record.
 #' This is done for the species included in the list of species (control@sel_species).
 #' For other species, a total weight by species is calculated and length information is set to missing.
 #' @title Allocate weight to individual prey lengths from prey-pooled weights
 #' @param stom input Stomach contents data of class STOMobs.
-#' @param sel_preys Vector of prey names for processing.
 #' @param sum_other_preys  Flag for transforming preys not included in sel_preys into prey="other food" with no length information
 #' @param do_plots  Flag for plotting derived length-weight relations and other plots.
 #' @param quantile_lw Quantile of size range of prey length to be used for estimating length-weight relation
@@ -13,7 +12,7 @@
 #' @export
 #' @examples \dontrun{individual_prey_weights_from_pooled_weight(stom=a,sel_preys=c("Clupea harengus"),
 #'       sum_other_preys=TRUE,do_plots=FALSE)}
-prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_other_preys=TRUE,do_plots=FALSE,quantile_lw=c(0.01,0.99)) {
+prey_w_from_pooled_weight<-function(stom,sum_other_preys=TRUE,do_plots=FALSE,quantile_lw=c(0.01,0.99)) {
 
   a<-b<-calc_prey_w<-digest<-fish_id<-lw_a<-n<-pool_prey_w<-prey_l<-prey_n<-prey_name<-prey_w<-prey_w_meth<-records<-sample_id<-sum_calc_prey_w<-sum_mis_l<-weight_pool_id<-weight_sample_id<-NULL
 
@@ -23,6 +22,7 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
     do_debug<-TRUE  # set do_debug=TRUE for debugging only
     quantile_lw<-c(0.01,0.99)
     stom<-a
+    my.fish_id<-c("38126",  "97787","45964")
    } else do_debug<-FALSE
 
 
@@ -30,32 +30,44 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
    sel_preys<-control@sel_preys
    mis_l <- as.integer(control@mis_l)
    other<-control@other  # id for "other food"
-   mis_digest<-9L  # skulle komme fra control
+   mis_digest<-control@mis_digest
+
+   stom[['PREY']]$prey_l<-as.integer(stom[['PREY']]$prey_l)
+
+   if (do_debug) {
+    sum(stom[['PREY']]$prey_w,na.rm=TRUE)
+    data.frame(dplyr::filter(stom[['PREY']],fish_id %in% my.fish_id) %>% select(-sample_id))
+  }
 
   # add variable for each weighing group (assuming that a recorded weight per prey name represent a dplyr::distinct group  )
   prey<-stom[['PREY']] %>% dplyr::mutate(weight_sample_id=paste(sample_id,fish_id,sep='-'),weight_pool_id=paste(weight_sample_id,prey_name,prey_w,sep='-'),pool_prey_w=prey_w)
+  if (do_debug) {
+    sum(prey$prey_w,na.rm=TRUE)
+    dplyr::filter(prey,fish_id %in% my.fish_id) %>% select(-sample_id)
+  }
 
   # records to be changed
   lat0<-dplyr::filter(prey,prey_w_meth=='p' & prey_name %in% sel_preys)
-  #dplyr::filter(lat0,sample_id=="Cod-1980-1-24-LAT-ZBA-26" & fish_id==41517)
-
-  if (do_debug) xtabs(~prey_name+digest,data=dplyr::filter(lat0,prey_name %in% sel_preys),addNA = TRUE)
+  if (do_debug) {
+    dplyr::filter(lat0,fish_id %in% my.fish_id)%>% select(-sample_id,-weight_sample_id)
+    xtabs(~prey_name+digest,data=dplyr::filter(lat0,prey_name %in% sel_preys),addNA = TRUE)
+  }
 
   l1<- lat0 %>% dplyr::select(weight_sample_id,weight_pool_id) %>% dplyr::group_by(weight_sample_id,weight_pool_id) %>% dplyr::summarise(records=n())
   l<-dplyr::left_join(lat0,l1, by = c("weight_sample_id", "weight_pool_id"))
-  # dplyr::filter(l,sample_id=="Cod-1980-1-24-LAT-ZBA-26" & fish_id==41517)
+  if (do_debug)   dplyr::filter(l,fish_id %in% my.fish_id)%>% select(-sample_id,-weight_sample_id)
 
   if (do_debug) {
-    l_deb <- l %>% dplyr::select(weight_sample_id,weight_pool_id,prey_w_meth,prey_name,prey_l,digest,pool_prey_w,prey_n,records)
-    dplyr::filter(l_deb,weight_sample_id=="Cod-1980-1-24-LAT-ZBA-26-41517")
+    l_deb <- l %>% dplyr::select(fish_id,weight_sample_id,weight_pool_id,prey_w_meth,prey_name,prey_l,digest,pool_prey_w,prey_n,records)
+    dplyr::filter(l_deb,fish_id %in% my.fish_id) %>% select(-weight_sample_id)
     dplyr::filter(l_deb,records>1)
   }
 
   # extract data for length weight relation of preys
-  lw<-dplyr::filter(prey, prey_n==1 & !is.na(prey_l) & prey_w_meth=='r' & prey_name %in% sel_preys )
+  lw<-dplyr::filter(prey, prey_n==1 & prey_l!=mis_l & prey_w_meth=='r' & prey_name %in% sel_preys )
 
   # data for length weight relation
-  lw<-dplyr::filter(lw, prey_l>=50 &  prey_l<=300) %>% droplevels()
+  lw<-dplyr::filter(lw, prey_l>=50 &  prey_l<=300 & prey_l !=mis_l) %>% droplevels()
   lw<-lw %>% dplyr::mutate(lw_a=prey_w/prey_l^3) %>% dplyr::filter(lw_a<1.5e-5  & lw_a>1e-6)
 
   #summary(lw)
@@ -88,8 +100,6 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
     })
   }
 
-  if (do_plots) cleanup()
-
   if (do_plots) {
     by(lw,list(lw$prey_name), function(x) {
       print(ggplot(x,aes(log(prey_l),log(prey_w))) +
@@ -100,7 +110,6 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
       )
     })
   }
-  if (do_plots) cleanup()
 
   # estimate parameter a and b in W=a*l^b
   lw_par<-by(lw,list(lw$prey_name,lw$digest), function(x) {
@@ -113,47 +122,41 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
   ab<-dplyr::as_tibble(do.call(rbind,lw_par))
   ab
 
-  # there are observations with prey_l , but no prey_n!
-  check<-dplyr::left_join(l,ab,by = c("prey_name", "digest"))
-  check<-dplyr::filter(check,!is.na(prey_l) & !is.na(pool_prey_w) &is.na(prey_n)) %>% dplyr::mutate(calc_prey_w=exp(a+log(prey_l)* b))
-  xtabs( ~digest,data=check)
-  del0<-check %>% dplyr::select(weight_sample_id) %>% dplyr::distinct()
-  del0
 
+  # calculate weight from length and l-w relation
   l2<-dplyr::left_join(l,ab,by = c("prey_name", "digest")) %>% dplyr::mutate(calc_prey_w=exp(a+log(prey_l)* b) * prey_n,a=NULL,b=NULL)
+  l2[l2$prey_l==mis_l,"calc_prey_w"]<-NA
+
+
   if (do_debug) {
-    data.frame(l2)
-    dplyr::filter(l2,digest==0 & records>1) #looks good
-    dplyr::filter(l2,digest==1 & records>1)
-    dplyr::filter(l2,weight_sample_id=="Cod-1980-1-24-LAT-ZBA-26-41517")
-  }
+    print(n=30,dplyr::filter(stom[['PREY']],fish_id %in% my.fish_id)%>% dplyr::select(-sample_id))
+    print(n=30,dplyr::filter(l2,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id,-weight_pool_id ))
+   }
 
   # sum prey weights by weight pool
-  ll<-l2 %>% dplyr::group_by( weight_sample_id,weight_pool_id) %>% dplyr::summarise(sum_calc_prey_w=sum(calc_prey_w,na.rm=TRUE))
-  if (do_debug)  dplyr::filter(ll,is.na(sum_calc_prey_w))
+  l2<-l2 %>% dplyr::group_by( weight_sample_id,weight_pool_id) %>% dplyr::mutate(sum_calc_prey_w=sum(calc_prey_w,na.rm=TRUE),mis_len=prey_l==mis_l)
 
-  l2<-dplyr::left_join(l2,ll,by = c("weight_sample_id", "weight_pool_id")) %>% dplyr::mutate(mis_l=is.na(prey_l))
-  #dplyr::filter(l2,weight_sample_id=="Cod-1980-1-24-LAT-ZBA-26-41517")
+  if (do_debug) dplyr::filter(l2,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id,-weight_pool_id )
+
 
   # number of records with missing length within weight_pool_id
-  ll<-l2 %>%  dplyr::group_by( weight_sample_id,weight_pool_id) %>% dplyr::summarise(sum_mis_l=sum(mis_l,na.rm=TRUE)) %>% dplyr::mutate(mis_l=NULL)
-  l2<-dplyr::left_join(l2,ll,by = c("weight_sample_id", "weight_pool_id")) %>% dplyr::mutate(mis_l=NULL)
-  l2<-dplyr::ungroup(l2)
+
+  # number of records with missing length within weight_pool_id
+  l2<-l2 %>%  dplyr::group_by( weight_sample_id,weight_pool_id) %>% dplyr::mutate(sum_mis_l=sum(mis_len,na.rm=TRUE)) %>% dplyr::mutate(mis_len=NULL) %>% ungroup()
   if (do_debug) {
-    l2
-    dplyr::filter(l2,weight_sample_id=="Cod-1980-1-24-LAT-ZBA-26-41517")
+    print(n=30,dplyr::filter(l2,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id,-weight_pool_id ))
   }
 
 
   if (do_debug) head(dplyr::filter(l2,records>1),20)
   l_multi<-dplyr::filter(l2,records>1)
   l_multi0<-dplyr::filter(l_multi,sum_mis_l==0) %>% dplyr::mutate(prey_w=calc_prey_w*pool_prey_w / sum_calc_prey_w)
-  # dplyr::filter(l_multi0,weight_sample_id=="Cod-1980-1-24-LAT-ZBA-26-41517")
+  if (do_debug) dplyr::filter(l_multi0,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id,-weight_pool_id )
 
   # record with missing prey_w
   l_multi00<-dplyr::filter(l_multi0,is.na(prey_w))
   l_multi00<-l_multi00 %>%dplyr::select(-prey_l) %>% dplyr::distinct() %>% dplyr::mutate(prey_w=pool_prey_w,prey_l=NA)
-  # dplyr::filter(l_multi00,weight_sample_id=="Cod-1980-1-24-LAT-ZBA-26-41517")
+  if (do_debug) dplyr::filter(l_multi00,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id,-weight_pool_id )
 
 
   l_multi0<-dplyr::filter(l_multi0,!is.na(prey_w))
@@ -161,23 +164,24 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
   if (do_debug) head(data.frame(l_multi0),11)
   l_multi0<-dplyr::bind_rows(l_multi0,l_multi00)
 
-  # dplyr::filter(l_multi0,weight_sample_id=="Cod-1980-1-24-LAT-ZBA-26-41517")
 
   l_multi1<-dplyr::filter(l_multi,sum_mis_l>0)
-  if (do_debug) dplyr::filter(l_multi1,weight_sample_id=="Cod-1980-1-24-LAT-ZBA-26-41517")
-
-  l_multi11<- l_multi1 %>% dplyr::mutate(prey_w=dplyr::if_else(is.na(prey_l),(pool_prey_w-sum_calc_prey_w)/ sum_mis_l,
-                                                 dplyr::if_else(sum_calc_prey_w < pool_prey_w, calc_prey_w, calc_prey_w*pool_prey_w / sum_calc_prey_w))) %>%
-                         dplyr::mutate(prey_w=dplyr::if_else(is.na(prey_l) & prey_w<0,0,prey_w)) #%>% dplyr::mutate(pool_prey_w=NA)
 
   if (do_debug) {
-    l_multi11
-    summary(l_multi11)
-    dplyr::filter(l_multi11,is.na(prey_w))
-    if (do_debug) dplyr::filter(l_multi11,weight_sample_id=="Cod-1980-1-24-LAT-ZBA-26-41517")
+    print(n=30,dplyr::filter(l_multi1,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id,-weight_pool_id ))
   }
 
-  del2<-dplyr::filter(l_multi11,is.na(prey_w)) %>% dplyr::select(weight_sample_id) %>% dplyr::distinct()
+  l_multi11<- l_multi1 %>% dplyr::mutate(prey_w=dplyr::if_else(prey_l==mis_l,(pool_prey_w-sum_calc_prey_w)/ sum_mis_l,
+                                                   dplyr::if_else(sum_calc_prey_w < pool_prey_w, calc_prey_w, calc_prey_w*pool_prey_w / sum_calc_prey_w))) %>%
+                         dplyr::mutate(prey_w=dplyr::if_else(prey_l==mis_l & prey_w<0,0,prey_w)) #%>% dplyr::mutate(pool_prey_w=NA)
+
+  if (do_debug) {
+    print(n=30,dplyr::filter(l_multi11,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id,-weight_pool_id ))
+  }
+
+
+  dplyr::filter(l_multi11,fish_id=="76712")
+  del2<-          dplyr::filter(l_multi11,is.na(prey_w)) %>% dplyr::select(weight_sample_id) %>% dplyr::distinct()
   del2_sample_id<-dplyr::filter(l_multi11,is.na(prey_w)) %>% dplyr::select(sample_id,fish_id) %>% dplyr::distinct()
 
   # just cheking
@@ -190,36 +194,43 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
 
 
   #### put it all together
-  # just cheking
-  if (do_debug) {
-    l_multi0[is.na(l_multi0$prey_l),] #mulig fejl ?
-    l_multi0[is.na(l_multi0$prey_l) & l_multi0$sum_calc_prey_w>0 & l_multi0$prey_w>0,] #mulig fejl ?
 
-    l_multi1[is.na(l_multi1$prey_l),]
+  aa<-dplyr::bind_rows(l_multi0,l_multi11)
+
+  if (do_debug)  print(n=30, dplyr::filter(aa,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id,-weight_pool_id ))
+
+  if (do_debug) {
+    dplyr::filter(aa,fish_id=="76712") %>% dplyr::select(-sample_id,-weight_sample_id,-weight_pool_id )
+    dplyr::filter(stom[['PREY']],fish_id=="76712")
   }
 
-  aa<-dplyr::bind_rows(l_multi0,l_multi11) %>%
-      dplyr::select(-records,-calc_prey_w,-sum_calc_prey_w,-sum_mis_l) %>%
+  aa<- aa%>% mutate(prey_w=if_else(is.na(prey_w),(pool_prey_w-sum_calc_prey_w)/sum_mis_l,prey_w))
+
+  if (do_debug) {
+    print(n=30,dplyr::filter(aa,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id,-weight_pool_id ))
+    dplyr::filter(stom[['PREY']],fish_id=="76712")
+  }
+
+  aa<- aa%>%  dplyr::select(-records,-calc_prey_w,-sum_calc_prey_w,-sum_mis_l) %>%
       dplyr::mutate(weight_pool_id=NULL,pool_prey_w=NULL,prey_w_meth=NULL) %>% dplyr::filter(!is.na(prey_w))
 
   if (do_debug) {
      sort(unique(aa$prey_name))
-     aa
-     summary(aa)
-     dplyr::filter(aa,weight_sample_id=="Cod-1980-1-24-LAT-ZBA-26-41517")
+     print(n=30,dplyr::filter(aa,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id ))
   }
-
 
   aa<- aa %>% dplyr::mutate(prey_ll=prey_l,prey_lu=prey_l,prey_w_meth=factor('r',levels=levels(prey$prey_w_meth)))
 
-
-    # dplyr::filter(aa,sample_id=="Cod-1980-1-24-LAT-ZBA-26" & fish_id==41517)
+  if (do_debug) {
+   print(n=30,dplyr::filter(stom[['PREY']],fish_id %in% my.fish_id))
+   print(n=30,dplyr::filter(aa,fish_id %in% my.fish_id) %>%dplyr::select(-weight_sample_id))
+  }
 
 
   oth<-dplyr::filter(prey,(prey_w_meth=='p' & !(prey_name %in% sel_preys)))
 
-    if (do_debug) {
-    dplyr::filter(oth,sample_id=="Cod-1980-1-24-LAT-ZBA-26" & fish_id==41517)
+  if (do_debug) {
+    dplyr::filter(oth,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id )
     dim(prey);dim(oth);dim(aa)
     print(setdiff(names(aa),names(oth)))
     print(setdiff(names(oth),names(aa)))
@@ -246,28 +257,38 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
   aa<- aa %>% dplyr::mutate(prey_name=as.character(prey_name))
   bb<-dplyr::bind_rows(aa,oth)
 
+  if (do_debug) {
+    dplyr::filter(stom[['PREY']],fish_id %in% my.fish_id)
+    dplyr::filter(bb,fish_id %in% my.fish_id)
+
+  }
+
+
   if (do_debug) {dim(aa);dim(bb)}
   stopifnot(dim(aa)[[2]]==dim(bb)[[2]])
 
   remains<-dplyr::filter(prey,prey_w_meth!='p') %>% dplyr::mutate(weight_pool_id=NULL,pool_prey_w=NULL,prey_name=as.character(prey_name))
-  # dplyr::filter(remains,sample_id=="Cod-1980-1-24-LAT-ZBA-26" & fish_id==41517)
+  if (do_debug) print(n=30,dplyr::filter(remains,fish_id %in% my.fish_id))
   if (do_debug) {dim(bb);dim(remains)}
   setdiff(names(bb),names(remains))
   setdiff(names(remains),names(bb))
   stopifnot(dim(bb)[[2]]==dim(remains)[[2]])
 
-
   bb<-dplyr::bind_rows(bb,remains)
-  # dplyr::filter(bb,sample_id=="Cod-1980-1-24-LAT-ZBA-26" & fish_id==41517)
+
+
+  if (do_debug) {
+    print(n=30,dplyr::filter(bb,fish_id %in% my.fish_id) %>% dplyr::select(-sample_id,-weight_sample_id ))
+    print(n=30,dplyr::filter(stom[['PREY']],fish_id %in% my.fish_id) %>% dplyr::select(-sample_id))
+  }
   if (do_debug) dim(bb)
-  #bb<-dplyr::filter(bb,!(weight_sample_id %in% del2$weight_sample_id))
+
+
   bb<-dplyr::anti_join(bb,del2_sample_id,by = c("sample_id", "fish_id"))
 
-
   if (do_debug) dim(bb)
 
- #dplyr::filter(bb,year==1980 & quarter==3 & prey_name=='Sprattus sprattus')
- # dplyr::filter(bb,sample_id=="Cod-1980-1-24-LAT-ZBA-26" & fish_id==41517)
+  if (do_debug) summary(bb$prey_l)
   mis_ll_rec<-is.na(bb$prey_l)
   bb[mis_ll_rec,'prey_l']<-mis_l
   bb[mis_ll_rec,'prey_ll']<-mis_l
@@ -281,7 +302,15 @@ prey_w_from_pooled_weight<-function(stom,sel_preys=c("Clupea harengus"),sum_othe
   stom[['PRED']]<-droplevels(stom[['PRED']])
 
   # re-factor$sample_id
-  bb<-bb %>% dplyr::mutate(sample_id=factor(sample_id,levels=levels(stom[['PRED']]$sample_id)),fish_id=factor(fish_id,levels=levels(stom[['PRED']]$fish_id)))
+  bb<-bb %>% dplyr::mutate(sample_id=factor(sample_id,levels=levels(stom[['PRED']]$sample_id)),
+                           fish_id=factor(fish_id,levels=levels(stom[['PRED']]$fish_id)),prey_ll=as.integer(prey_ll),prey_lu=as.integer(prey_lu))
+
+
+  if (do_debug) {
+
+    print(n=30,dplyr::filter(bb,fish_id %in% my.fish_id) %>% dplyr::group_by(sample_id,fish_id, prey_name,digest) %>% dplyr::mutate(sumW=sum(prey_w,na.rm=TRUE)) %>% dplyr::select(-sample_id))
+    print(n=30,dplyr::filter(stom[['PREY']],fish_id %in% my.fish_id) %>% dplyr::select(-sample_id))
+  }
 
   stom[['PREY']]<-bb
   attr(stom,all_stom_attributes()["prey_w_id"])<-TRUE
