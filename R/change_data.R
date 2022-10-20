@@ -72,7 +72,7 @@ change_data <- function(stom,delete_vars,control_criteria=FALSE,
 
   if (add_weight_method & !("prey_w_meth" %in% colnames(stom[['PREY']]))) {
     stom[['PREY']]<- stom[['PREY']] %>% dplyr::mutate(prey_pool_id=factor(paste(sample_id,fish_id,prey_name,prey_w)))
-    b<- stom[['PREY']] %>% dplyr::select(prey_pool_id) %>%  dplyr::group_by(prey_pool_id) %>% dplyr::summarise(n=n())
+    b<- stom[['PREY']] %>% dplyr::select(prey_pool_id) %>%  dplyr::group_by(prey_pool_id) %>% dplyr::summarise(n=dplyr::n())
     stom[['PREY']]<-dplyr::left_join(stom[['PREY']],b, by = "prey_pool_id") %>% dplyr::mutate(prey_w_meth=factor(dplyr::if_else(n>1,'p','r')),n=NULL,prey_pool_id=NULL)
   }
 
@@ -103,9 +103,9 @@ change_data <- function(stom,delete_vars,control_criteria=FALSE,
 
   # reorganise sample_id and prey_id
   if (reorganize_keys) {
-    stom[['PRED']] <- stom[['PRED']]  %>% dplyr::group_by(pred_name) %>% dplyr::mutate(sample_id2=1:n()) %>%  dplyr::ungroup() %>%
+    stom[['PRED']] <- stom[['PRED']]  %>% dplyr::group_by(pred_name) %>% dplyr::mutate(sample_id2=1:dplyr::n()) %>%  dplyr::ungroup() %>%
       dplyr::mutate(sample_id2=factor(paste(pred_name,sample_id2,sep='_'))) %>%
-      dplyr::group_by(pred_name) %>% dplyr::mutate(fish_id2=1:n())  %>%  dplyr::ungroup() %>%
+      dplyr::group_by(pred_name) %>% dplyr::mutate(fish_id2=1:dplyr::n())  %>%  dplyr::ungroup() %>%
       dplyr::mutate(fish_id2=factor(fish_id2))
 
     stom[['PREY']] <- dplyr::left_join(stom[['PREY']],dplyr::select(stom[['PRED']],sample_id,fish_id,sample_id2,fish_id2),by = c("sample_id", "fish_id")) %>%

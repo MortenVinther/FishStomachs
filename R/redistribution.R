@@ -189,7 +189,7 @@ redist_unidentified_prey_sp <- function(s, dist_time = stratum_time, dist_area =
 #' @export
 #' @return s Stomach contents data of class STOMobs.
 redist_unidentified_prey_lengths <- function(s, dist_time = stratum_time, dist_area = stratum_area, dist_pred_size = pred_size, selected_pred, remains_to_other = TRUE,others_to_other=TRUE,verbose=FALSE) {
-    # test s=b; from_to_species=from_to;remains_to_other = FALSE; selected_pred<-sort(unique(s[['PRED']]$pred_name))
+    # test s=b; from_to_species=from_to;remains_to_other = TRUE; selected_pred<-sort(unique(s[['PRED']]$pred_name))
     fish_id<-pred_name<-pred_size<-prey_name<-prey_size<-prey_size_class<-prey_w<-proportion<-sample_id<-stratum_area<-stratum_time<-NULL
 
     s_org <- s
@@ -241,8 +241,6 @@ redist_unidentified_prey_lengths <- function(s, dist_time = stratum_time, dist_a
         return(a1)
     }
     rel_key <- strata_rel_dist(dist_key)
-
-
     found <- dplyr::inner_join(dist, rel_key, by = c("pred_name", "prey_name", "dist_time", "dist_area", "dist_pred_size")) %>%
         dplyr::mutate(prey_w = prey_w * proportion, proportion = NULL, prey_n = 0)
 

@@ -19,7 +19,7 @@ convert_year_of_the_stomach<-function(dir,in_file,NODC_latin,latin_prey_names=TR
   if (!file.exists(NODC_latin)) {cat('NODC_latin file: ',NODC_latin,' does not exist\n'); stop()}
   b <- dplyr::as_tibble(read.csv(file = NODC_latin, stringsAsFactors = FALSE)) %>%
        dplyr::select(species,NODC) %>% dplyr::distinct()
-  stopifnot( dim(b %>% dplyr::group_by(NODC) %>% dplyr::summarise(n=n()) %>% dplyr::filter(n>1))[[1]]==0)  # no duplicated NODC
+  stopifnot( dim(b %>% dplyr::group_by(NODC) %>% dplyr::summarise(n=dplyr::n()) %>% dplyr::filter(n>1))[[1]]==0)  # no duplicated NODC
 
   out<-lapply(in_file,function(x) {
      # test x="RADIATA_915.dat"; dir=stomach_dir

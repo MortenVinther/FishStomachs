@@ -11,9 +11,9 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  options(rmarkdown.html_vignette.check_title = FALSE) 
+  comment = "#>"
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 This example shows the basic data structures and  how to read data on exchange data format. Further, examples are shown on and how to make initial editing and addition of data.

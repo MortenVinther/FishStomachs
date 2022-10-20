@@ -10,7 +10,8 @@ make_length_classess(
   max_l = 9999,
   write_output = TRUE,
   out_file = "length_classes.csv",
-  minus_one = -1
+  minus_one = -1,
+  same_no_all_data = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ make_length_classess(
 \item{out_file}{Output file with defined length classes.}
 
 \item{minus_one}{Value to define upper length in length class, e.g. \code{minus_one}= -1 will provide length classes "050-059" and "060-69" for l 50, 60 and 70.}
+
+\item{same_no_all_data}{Logical, should all size classes have the same numbering irrespective of year and quarter?}
 }
 \value{
 defined length classes.

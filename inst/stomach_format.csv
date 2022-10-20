@@ -17,7 +17,7 @@ Haul, , ,haul,c,T,T,F,free text,Sampling haul
 Sampling_Method,sampling_method,Sampling_method,samp_meth,c,F,T,F,free text,"Sampling method, e.g. DEM=Demersal, PEL=Pelagic"
 Depth, , ,depth,d,F,T,F,meter,Ambient depth
 Temperature,temperature, ,temp,d,F,T,F,degree Celcius,Ambient temperature
-Sample_ID, ,sample_number,sample_id,c,T,T,T,free text,"Unique id for one or more individual  stomachs or  pool of  stomachs from the same sample station (e.g. haul ). Unique within the full dataset, e.g. created from combination of pred_name, pred_l, year, month, day, country, ship, haul, station, fish nr "
+Sample_ID,SampleID,sample_number,sample_id,c,T,T,T,free text,"Unique id for one or more individual  stomachs or  pool of  stomachs from the same sample station (e.g. haul ). Unique within the full dataset, e.g. created from combination of pred_name, pred_l, year, month, day, country, ship, haul, station, fish nr "
 SampleNo(FishID),SampleNoFishID,StomachID,fish_id,c,T,T,T,free text,Id for each individual stomach or pool of stomachs. Unique id in combination with sample_id 
 RecordType, , ,record_type,c,F,T,F,SS|PS,"Collation of stomachs by individual stomach or by a pool of stomachs, SS=Single stomachs, PS=Pooled stomachs"
 Predator_AphiaID,pred_aphia_id,Predator_code,pred_aphia,i,F,T,F,WoRMS aphia id,World Register of Marine Species code
@@ -54,4 +54,4 @@ Weight_method,prey_weight_method, ,prey_w_meth,c,T,F,T,r|p,"Method of weiging an
 Prey_TotalNo, ,PreyNumber,prey_n,i,T,F,T, ,"Number of preys (whole animals) , or number of preys counted for weight_method equal to ""p"""
 Prey_Weight, ,PreyWeight,prey_w,d,T,F,T,gram,Weight of prey (see prey_weight_method)
 Prey_MinNo, ,minimumofPreys,prey_min_n,c,F,F,T, ,Minimum number of preys or flag ?
-Remarks, , ,remarks,c,F,T,F, ,Free  text
+Remarks, , ,remarks,c,F,F,F, ,Free  text

@@ -26,7 +26,7 @@ bootstrap_data<-function(s,nfac=1,replace=TRUE,seed=0,rep_id=1) {
    n<-as.integer(max(x$boots_id))
    samples<-sample.int(n,size=as.integer(n*nfac),replace=replace)
    samp<-data.frame(boots_id=samples) %>% dplyr::group_by(boots_id) %>%
-     dplyr::mutate(i=1:n()) %>% dplyr::ungroup()
+     dplyr::mutate(i=1:dplyr::n()) %>% dplyr::ungroup()
    x<-dplyr::inner_join(x,samp,by = "boots_id") %>%
       dplyr::mutate(sample_id=factor(paste(sample_id,i)),fish_id=factor(paste(fish_id,i)),rep_id=rep_id,n_boot=n)
  })

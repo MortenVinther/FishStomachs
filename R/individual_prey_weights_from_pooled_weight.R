@@ -39,7 +39,7 @@ prey_w_from_pooled_weight<-function(stom,sum_other_preys=TRUE,do_plots=FALSE,qua
     data.frame(dplyr::filter(stom[['PREY']],fish_id %in% my.fish_id) %>% select(-sample_id))
   }
 
-  # add variable for each weighing group (assuming that a recorded weight per prey name represent a dplyr::distinct group  )
+  # add variable for each weighting group (assuming that a recorded weight per prey name represent a dplyr::distinct group  )
   prey<-stom[['PREY']] %>% dplyr::mutate(weight_sample_id=paste(sample_id,fish_id,sep='-'),weight_pool_id=paste(weight_sample_id,prey_name,prey_w,sep='-'),pool_prey_w=prey_w)
   if (do_debug) {
     sum(prey$prey_w,na.rm=TRUE)
@@ -53,7 +53,7 @@ prey_w_from_pooled_weight<-function(stom,sum_other_preys=TRUE,do_plots=FALSE,qua
     xtabs(~prey_name+digest,data=dplyr::filter(lat0,prey_name %in% sel_preys),addNA = TRUE)
   }
 
-  l1<- lat0 %>% dplyr::select(weight_sample_id,weight_pool_id) %>% dplyr::group_by(weight_sample_id,weight_pool_id) %>% dplyr::summarise(records=n())
+  l1<- lat0 %>% dplyr::select(weight_sample_id,weight_pool_id) %>% dplyr::group_by(weight_sample_id,weight_pool_id) %>% dplyr::summarise(records=dplyr::n())
   l<-dplyr::left_join(lat0,l1, by = c("weight_sample_id", "weight_pool_id"))
   if (do_debug)   dplyr::filter(l,fish_id %in% my.fish_id)%>% select(-sample_id,-weight_sample_id)
 
@@ -237,7 +237,7 @@ prey_w_from_pooled_weight<-function(stom,sum_other_preys=TRUE,do_plots=FALSE,qua
   }
 
   if (sum_other_preys) {
-    oth<-oth %>% dplyr::group_by(weight_sample_id,weight_pool_id) %>% dplyr::mutate(n=1:n()) %>% dplyr::ungroup()
+    oth<-oth %>% dplyr::group_by(weight_sample_id,weight_pool_id) %>% dplyr::mutate(n=1:dplyr::n()) %>% dplyr::ungroup()
     #delete replicates
     oth<-dplyr::filter(oth,n==1) %>%
       dplyr::mutate(prey_w=pool_prey_w,n=NULL)

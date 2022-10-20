@@ -25,11 +25,11 @@
 #' @param write_output Flag for saving the length classes defined on \code{out_file}
 #' @param out_file Output file with defined length classes.
 #' @param minus_one Value to define upper length in length class, e.g. \code{minus_one}= -1 will provide length classes "050-059" and "060-69" for l 50, 60 and 70.
+#' @param same_no_all_data Logical, should all size classes have the same numbering irrespective of year and quarter?
 #' @return defined length classes.
 #' @export
-#' @examples \dontrun{ll<-make_length_classess(inp_dir=system.file('extdata', package = 'FishStomachs'),
-#'                           inp_file='length_classes_config.csv'))}
-make_length_classess<-function(inp_dir=".",inp_file='length_classes_config.csv',max_l=9999,write_output=TRUE,out_file='length_classes.csv',minus_one= -1) {
+#' @examples \dontrun{ll<-make_length_classess(inp_dir=system.file('extdata', package = 'FishStomachs'),inp_file='length_classes_config.csv')}
+make_length_classess<-function(inp_dir=".",inp_file='length_classes_config.csv',max_l=9999,write_output=TRUE,out_file='length_classes.csv',minus_one= -1,same_no_all_data=FALSE) {
   l1<-NULL
   max_l<-as.integer(max_l)
 widthl<-4
@@ -64,6 +64,11 @@ l2<-l2[order(l2$Species,l2$year,l2$quarter,l2$no),]
 l2[l2$l2 !=max_l,'l2']<-as.integer(l2[l2$l2 != max_l,'l2']+minus_one)
 l2$group<-paste(formatC(l2$l1, width=widthl,flag='0'),formatC(l2$l2, width=widthl,flag='0'),sep='-')
 
+if (same_no_all_data) {
+  l3<-l2 %>% dplyr::select(Species,group) %>% dplyr::distinct() %>% dplyr::group_by(Species) %>% dplyr::mutate(nno=dplyr::row_number()) %>%ungroup()
+  l2<-dplyr::right_join(l3,l2,by = c("Species", "group")) %>% dplyr::mutate(no=nno,nno=NULL) %>%
+      dplyr::arrange(Species,year,quarter,group)
+}
 
 if (write_output) write.csv(l2,file=file.path(inp_dir,out_file),row.names = FALSE)
 return(dplyr::as_tibble(l2))

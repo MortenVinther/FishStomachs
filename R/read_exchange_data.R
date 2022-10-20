@@ -37,6 +37,7 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
         cat("\nProcessing file_", file.path(stom_dir, x), "\n")
         a <- readr::read_csv(file = file.path(stom_dir, x), n_max = 1, col_types = readr::cols())
         name_in <- colnames(a)
+        name_in_org <- colnames(a)
 
         if (allow_alias_names) {
             b$alias_4 <- b$field
@@ -62,11 +63,14 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
 
 
         if (length(setdiff(name_in, all_fields)) > 0) {
-            cat(paste0("File: ", x, " includes variable name\n", paste(setdiff(name_in, all_fields), collapse = ", "), "\n which is not considered as a valid variable name and is not included in file:",
-                stomach_format))
+         #   cat(paste0("File: ", x, " includes variable names:\n", paste(setdiff(name_in, all_fields), collapse = ", "),
+         #             "\n which are not considered as a valid variable name and is not included in file:", stomach_format),'\n')
+          cat(paste0("File: ", x, " includes variable names:\n", paste(name_in_org[is.na(name_in)], collapse = ", "),
+                     "\n which are not considered as a valid variable name and are not included in file:", stomach_format),'\n')
+
             if (!delete_errors)
                 stop("remove not included variables, or rerun with parameter delete_errors=TRUE")
-            cat("\n The invalid variable is not included in the resulting data set.\n")
+            cat("The invalid variable is not included in the resulting data set.\n")
         }
 
         if (!allow_alias_names) {
@@ -77,6 +81,7 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
         types <- paste(b[key, "types"], collapse = "")
         types <- gsub("NA", "-", types)
         a <- readr::read_csv(file = file.path(stom_dir, x), col_types = types, na = c("", "NA", "NULL", "-999", "-9", "-99"))  # read data with specified data type
+        print(readr::problems(a))
         coln <- b[key, "field"]
         colnames(a) <- coln[!is.na(coln)]
         return(a)
@@ -86,11 +91,11 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
 
 
     mis_pl <- is.na(a$pred_l) & is.na(a$pred_ll) & is.na(a$pred_lu)
-
     if (any(mis_pl)) {
         if (delete_errors) {
-            a <- a[!mis_pl, ]
             cat("Records with neither pred_l, pred_ll or pred_lu information have been deleted\n")
+          print(a[mis_pl, ])
+          a <- a[!mis_pl, ]
         } else {
             cat("Records with neither pred_l, pred_ll or pred_lu information\n")
             print(a[mis_pl, ] %>%

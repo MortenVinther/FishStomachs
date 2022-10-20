@@ -205,7 +205,7 @@ calc_population_stom<-function(s,verbose=FALSE) {
   pred<-s[['PRED']]  %>% dplyr::mutate_if(is.factor,as.character)
   prey<-s[['PREY']]  %>% dplyr::mutate_if(is.factor,as.character)
 
-  n_samples<-pred %>% dplyr::group_by(stratum_time, pred_name,pred_size) %>% dplyr::summarize(n_sample=n()) %>% dplyr::ungroup()
+  n_samples<-pred %>% dplyr::group_by(stratum_time, pred_name,pred_size) %>% dplyr::summarize(n_sample=dplyr::n()) %>% dplyr::ungroup()
 
   sc<-control@calc_sub_strata
   check_sc(sc,strata=c('sub_strata','strata','total')[1])
@@ -617,7 +617,7 @@ from_to_species_diet<-function(d,pred_from_to=c("xcode","xshort"),prey_from_to=c
     if (refactor) {
       aa <- aa %>% filter(new_pred_name %in% unique(dd$pred_name)) %>% unique() %>% arrange(number)
       aa <- bind_rows(filter(aa,number>0),filter(aa,number==0)) %>%
-        mutate(number=1:n())
+        mutate(number=1:dplyr::n())
       dd$pred_name<-forcats::fct_relevel(dd$pred_name,aa$new_pred_name)
     }
   }
@@ -633,7 +633,7 @@ from_to_species_diet<-function(d,pred_from_to=c("xcode","xshort"),prey_from_to=c
     if (refactor) {
       aa <- aa %>% filter(new_prey_name %in% unique(dd$prey_name)) %>% unique() %>% arrange(number)
       aa <- bind_rows(filter(aa,number>0),filter(aa,number==0)) %>%
-        mutate(number=1:n())
+        mutate(number=1:dplyr::n())
       dd$prey_name<-forcats::fct_relevel(dd$prey_name,aa$new_prey_name)
     }
 
