@@ -8,7 +8,7 @@
 #'    50 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
 #'    60 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
 #'    70 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
-#'b   80 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
+#'    80 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
 #'}
 #' where
 #'  l is the length used to define length classes, e.g. the first two lines will produce the sizes "050-059" and "060-69".
@@ -34,22 +34,9 @@ make_length_classess<-function(inp_dir=".",inp_file='length_classes_config.csv',
   max_l<-as.integer(max_l)
 widthl<-4
 
-l<-read.csv(file=file.path(inp_dir,inp_file),stringsAsFactors=FALSE)
-l<-unique(l)
-
-l<-l[order(l$Species,l$y1,l$y2,l$q1,l$q2),]
-
-l<-by(l,list(l$Species,l$y1,l$y2,l$q1,l$q2),function(x){
-  n<-dim(x)[[1]]
-  x$l1<-x$l
-  x$l2<-c(x[2:n,'l1'],max_l)
-  x$no<-1:n
-  x
- })
-
-l<-do.call(rbind,l)
-
-l<-subset(l,l1 != l2,select=c(-l))
+l<-read.csv(file=file.path(inp_dir,inp_file),stringsAsFactors=FALSE) %>% unique() %>%
+ dplyr::group_by(Species,y1,y2,q1,q2) %>% dplyr::mutate(l2=dplyr::lead(l),no=1:dplyr::n()) %>% rename(l1=l) %>% ungroup()
+l[is.na(l$l2),'l2']<-max_l
 
 
 l2<-by(l,list(l$Species,l$y1,l$y2,l$q1,l$q2,l$no),function(x){

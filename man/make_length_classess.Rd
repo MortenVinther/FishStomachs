@@ -45,7 +45,7 @@ see this table
 50 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
 60 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
 70 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
-b   80 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
+80 \tab  ALL     \tab  1991 \tab  2013 \tab  1  \tab    4 \cr
 }
 where
 l is the length used to define length classes, e.g. the first two lines will produce the sizes "050-059" and "060-69".
@@ -56,6 +56,5 @@ q1 and q2 are the year range for which the length  classes will be used.
 The defined length classes are made for all combinations of Species, y1 to y1, q1 to q2.
 }
 \examples{
-\dontrun{ll<-make_length_classess(inp_dir=system.file('extdata', package = 'FishStomachs'),
-                          inp_file='length_classes_config.csv'))}
+\dontrun{ll<-make_length_classess(inp_dir=system.file('extdata', package = 'FishStomachs'),inp_file='length_classes_config.csv')}
 }
