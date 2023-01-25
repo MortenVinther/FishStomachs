@@ -24,6 +24,8 @@
 #' prey item weight and number can be corrected by a factor to calculate
 #' the mean stomach contents of a predator within a 'sample_id'.
 #'
+#' The bias correction makes sense for stomach that have been pooled during sampling (e.g. the 1981 and 1991 North Sea sampling)
+#' or if several individually processed stomachs are aggregated into a group of stomachs to get the stomach contents for a group of fish (see  \link{aggregate_within_sample)}.
 #'
 #' \deqn{factor = \frac{(N_{food} + N_{regur})}{N_{food}*(N_{food} + N_{skel} + N_{regur} + N_{empt})}}
 #'
@@ -33,7 +35,7 @@
 #' @param stom  stomach contents data of class STOMobs.
 #' @param delete_just_regurgitated Delete stomachs where all stomachs within a sample_id and predator size class are regurgitated.
 #' @param drop_variables  Names of variables for number of stomachs to be deleted from dataset. This includes combinations of 'n_food', 'n_regur', 'n_skel' and 'n_empty'.
-#' if drop_variables is missing the variables 'n_food', 'n_regur', 'n_skel' and 'n_empty' will be deleted.
+#'  By default the variables 'n_food', 'n_regur', 'n_skel' and 'n_empty' will be deleted.
 #' @param update_n_food_with_n_regur Update number of stomachs with food (n_food) by the number of regurgitated stomachs (n_regur).
 #' @return stomach contents data of class STOMobs, where the stomach contents per sample have been raised as it is assumed
 #' that the regurgitated stomach had the same stomach contents as the one with food (and no regurgitation).
@@ -51,8 +53,12 @@ bias_correct_regurgitated <- function(stom, delete_just_regurgitated = TRUE, dro
     if (!("pred_size" %in% colnames(stom[["PRED"]]))) {
         cat("ERROR: Dataset does not include the variable for predator size class (pred_size).\nYou have to run put_size_class_on_predator() first!\n")
         stop()
-
     }
+
+  if (!("prey_size" %in% colnames(stom[["PREY"]]))) {
+    cat("ERROR: Dataset does not include the variable for prey size class (prey_size).\nYou have to run put_size_class_on_prey() first!\n")
+    stop()
+  }
 
     fac <- stom[["PRED"]] %>%
         dplyr::select(sample_id, pred_size, n_tot, n_food, n_regur, n_skel, n_empty) %>%
@@ -60,8 +66,10 @@ bias_correct_regurgitated <- function(stom, delete_just_regurgitated = TRUE, dro
         dplyr::summarise(n_food = sum(n_food), n_regur = sum(n_regur), n_tot = sum(n_tot), n_skel = sum(n_skel)) %>%
         dplyr::mutate(regur_fac = ifelse((n_skel == n_tot) | (n_food == 0), 0, (n_food + n_regur)/n_food)) %>%
         dplyr::mutate(just_regur = n_regur == n_tot, n_food = NULL, n_regur = NULL, n_tot = NULL, n_skel = NULL)
+
     fac2 <- dplyr::left_join(dplyr::select(stom[["PRED"]], sample_id, fish_id, pred_size), fac, by = c("sample_id", "pred_size")) %>%
         dplyr::mutate(pred_size = NULL)
+    fac2Save<<-fac2
 
     stom[["PREY"]] <- dplyr::left_join(stom[["PREY"]], fac2, by = c("sample_id", "fish_id")) %>%
         dplyr::mutate(prey_w = prey_w * regur_fac, prey_n = prey_n * regur_fac) %>%

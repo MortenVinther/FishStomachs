@@ -31,6 +31,7 @@ Collate:
     'stom.control.R'
     'add_strata.R'
     'aggregate_sample_id.R'
+    'pool_sample_id_size.R'
     'change_data.R'
     'check_unique_sample_id.R'
     'individual_prey_weights_from_pooled_weight.R'

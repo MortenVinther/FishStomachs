@@ -1,0 +1,54 @@
+Criterium:
+  ,pred_name == "Gadus morhua",year == 1991,quarter == 1,sample_id %in% c("Gadus morhua_FRA_y:91_q:1_ID:1008", "Gadus morhua_SCO_y:91_q:1_ID:582") 
+
+
+ NEW set: Before any change 
+
+stratum_area: R-1 stratum_sub_area: 50E7 stratum_time: 1991-Q1 sample_id: Gadus morhua_SCO_y:91_q:1_ID:582  fish_id: 0500-0699 
+Number of stomachs ('n_tot'): 4
+          Clupea harengus other Trisopterus esmarkii    all
+0100-0149              NA    NA                353.3  353.3
+0200-0249          1295.7    NA                   NA 1295.7
+0250-0299              NA    NA                   NA    0.0
+9999-9999              NA   0.5                   NA    0.5
+all                1295.7   0.5                353.3 1649.5
+
+stratum_area: R-7 stratum_sub_area: 40F6 stratum_time: 1991-Q1 sample_id: Gadus morhua_FRA_y:91_q:1_ID:1008  fish_id: 1000-1499 
+Number of stomachs ('n_tot'): 1
+          Clupea harengus Merlangius merlangus   other     all
+0100-0149              NA                   NA      NA     0.0
+0200-0249          2033.8                   NA      NA  2033.8
+0250-0299              NA               6504.2      NA  6504.2
+9999-9999              NA                   NA 11283.5 11283.5
+all                2033.8               6504.2 11283.5 19821.5
+
+
+ NEW set: after stomach content per stomach and potential relative weight 
+
+stratum_area: R-1 stratum_sub_area: 50E7 stratum_time: 1991-Q1 sample_id: Gadus morhua_SCO_y:91_q:1_ID:582  fish_id: 0500-0699 
+Number of stomachs ('n_tot'): 4
+          Clupea harengus other Trisopterus esmarkii   all
+0100-0149              NA    NA                 88.3  88.3
+0200-0249           323.9    NA                   NA 323.9
+9999-9999              NA   0.1                   NA   0.1
+all                 323.9   0.1                 88.3 412.4
+
+stratum_area: R-7 stratum_sub_area: 40F6 stratum_time: 1991-Q1 sample_id: Gadus morhua_FRA_y:91_q:1_ID:1008  fish_id: 1000-1499 
+Number of stomachs ('n_tot'): 1
+          Clupea harengus Merlangius merlangus   other     all
+0200-0249          2033.8                   NA      NA  2033.8
+0250-0299              NA               6504.2      NA  6504.2
+9999-9999              NA                   NA 11283.5 11283.5
+all                2033.8               6504.2 11283.5 19821.5
+
+
+ NEW set: after aggregation by sub-area strata. Average stomach contents by sub-strata. 
+
+
+ NEW set: after aggregation by area strata. 
+
+
+ NEW set: after aggregation into total area. 
+
+
+ NEW set: after aggregation into total area. 

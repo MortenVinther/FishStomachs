@@ -17,7 +17,7 @@ bias_correct_regurgitated(
 \item{delete_just_regurgitated}{Delete stomachs where all stomachs within a sample_id and predator size class are regurgitated.}
 
 \item{drop_variables}{Names of variables for number of stomachs to be deleted from dataset. This includes combinations of 'n_food', 'n_regur', 'n_skel' and 'n_empty'.
-if drop_variables is missing the variables 'n_food', 'n_regur', 'n_skel' and 'n_empty' will be deleted.}
+By default the variables 'n_food', 'n_regur', 'n_skel' and 'n_empty' will be deleted.}
 
 \item{update_n_food_with_n_regur}{Update number of stomachs with food (n_food) by the number of regurgitated stomachs (n_regur).}
 }
@@ -52,6 +52,9 @@ regurgitated stomachs sampled within 'sample_id' have had the same
 stomach contents as the feeding (non-regurgitated) fish each observed
 prey item weight and number can be corrected by a factor to calculate
 the mean stomach contents of a predator within a 'sample_id'.
+
+The bias correction makes sense for stomach that have been pooled during sampling (e.g. the 1981 and 1991 North Sea sampling)
+or if several individually processed stomachs are aggregated into a group of stomachs to get the stomach contents for a group of fish (see  \link{aggregate_within_sample)}.
 
 \deqn{factor = \frac{(N_{food} + N_{regur})}{N_{food}*(N_{food} + N_{skel} + N_{regur} + N_{empt})}}
 }

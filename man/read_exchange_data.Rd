@@ -8,7 +8,8 @@ read_exchange_data(
   control,
   delete_errors = FALSE,
   allow_alias_names = FALSE,
-  keep_just_mandatory_fields = FALSE
+  keep_just_mandatory_fields = FALSE,
+  fileEncoding = ""
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ if TRUE records with errors will be deleted, but the function continues if possi
 \item{allow_alias_names}{Logical for using alias field names as specified in the stomach_format}
 
 \item{keep_just_mandatory_fields}{Logical for just keeping mandatory field names as specified in the stomach_format}
+
+\item{fileEncoding}{character string: if non-empty declares the encoding used on a file so the character data can be re-encoded.}
 }
 \value{
 Stomach data of class STOMobs.
@@ -28,14 +31,6 @@ Stomach data of class STOMobs.
 \description{
 Read data from exchange data
 }
-\section{Fields}{
-
-\describe{
-\item{\code{a1}}{her er a1}
-
-\item{\code{a2}}{her er a2}
-}}
-
 \examples{
-\dontrun{read_exchange_data(control)}
+\dontrun{read_exchange_data(control, fileEncoding = "latin1")}
 }

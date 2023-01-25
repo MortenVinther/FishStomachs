@@ -10,7 +10,7 @@ aggregate_within_sample(stom)
 \item{stom}{stomach contents data of class STOMobs.}
 }
 \value{
-stomach contents data of class STOMobs with aggregated stomach contents and updated predator information.
+stomach contents data of class STOMobs with aggregated stomach contents and number of stomachs, and updated predator information.
 }
 \description{
 Stomach contents are aggregated and predator information are updated for samples with the same \code{sample_id} and one or more fish \code{fish_id}.
@@ -18,9 +18,9 @@ Stomach contents are aggregated and predator information are updated for samples
 \details{
 The stomach contents weight by prey and prey_size class are summed for for all samples within a sample_id and predator size class.
 Number of stomachs are similarly added to include all stomachs, however only the total number of stomachs \code{n_tot} is maintained.
-In the aggregated data, the variable \code{fish_id }becomes the value of predator size.
+In the aggregated data, the variable \code{fish_id} becomes the value of predator size.
 
-Size classes of both predators and preys must have been assigned ( \link{put_size_class_on_predator} and \link{put_size_class_on_prey}) aggregation can be made.
+Size classes of both predators and preys must have been assigned ( \link{put_size_class_on_predator} and \link{put_size_class_on_prey} ) before aggregation can be made.
 }
 \examples{
 \dontrun{aggregate_within_sample(ns)}

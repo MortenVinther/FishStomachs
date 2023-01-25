@@ -14,7 +14,7 @@
 #' @export
 #'
 group_prey_species <- function(stom, keep_prey_names,sum_other_food=TRUE,NODC_split,show_allocations=FALSE ) {
-#debug  stom=ns; keep_prey_names<-c("Gadus morhua","Clupea harengus", "Sprattus sprattus"); sum_other_food=TRUE;show_allocations=TRUE;
+#debug  stom=s; keep_prey_names<-c("Gadus morhua","Clupea harengus", "Sprattus sprattus"); sum_other_food=TRUE;show_allocations=TRUE;
   fish_id<-prey_group<-prey_name<-prey_w<-sample_id<-NULL
   if (missing(keep_prey_names) & missing(NODC_split)) stop('You have to supply either the parameter keep_prey_names or NODC_split.\n ')
 

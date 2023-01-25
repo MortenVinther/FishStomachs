@@ -36,7 +36,7 @@ Stomach_WithFood, ,NumberWithFood,n_food,i,T,T,F, ,Number of stomachs with food 
 Stomach_Regurgitated, ,NumberRegurgitated,n_regur,i,T,T,F, ,Number of regurgitated stomachs
 Stomach_WithSkeletalRemains, ,NumberWithSkeletalRemains,n_skel,i,T,T,F, ,Number of stomachs with skeletal remains  only
 Stomach_Empty, ,NumberEmpty,n_empty,i,T,T,F, ,Number of empty stomachs
-Stomach_ContentWgt, , ,stom_content_w,d,F,T,F,gram,Total weight of stomach contents
+Stomach_ContentWgt, , ,stom_content_w,d,F,T,F,gram,Total weight of of the stomach
 Stomach_EmptyWgt, ,stomachWeighEmpty,stom_empty_w,d,F,T,F,gram,Weigth of stomach with no food left
 Stomach_fullness, ,stomachFullness,stom_fullness,d,F,T,F,%,Stomach fullness ?????
 Stomach_Item, , ,prey_item,c,F,F,T, ,Prey name as used in the original dataset

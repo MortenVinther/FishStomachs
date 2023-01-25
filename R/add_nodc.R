@@ -34,6 +34,7 @@ add_NODC_ID <- function(stom, NODC_ID, predator_or_prey = c("predator", "prey"),
     file <- system.file("extdata","NODC_latin.csv", package = "FishStomachs")
     b <- utils::read.csv(file, strip.white = TRUE, stringsAsFactors = FALSE)
   } else b <- utils::read.csv(file = NODC_ID, stringsAsFactors = FALSE)
+
   b$dup_species<-b$dup_species=="TRUE"
   b <- unique(subset(b, !dup_species,select = c(species, NODC)))
   dimb<-dim(b)[[1]]
@@ -44,11 +45,12 @@ add_NODC_ID <- function(stom, NODC_ID, predator_or_prey = c("predator", "prey"),
 
   if (predator_or_prey %in%  c("prey")) {
     if (!("prey_nodc" %in% names(x))) x$prey_nodc <- as.numeric(NA)
-    no_id <- subset(x, is.na(x$prey_nodc) & x$n_food >= 1)
+ #   no_id <- subset(x, is.na(x$prey_nodc) & x$n_food >= 1)
+    no_id <- subset(x, is.na(x$prey_nodc) )
     no_id <- sort(unique(no_id$prey_name))
     key <- match(no_id, b$species)
     if (any(is.na(key))) {
-      cat("NODC for preys are not found:", no_id[is.na(key)])
+      cat("NODC for preys are not found:", paste(as.character(no_id[is.na(key)]),';',sep=''),'\n')
       if (stop_if_errror)
         stop("Data processing stopped\n")
     }
@@ -58,7 +60,7 @@ add_NODC_ID <- function(stom, NODC_ID, predator_or_prey = c("predator", "prey"),
     no_id <- sort(unique(no_id$pred_name))
     key <- match(no_id, b$species)
     if (any(is.na(key))) {
-      cat("NODC for predators are not found:", no_id[is.na(key)])
+      cat("NODC for predators are not found:",paste(as.character(no_id[is.na(key)]),';',sep=''),'\n')
       if (stop_if_errror)
         stop("Data processing stopped\n")
     }
@@ -70,7 +72,9 @@ add_NODC_ID <- function(stom, NODC_ID, predator_or_prey = c("predator", "prey"),
     # allocate missing prey NODC where exist
     if (predator_or_prey %in% c("prey")) {
       x <- dplyr::left_join(x = x, y = b, by = c("prey_name" = "species")) %>% dplyr::mutate(prey_name=factor(prey_name))
-      mis <- is.na(x$prey_nodc) & x$n_food >= 1
+      #mis <- is.na(x$prey_nodc) & x$n_food >= 1
+      mis <- is.na(x$prey_nodc)
+
       x[mis, 'prey_nodc'] <- x[mis, "NODC"]
 
     } else if (predator_or_prey %in% c("predator")) {
@@ -85,4 +89,3 @@ add_NODC_ID <- function(stom, NODC_ID, predator_or_prey = c("predator", "prey"),
   if (predator_or_prey %in% c("predator")) x<-as_STOMobs(x,new_pred_var='pred_nodc') else x<-as_STOMobs(x,new_prey_var='prey_nodc')
   return(x)
 }
-

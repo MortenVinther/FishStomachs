@@ -4,12 +4,14 @@
 \alias{write_exchange_data}
 \title{Write stomach contents data of class STOMobs on the exchange format.}
 \usage{
-write_exchange_data(stom, exchange_file = NA)
+write_exchange_data(stom, exchange_file = NA, fileEncoding = "")
 }
 \arguments{
 \item{stom}{Input stomach data set for writing}
 
 \item{exchange_file}{File name for output data on exchange format.}
+
+\item{fileEncoding}{character string: if non-empty declares the encoding used on a file so the character data can be re-encoded.}
 }
 \value{
 Returns the input stom invisibly.

@@ -66,7 +66,11 @@ do_detailed_output <-function(stom,append=TRUE,to_screen=FALSE,label,digits=1,re
       if ('stratum_sub_area' %in% colnames(x)) cat(' stratum_sub_area:',as.character(x[1,'stratum_sub_area']))
       if ('stratum_time' %in% colnames(x)) cat(' stratum_time:',as.character(x[1,'stratum_time']))
       cat( " sample_id:",as.character(x[1,"sample_id"])," fish_id:",as.character(x[1,"fish_id"]),"\n")
-      if ('n_tot' %in% colnames(x)) cat("Number of stomachs ('n_tot'):",x[1,'n_tot'],"\n")
+      if ('n_tot' %in% colnames(x)) cat("Number of stomachs ('n_tot'):",x[1,'n_tot'])
+      if ('n_empty' %in% colnames(x)) cat("  Empty ('n_empty'):",x[1,'n_empty'])
+      if ('n_regur' %in% colnames(x)) cat("  Regurgitated ('n_regur'):",x[1,'n_regur'])
+      cat('\n')
+
     }
     x$prey_name<-as.character(x$prey_name)
     x<-tapply(x$prey_w,list(x$prey_name,x$prey_ll),sum,na.rm=TRUE)
@@ -126,7 +130,8 @@ do_detailed_output_diet <-function(diet,append=TRUE,to_screen=FALSE,label,digits
         as.character(x[1,'pred_name']),
         as.character(x[1,'pred_size']),'\n')
 
-    cat("Number of stomachs ('n_tot'):",x[1,'n_tot'],"\n")
+    cat("Number of stomachs ('n_tot'):",x[1,'n_tot'],'\n')
+
 
     x<-tapply(x$prey_w,list(x$prey_name,x$prey_size),sum,na.rm=TRUE)
     x<-rbind(x,all=colSums(x,na.rm=TRUE))

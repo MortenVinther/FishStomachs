@@ -213,7 +213,7 @@ length.STOMobs <- function(x)nrow(x[['PRED']])
 #' Summary of number of stomachs
 #' @method summary STOMobs
 #' @param x Diet data of class STOMdiet.
-#' @param level Level of details.
+#' @param level Level of details, 1 or 2.
 #' @examples \dontrun{summary(s,level=2)}
 #' @export
 summary.STOMobs <- function(x, level=1){

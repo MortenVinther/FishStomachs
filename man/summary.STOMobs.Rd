@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{Diet data of class STOMdiet.}
 
-\item{level}{Level of details.}
+\item{level}{Level of details, 1 or 2.}
 }
 \description{
 Summary of number of stomachs

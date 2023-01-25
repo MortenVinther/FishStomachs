@@ -6,14 +6,14 @@
 #' if TRUE records with errors will be deleted, but the function continues if possible.
 #' @param allow_alias_names Logical for using alias field names as specified in the stomach_format
 #' @param keep_just_mandatory_fields Logical for just keeping mandatory field names as specified in the stomach_format
+#' @param fileEncoding character string: if non-empty declares the encoding used on a file so the character data can be re-encoded.
 #' @return Stomach data of class STOMobs.
 #' @importFrom readr read_csv
 #' @export
-#' @examples \dontrun{read_exchange_data(control)}
-#' @field a1 her er a1
-#' @field a2 her er a2
-read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names = FALSE, keep_just_mandatory_fields = FALSE) {
+#' @examples \dontrun{read_exchange_data(control, fileEncoding = "latin1")}
 
+read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names = FALSE, keep_just_mandatory_fields = FALSE,fileEncoding="") {
+     # delete_errors = FALSE; allow_alias_names = FALSE; keep_just_mandatory_fields = FALSE; fileEncoding=""
     alias_1<-alias_2<-alias_3<-dataset<-field<-fish_id<-mandatory<-n_sample_id<-pred_l<-pred_ll<-pred_lu<-pred_name<-sample_id<-types<-year<-NULL
 
     options(dplyr.summarise.inform = FALSE)
@@ -23,7 +23,7 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
         stop("\nError Input file name for stomach data on exchange format must be given in the control@datasets\n")
 
     stomach_format <- eval(control@stomach_format)
-    b <- read.csv(file = stomach_format, stringsAsFactors = FALSE)
+    b <- read.csv(file = stomach_format, stringsAsFactors = FALSE,fileEncoding=fileEncoding)
 
     if (allow_alias_names)
         b <- subset(b, select = c(field, types, mandatory, alias_1, alias_2, alias_3)) else b <- subset(b, select = c(field, types, mandatory))
@@ -81,7 +81,8 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
         types <- paste(b[key, "types"], collapse = "")
         types <- gsub("NA", "-", types)
         a <- readr::read_csv(file = file.path(stom_dir, x), col_types = types, na = c("", "NA", "NULL", "-999", "-9", "-99"))  # read data with specified data type
-        print(readr::problems(a))
+        prbl<-readr::problems(a)
+        if (dim(prbl)[[1]]>0) print(prbl)
         coln <- b[key, "field"]
         colnames(a) <- coln[!is.na(coln)]
         return(a)
@@ -180,13 +181,14 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
 #' @title Write stomach contents data of class STOMobs on the exchange format.
 #' @param stom Input stomach data set for writing
 #' @param exchange_file  File name for output data on exchange format.
+#' @param fileEncoding character string: if non-empty declares the encoding used on a file so the character data can be re-encoded.
 #' @return Returns the input stom invisibly.
 #' @examples \dontrun{write_exchange_data(tst, exchange_file = 'cod_stomachs_2017.csv')}
 #' @export
-write_exchange_data <- function(stom, exchange_file = NA) {
+write_exchange_data <- function(stom, exchange_file = NA,fileEncoding = "") {
     if (is.na(exchange_file))
         stop("\nError Input file name for stomach data on exchange format must be given\n")
 
-    readr::write_csv(as.data.frame(stom), file = exchange_file)
+    write.csv(as.data.frame(stom), file = exchange_file,fileEncoding = fileEncoding)
 }
 

@@ -24,7 +24,7 @@ change_data <- function(stom,delete_vars,control_criteria=FALSE,
                         insert_quarter=TRUE, correct_nstom=TRUE,correct_predl=TRUE,correct_preyl=TRUE,
                         add_weight_method=FALSE,add_record_type=TRUE,reorganize_keys=FALSE) {
 
-  #  stom<-st; delete_vars=c('ship','month','day','time','haul','station');pred_weight_multiplier=1;pred_length_multiplier=1;prey_weight_multiplier=1;prey_length_multiplier=1;insert_quarter=TRUE;correct_nstom=TRUE;correct_predl=TRUE;reorganize_fields=TRUE;add_weight_method=TRUE;add_record_type=TRUE;
+  #  stom<-s; delete_vars=c('ship','month','day','time','haul','station');pred_weight_multiplier=1;pred_length_multiplier=1;prey_weight_multiplier=1;prey_length_multiplier=1;insert_quarter=TRUE;correct_nstom=TRUE;correct_predl=TRUE;correct_preyl=TRUE;control_criteria=FALSE;reorganize_fields=TRUE;reorganize_keys=FALSE;add_weight_method=TRUE;add_record_type=TRUE;
   fish_id<-fish_id2<-month<-n<-n_tot<-PRED<-pred_name<-PREY<-prey_name<-prey_pool_id<-prey_w<-quarter<-record_type<-sample_id<-sample_id2<-year<-NULL
 
   control<-attr(stom,'control')
@@ -117,15 +117,15 @@ change_data <- function(stom,delete_vars,control_criteria=FALSE,
   stomach_format<- eval(control@stomach_format)
   b <- read.csv(file = stomach_format, stringsAsFactors = FALSE)
   for (pp in c('PRED','PREY')) {
-     if (pp=='PRED') field <- subset(b,PRED==TRUE)$field
-     if (pp=='PREY') field <- subset(b,PREY==TRUE)$field
+     if (pp=='PRED') {field <- subset(b,PRED==TRUE)$field; print(field)}
+     if (pp=='PREY') {field <- subset(b,PREY==TRUE)$field ;print(field)}
      fields<-data.frame(field=field,n=1:length(field))
      cols<-colnames(stom[[pp]])
      incl<-intersect(cols,field)
      fields<-subset(fields,field %in% incl)
      fields<-fields[order(fields$n),]
      incl<-as.character(fields$field)
-     stom[[pp]]<- stom[[pp]] %>% dplyr::select(incl)
+     stom[[pp]]<- stom[[pp]] %>% dplyr::select(dplyr::all_of(incl))
   }
 
   if (control_criteria) {
