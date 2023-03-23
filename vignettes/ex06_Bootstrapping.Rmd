@@ -171,7 +171,7 @@ return(d)
 
 
 The creation of data for bootstrapping is done by the function bootstrap_data(), which create a new STOMobs object including the bootstrap replicate data.
-The result of the call, bd, is a list with STOMobs object.
+The result of the call, bd, is a list of STOMobs object.
 
 ```{r ex06_06}
 

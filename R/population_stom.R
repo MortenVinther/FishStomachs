@@ -283,7 +283,7 @@ calc_population_stom<-function(s,verbose=FALSE) {
     w<-read_strata_weighting(stom=s,strata=c('sub_strata','strata','total')[2])
     pred<-dplyr::left_join(pred,w,by = c("stratum_sub_area", "stratum_area", "stratum_time", "pred_name", "pred_size"))  %>%
       dplyr::filter(!is.na(w_fac_sub_area)) %>% dplyr::filter(w_fac_sub_area>0)
-    cat('Using area weighting factors from file',sc$weighting_factor_file,'\n')
+    if (verbose) cat('Using area weighting factors from file',sc$weighting_factor_file,'\n')
   } else {
     tt<-try(pred<-pred %>% dplyr::mutate(w_fac_sub_area=eval(control@calc_strata$weighting_factor)),TRUE)
     if (class(tt)[[1]]=="try-error") {cat(tt[1]);stop('Error found.')}
@@ -458,7 +458,7 @@ plot.STOMdiet<-function(d,show_plot=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tA
   if (show_plot) return() else return(out)
 }
 
-#' Plot diet data.
+#' Plot diet data with prey size.
 #'
 #' @param d Diet data set of class STOMdiet.
 #' @param cut_pred_size From to in substring of predator size

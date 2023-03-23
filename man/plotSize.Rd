@@ -2,7 +2,7 @@
 % Please edit documentation in R/population_stom.R
 \name{plotSize}
 \alias{plotSize}
-\title{Plot diet data.}
+\title{Plot diet data with prey size.}
 \usage{
 plotSize(
   d,
@@ -39,5 +39,5 @@ plotSize(
 nothing (if show_plot=TRUE) or a list of plots.
 }
 \description{
-Plot diet data.
+Plot diet data with prey size.
 }

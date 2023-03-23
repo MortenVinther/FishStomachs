@@ -161,7 +161,7 @@ plotSize(subset(d2,!(pred_size %in% c("0100-0149","0150-0199"))),
  s<-mutate(s,prey_name=if_else(identified,prey_name,factor('other')),
         prey_size=if_else(identified,prey_size,factor('9999-9999')),
         prey_size_class=if_else(identified,prey_size_class,0L),
-        prey_l_mean=if_else(identified,prey_l_mean,as.double(NA)),
+        prey_l_mean=if_else(identified,prey_l_mean,as.integer(NA)),
         prey_n=if_else(identified,prey_n,as.double(NA))
         )
  

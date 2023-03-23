@@ -35,17 +35,14 @@ add_NODC_ID <- function(stom, NODC_ID, predator_or_prey = c("predator", "prey"),
     b <- utils::read.csv(file, strip.white = TRUE, stringsAsFactors = FALSE)
   } else b <- utils::read.csv(file = NODC_ID, stringsAsFactors = FALSE)
 
-  b$dup_species<-b$dup_species=="TRUE"
-  b <- unique(subset(b, !dup_species,select = c(species, NODC)))
   dimb<-dim(b)[[1]]
+  b<-unique(b)
   stopifnot("NODC list has not unique combinations of species and NODC values"=dimb==dim(b)[[1]])
-  stopifnot("NODC list has not unique NODC values"=dimb==length(unique(b$NODC)))
-  stopifnot("NODC list has not unique species values"=dimb==length(unique(b$species)))
 
 
   if (predator_or_prey %in%  c("prey")) {
     if (!("prey_nodc" %in% names(x))) x$prey_nodc <- as.numeric(NA)
- #   no_id <- subset(x, is.na(x$prey_nodc) & x$n_food >= 1)
+    #   no_id <- subset(x, is.na(x$prey_nodc) & x$n_food >= 1)
     no_id <- subset(x, is.na(x$prey_nodc) )
     no_id <- sort(unique(no_id$prey_name))
     key <- match(no_id, b$species)

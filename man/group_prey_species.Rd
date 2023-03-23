@@ -9,7 +9,8 @@ group_prey_species(
   keep_prey_names,
   sum_other_food = TRUE,
   NODC_split,
-  show_allocations = FALSE
+  show_allocations = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ group_prey_species(
 
 \item{show_allocations}{If true the allocation of prey names into groups are shown, when the \code{NODC_split} is used.
 in the control object are renamed into "other".}
+
+\item{verbose}{Show extra information}
 }
 \value{
 Stomach contents data of class STOMobs. Prey sizes and number of preys as set to missing for preys in the "other" food group.

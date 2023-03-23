@@ -6,10 +6,11 @@
 #' @param replace Logical for bootstrapping with replacement.
 #' @param seed Random seed value.
 #' @param rep_id Replicate identifier
+#' @param firstUnchanged Do not bootstrap for rep_id==1
 #' @return Bootstrapped stomach data (replicate) of class STOMobs.
 #' @export
 #' @examples \dontrun{b<-bootstrap_data(s)}
-bootstrap_data<-function(s,nfac=1,replace=TRUE,seed=0,rep_id=1) {
+bootstrap_data<-function(s,nfac=1,replace=TRUE,seed=0,rep_id=1,firstUnchanged=TRUE) {
 
  boots_id<-fish_id<-i<-sample_id<-NULL
 
@@ -20,18 +21,21 @@ bootstrap_data<-function(s,nfac=1,replace=TRUE,seed=0,rep_id=1) {
                  boots_strata=eval(control@bootstrapping$boots_strata))
  ss<-as.data.frame(s)
 
- #sample from 1 to ... and draw samples for each strata
-  a<-by(ss,list(ss$boots_strata),function(x) {
-   x<-dplyr::mutate(x,boots_id=as.integer(factor(boots_id)))
-   n<-as.integer(max(x$boots_id))
-   samples<-sample.int(n,size=as.integer(n*nfac),replace=replace)
-   samp<-data.frame(boots_id=samples) %>% dplyr::group_by(boots_id) %>%
-     dplyr::mutate(i=1:dplyr::n()) %>% dplyr::ungroup()
-   x<-dplyr::inner_join(x,samp,by = "boots_id") %>%
-      dplyr::mutate(sample_id=factor(paste(sample_id,i)),fish_id=factor(paste(fish_id,i)),rep_id=rep_id,n_boot=n)
- })
-
-  x<-do.call(rbind,a);
+ if (!(firstUnchanged & rep_id==1 )) {
+   #sample from 1 to ... and draw samples for each strata
+    a<-by(ss,list(ss$boots_strata),function(x) {
+     x<-dplyr::mutate(x,boots_id=as.integer(factor(boots_id)))
+     n<-as.integer(max(x$boots_id))
+     samples<-sample.int(n,size=as.integer(n*nfac),replace=replace)
+     samp<-data.frame(boots_id=samples) %>% dplyr::group_by(boots_id) %>%
+       dplyr::mutate(i=1:dplyr::n()) %>% dplyr::ungroup()
+     x<-dplyr::inner_join(x,samp,by = "boots_id") %>%
+        dplyr::mutate(sample_id=factor(paste(sample_id,i)),fish_id=factor(paste(fish_id,i)),rep_id=rep_id,n_boot=n)
+    })
+    x<-do.call(rbind,a);
+ } else {
+   x<- ss %>% dplyr::mutate(rep_id=rep_id,n_boot=1L)
+ }
   as_STOMobs(x,new_pred_var=c('rep_id','n_boot'))
 }
 
@@ -73,7 +77,7 @@ bootstrap_show<-function(s,show=c("strata",'sample')[1],vari=c("stomach","sample
 #' Add missing prey and prey size combination for bootstrap replicates
 #'
 #' @param bt Bootstrapped diet data (list).
-#' @param mis_value Value used for missing prey weights in replicates. Uses control@model_options$minimum_stom as default
+#' @param mis_value Value used for missing prey weights in replicates. Uses control@model_options$min_stom as default
 #' @return Bootstrapped diet data with inserted value for missing prey and prey size combinations
 #' @export
 #' @examples \dontrun{s<-add_missing(boots(s))}
@@ -81,7 +85,7 @@ add_missing_boots<-function(bt,mis_value) {
 
   pred_name<-pred_size_class<-prey_name<-prey_size<-prey_size_class<-repli<-stratum_area<-stratum_time<-NULL
   control<-attr(bt[[1]],'control')
-  if (missing(mis_value)) mis_value<-control@model_options$minimum_stom
+  if (missing(mis_value)) mis_value<-control@model_options$min_stom
 
   #find all combinations of prey and prey sizes
   all<-lapply(bt,function(x){
@@ -97,8 +101,9 @@ add_missing_boots<-function(bt,mis_value) {
                 by = c("stratum_area", "stratum_time", "pred_size_class", "pred_name","prey_name", "prey_size", "prey_size_class")) %>%
       dplyr::mutate(prey_w=mis_value)
 
+    varsPrey<-names(x[['PREY']])
     a<- dplyr::right_join(x[['PRED']],a, by = c("stratum_area", "stratum_time", "pred_size_class", "pred_name")) %>%
-        dplyr::select(all_of(names(x[['PREY']])))
+        dplyr::select(tidyselect::all_of(varsPrey))
 
     x[['PREY']]<-rbind(x[['PREY']],a)
     return(x)
@@ -110,7 +115,7 @@ add_missing_boots<-function(bt,mis_value) {
 
 #' Plot bootstrapping diet data.
 #'
-#' @param b Bootstrap diet data set of class STOMdiet.
+#' @param b List of Bootstrap diet data of class STOMdiet.
 #' @param cut_pred_size From to in substring of predator size
 #' @param cut_prey_size From to in substring of prey size
 #' @param show_plot Show the resulting graphs on screen (or save the results for later processing)
@@ -139,6 +144,11 @@ plotboots.size<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(
                   quarter=as.integer(eval(control@strata_quarter_back)),
                   pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2]),
                   prey_size=substr(prey_size,cut_prey_size[1],cut_prey_size[2])) %>%
+
+    dplyr::group_by(stratum_time,year,quarter,pred_name, pred_size,prey_name,rep_id) %>%
+    dplyr::mutate(prey_w=sum(prey_w)) %>% dplyr::ungroup() %>%
+
+
     dplyr::select(key,stratum_time,pred_name, pred_size,n_tot,prey_name,prey_size,prey_w,rep_id)
 
 
@@ -158,7 +168,7 @@ plotboots.size<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(
 
 #' Plot bootstrapping diet data.
 #'
-#' @param b Bootstrap diet data set of class STOMdiet.
+#' @param b List of Bootstrap diet data of class STOMdiet.
 #' @param cut_pred_size From to in substring of predator size
 #' @param show_plot Show the resulting graphs on screen (or save the results for later processing)
 #' @param freq Logical, show frequency (or density).
@@ -196,7 +206,7 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
                   quarter=as.integer(eval(control@strata_quarter_back)),
                   pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2])) %>%
     dplyr::group_by(stratum_time,year,quarter,pred_name, pred_size,prey_name,rep_id) %>%
-    dplyr::summarise(prey_w=sum(prey_w)) %>% dplyr::ungroup()
+    dplyr::summarise(prey_w=sum(prey_w)*100) %>% dplyr::ungroup()
   if (addStat) {
     x<-left_join(x,stat,by = c("year", "quarter", "pred_name", "pred_size", "prey_name"))
   }
@@ -268,7 +278,8 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 #'  param     \tab Estimated parameters assuming a Dirichlet distribution of bootstrap replicates.\cr
 #'  phi       \tab Estimated precision parameter (sum of param from the Dirichlet distribution).\cr
 #'  mu        \tab Estimated mean value from the Dirichlet distribution.\cr
-#'  p_value   \tab p-value for Log-likelihood ratio test for the estimated Dirichlet \cr \tab mean vector describe the bootstrap data well.\cr
+#'  p_value   \tab p-value for Log-likelihood ratio test for the estimated Dirichlet mean vector.\cr
+#'  Log-likelihood ratio test for a Dirichlet mean vector
 #'  mean_w    \tab Mean value of prey weights (proportions).\cr
 #'  sd_w      \tab Standard deviation of prey weights (proportions).\cr
 #'  prey_w    \tab Point estimate of prey weight (proportions). \cr
@@ -335,6 +346,9 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
     }
     return(a)
   })
+
+  #delete empty lists
+  out<-out %>% purrr::discard(rlang::is_null)
 
   b<-lapply(out,function(x) {
     if (x$ok & do_Diri)  data.frame(nboots=x$empirical$n,

@@ -9,7 +9,7 @@ add_missing_boots(bt, mis_value)
 \arguments{
 \item{bt}{Bootstrapped diet data (list).}
 
-\item{mis_value}{Value used for missing prey weights in replicates. Uses control@model_options$minimum_stom as default}
+\item{mis_value}{Value used for missing prey weights in replicates. Uses control@model_options$min_stom as default}
 }
 \value{
 Bootstrapped diet data with inserted value for missing prey and prey size combinations

@@ -13,5 +13,5 @@
 STOMdiet object transformed to a "flat" data.frame.
 }
 \description{
-Method to convert an object of class STOMdiet into a data.frame (and tibble).
+Convert STOMdiet into a data.frame
 }

@@ -44,7 +44,7 @@ do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE, label='Begin example 3')
 ### Group prey species
 
 The Multi species model, SMS, groups the prey species into commercial
-species and a other species, both fish and invertebrates, into "Other
+species and another species, both fish and invertebrates, into "Other
 food". For this the NODC system is convenient due to its hierarchical
 structure. First, the structure for grouping is made input files. Here,
 data files from the FishStomachs package are used to produce the key

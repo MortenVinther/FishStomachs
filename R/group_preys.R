@@ -7,13 +7,14 @@
 #' @param keep_prey_names Names of preys to be kept unchanged. Remaining preys are renamed to "other" and their prey sizes are changed to missing.
 #' @param sum_other_food Sum  stomach contents of "other" preys.
 #' @param NODC_split Input file with the fields XXXXX
+#' @param verbose Show extra information
 #' @param show_allocations If true the allocation of prey names into groups are shown, when the \code{NODC_split} is used.
 ##' in the control object are renamed into "other".
 #'
 #' @return Stomach contents data of class STOMobs. Prey sizes and number of preys as set to missing for preys in the "other" food group.
 #' @export
 #'
-group_prey_species <- function(stom, keep_prey_names,sum_other_food=TRUE,NODC_split,show_allocations=FALSE ) {
+group_prey_species <- function(stom, keep_prey_names,sum_other_food=TRUE,NODC_split,show_allocations=FALSE,verbose=FALSE ) {
 #debug  stom=s; keep_prey_names<-c("Gadus morhua","Clupea harengus", "Sprattus sprattus"); sum_other_food=TRUE;show_allocations=TRUE;
   fish_id<-prey_group<-prey_name<-prey_w<-sample_id<-NULL
   if (missing(keep_prey_names) & missing(NODC_split)) stop('You have to supply either the parameter keep_prey_names or NODC_split.\n ')
@@ -40,7 +41,7 @@ group_prey_species <- function(stom, keep_prey_names,sum_other_food=TRUE,NODC_sp
 
 
   if (missing(NODC_split)) {
-    cat('Grouping of prey species is done on the basis of keep_prey_names:',paste(keep_prey_names,collapse=', '),'\n')
+    if (verbose) cat('Grouping of prey species is done on the basis of keep_prey_names:',paste(keep_prey_names,collapse=', '),'\n')
     st$prey_name<-as.character(st$prey_name)
      id_prey<- st$prey_name %in% keep_prey_names
     oth<-st[!id_prey,] %>% dplyr::mutate(prey_name=other)

@@ -4,7 +4,14 @@
 \alias{bootstrap_data}
 \title{Make bootstrap replicates.}
 \usage{
-bootstrap_data(s, nfac = 1, replace = TRUE, seed = 0, rep_id = 1)
+bootstrap_data(
+  s,
+  nfac = 1,
+  replace = TRUE,
+  seed = 0,
+  rep_id = 1,
+  firstUnchanged = TRUE
+)
 }
 \arguments{
 \item{s}{Stomach data set of class STOMobs.}
@@ -16,6 +23,8 @@ bootstrap_data(s, nfac = 1, replace = TRUE, seed = 0, rep_id = 1)
 \item{seed}{Random seed value.}
 
 \item{rep_id}{Replicate identifier}
+
+\item{firstUnchanged}{Do not bootstrap for rep_id==1}
 }
 \value{
 Bootstrapped stomach data (replicate) of class STOMobs.

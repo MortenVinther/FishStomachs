@@ -16,7 +16,7 @@ plotboots.size(
 )
 }
 \arguments{
-\item{b}{Bootstrap diet data set of class STOMdiet.}
+\item{b}{List of Bootstrap diet data of class STOMdiet.}
 
 \item{show_plot}{Show the resulting graphs on screen (or save the results for later processing)}
 

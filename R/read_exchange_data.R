@@ -37,7 +37,7 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
         cat("\nProcessing file_", file.path(stom_dir, x), "\n")
         a <- readr::read_csv(file = file.path(stom_dir, x), n_max = 1, col_types = readr::cols())
         name_in <- colnames(a)
-        name_in_org <- colnames(a)
+        name_in_org <- name_in
 
         if (allow_alias_names) {
             b$alias_4 <- b$field
@@ -56,17 +56,16 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
             name_in <- all_fields[key]
         }
 
-        if (!setequal(mandatory_names, intersect(name_in, dplyr::all_of(mandatory_names)))) {
+
+        if (!setequal(mandatory_names, intersect(name_in, mandatory_names))) {
             stop(paste0("File: ", x, " does not include the mandatory field:", setdiff(mandatory_names, intersect(name_in, mandatory_names)), "\n"))
         }
 
-
-
         if (length(setdiff(name_in, all_fields)) > 0) {
-         #   cat(paste0("File: ", x, " includes variable names:\n", paste(setdiff(name_in, all_fields), collapse = ", "),
-         #             "\n which are not considered as a valid variable name and is not included in file:", stomach_format),'\n')
-          cat(paste0("File: ", x, " includes variable names:\n", paste(name_in_org[is.na(name_in)], collapse = ", "),
-                     "\n which are not considered as a valid variable name and are not included in file:", stomach_format),'\n')
+            cat(paste0("File: ", x, " includes variable names:\n", paste(setdiff(name_in, all_fields), collapse = ", "),
+                      "\n which are not considered as a valid variable name and is not included in file:", stomach_format),'\n')
+         # cat(paste0("File: ", x, " includes variable names:\n", paste(name_in_org[is.na(name_in)], collapse = ", "),
+        #             "\n which are not considered as a valid variable name and are not included in file:", stomach_format),'\n')
 
             if (!delete_errors)
                 stop("remove not included variables, or rerun with parameter delete_errors=TRUE")

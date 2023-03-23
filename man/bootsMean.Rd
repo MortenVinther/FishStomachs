@@ -45,7 +45,8 @@ n_prey_sp \tab Number of "preys" observed.\cr
 param     \tab Estimated parameters assuming a Dirichlet distribution of bootstrap replicates.\cr
 phi       \tab Estimated precision parameter (sum of param from the Dirichlet distribution).\cr
 mu        \tab Estimated mean value from the Dirichlet distribution.\cr
-p_value   \tab p-value for Log-likelihood ratio test for the estimated Dirichlet \cr \tab mean vector describe the bootstrap data well.\cr
+p_value   \tab p-value for Log-likelihood ratio test for the estimated Dirichlet mean vector.\cr
+Log-likelihood ratio test for a Dirichlet mean vector
 mean_w    \tab Mean value of prey weights (proportions).\cr
 sd_w      \tab Standard deviation of prey weights (proportions).\cr
 prey_w    \tab Point estimate of prey weight (proportions). \cr
