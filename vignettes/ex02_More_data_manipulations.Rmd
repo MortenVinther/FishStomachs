@@ -2,7 +2,7 @@
 title: "Example 02: More data manipulations"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{ex02_More_data_manipulations}
+  %\VignetteIndexEntry{Example 02: More data manipulations}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,9 +10,9 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  options(rmarkdown.html_vignette.check_title = FALSE)
+  comment = "#>"
 )
+ options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ```{r setup}

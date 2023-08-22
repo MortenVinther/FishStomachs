@@ -12,7 +12,8 @@ plotboots.size(
   addTitle = FALSE,
   tAngle = 90,
   Colours = "red",
-  maxbins = 50
+  maxbins = 50,
+  inclData
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ plotboots.size(
 \item{Colours}{Colours for frequency.}
 
 \item{maxbins}{maximum number of bins in plot.}
+
+\item{inclData}{Date set with combinations of stratum_time, pred_name and pred_size to be included in the plot.}
 }
 \value{
 nothing (if show_plot=TRUE) or a list of plots.

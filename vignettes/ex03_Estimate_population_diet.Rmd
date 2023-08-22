@@ -2,7 +2,7 @@
 title: "Example 03: Estimate population diet"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{ex03_Estimate_population_diet}
+  %\VignetteIndexEntry{Example 03: Estimate population diet}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -13,9 +13,10 @@ editor_options:
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  options(rmarkdown.html_vignette.check_title = FALSE) 
+  comment = "#>"
 )
+options(rmarkdown.html_vignette.check_title = FALSE) 
+
 ```
 
 This example shows the data compilation of stomach contents observations

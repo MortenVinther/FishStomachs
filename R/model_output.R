@@ -30,7 +30,7 @@
 #'
 model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FALSE) {
 
- # test diet<-d; length_classes_file=file.path(config_dir,paste0("length_classes_",sz,".csv")) ; sp_info_file<-file.path(config_dir,'species_info.csv')
+ # test diet<-d2; length_classes_file=file.path(config_dir,paste0("length_classes_",sz,".csv")) ; sp_info_file<-file.path(config_dir,'species_info.csv')
   a<-area<-b<-code<-config_dir<-group<-key<-mean.weight<-n_tot<-no<-number<-pred_id_number<-pred_l_mean<-pred_name<-NULL
   pred_size<-pred_size_class<-predator<-prey<-prey_id_number<-prey_l_mean<-prey_name<-prey_size<-prey_size_class<-NULL
   prey_w<-quarter<-sampling_effort<-sl<-SMS_species<-Species<-stomcon<-stratum_area<-stratum_time<-type<-year<-NULL
@@ -57,15 +57,22 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
   # calculate year and quarter from specifications
   diet[['PRED']]<-diet[['PRED']] %>% dplyr::mutate(year=as.integer(eval(control@strata_year_back)),quarter=as.integer(eval(control@strata_quarter_back)))
 
+  # sort(unique(diet[['PRED']]$pred_name))
+
   p<-dplyr::inner_join(diet[['PRED']],diet[['PREY']],by = "key") %>% dplyr::select(-key)
+
+  if ('phi' %in% names(p)) bootstrap<-TRUE else {
+    bootstrap<-FALSE
+    p$phi<- -9
+  }
 
   minl<-min(p$prey_size_class);maxl<-max(p$prey_size_class)
 
   prey_range<- p %>%  dplyr::group_by (stratum_time,year,quarter,stratum_area,pred_name,pred_size,pred_size_class,prey_name) %>%
-    dplyr::summarise(minl=min(prey_size_class),maxl=max(prey_size_class))
+    dplyr::summarise(minl=min(prey_size_class),maxl=max(prey_size_class),.groups = "keep")
 
 
-  b_expand<-p %>% tidyr::complete(tidyr::nesting(stratum_time,year,quarter,stratum_area,pred_name,pred_size,pred_size_class, n_tot, pred_l_mean,prey_name), prey_size_class)
+  b_expand<-p %>% tidyr::complete(tidyr::nesting(stratum_time,year,quarter,stratum_area,pred_name,pred_size,pred_size_class, n_tot, phi,pred_l_mean,prey_name), prey_size_class)
 
   bb<-dplyr::left_join(b_expand,prey_range,by = c("stratum_time", "year", "quarter", "stratum_area", "pred_name", "pred_size", "pred_size_class", "prey_name")) %>%
     dplyr::filter(prey_size_class>=minl-1 & prey_size_class<=maxl+1) %>%
@@ -82,14 +89,12 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
 
   if (any(lprey$prey_name=='ALL')) {
      lprey<-dplyr::mutate(lprey,prey_name=NULL)
-     byVar<-c("year", "quarter", "prey_size_class")
+     bb<-dplyr::left_join(bb,lprey,by = c("year", "quarter", "prey_size_class"))
   } else {
-    byVar<-c("year", "quarter", "prey_name","prey_size_class")
+    bb<-dplyr::left_join(bb,lprey,by = c("year", "quarter", "prey_name","prey_size_class"))
   }
 
-
-  #bb<-dplyr::left_join(bb,lprey,by = c("year", "quarter", "prey_size_class")) %>%
-  bb<-dplyr::left_join(bb,lprey,by = byVar) %>%
+  bb<-bb %>%
     dplyr::mutate(prey_size=dplyr::if_else(is.na(prey_size),factor(sl,levels=levels(bb$prey_size)),prey_size)) %>%
     dplyr::filter(!is.na(prey_size)) %>% dplyr::mutate(sl=NULL)
   bb[bb$type=='mid','prey_w']<-control@model_options$mid_value
@@ -98,31 +103,29 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
   if (!control@model_options$insert_tails) bb<- bb %>% dplyr::filter(type != 'tail')
 
   bb[bb$prey_name==other & bb$prey_w==0,'prey_w']<-min_stom
-
-  bb <- dplyr::select(bb,year,quarter,stratum_time, stratum_area, pred_name, pred_size,pred_size_class,pred_l_mean,n_tot, prey_name,type, prey_size,prey_size_class, prey_w) %>%
+ #filter(bb,type=='mid')
+  bb <- dplyr::select(bb,year,quarter,stratum_time, stratum_area, pred_name, pred_size,pred_size_class,pred_l_mean,n_tot, phi, prey_name,type, prey_size,prey_size_class, prey_w) %>%
     dplyr::group_by(year,quarter,stratum_time, stratum_area, pred_name, pred_size,pred_size_class) %>%
     dplyr::mutate(prey_w=prey_w/sum(prey_w)) %>% dplyr::ungroup()
   bb<- dplyr::mutate_if(bb, is.factor,as.character)
 
-
-
-
   # add additional information
   sp_info<- read_csv(file= sp_info_file,col_types = readr::cols()) %>% dplyr::mutate(number=as.integer(number))
 
+  bb<- bb %>% dplyr::rename(predator=pred_name)
+  bb<-dplyr::left_join(bb,dplyr::select(sp_info,pred_id_number=number,predator=code),by = "predator")
 
-  bb<- bb %>% dplyr::mutate(predator=pred_name,pred_name=NULL)
-  bb<-dplyr::left_join(bb,dplyr::select(sp_info,pred_id_number=number,predator=SMS_species),by = "predator")
 
-
-  bb<- bb %>% dplyr::mutate(prey=prey_name,prey_name=NULL)
-  bb<-dplyr::left_join(bb,dplyr::select(sp_info,prey_id_number=number,prey=SMS_species),by = "prey")
+  bb<- bb %>% dplyr::rename(prey=prey_name)
+  bb<-dplyr::left_join(bb,dplyr::select(sp_info,prey_id_number=number,prey=code),by = "prey")
 
   bb<-dplyr::mutate(bb,prey_l_mean=rowMeans(matrix(as.numeric(unlist(strsplit(prey_size,split='-'))),ncol=2,byrow=TRUE)))
 
    #correct  prey_l_mean for last (plus) size class
   pl<-grep(max_l,bb$prey_size)
   bb[pl,'prey_l_mean']<- matrix(as.numeric(unlist(strsplit(unlist(bb[pl,'prey_size']),split='-'))),ncol=2,byrow=TRUE)[,1]
+
+  bb[is.na(bb$phi),'phi']<- -9
 
   bb<-bb %>% dplyr::select(
       area=stratum_area,
@@ -134,6 +137,7 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
       pred_size_class,
       pred_l_mean,
       sampling_effort=n_tot,
+      phi,
       prey,
       prey_id_number,
       prey_size,
@@ -152,7 +156,7 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
                                pred.mean.length=pred_l_mean,prey=prey,prey.no=prey_id_number,
                                prey.size=substr(prey_size,1,4),prey.size.range=prey_size,prey.size.class=prey_size_class,
                                prey.mean.length=prey_l_mean,prey.mean.length.ALK=-9,
-                               stomcon=prey_w,type,mean.weight=mean.weight,haul.no=sampling_effort,
+                               stomcon=prey_w,type,mean.weight=mean.weight,haul.no=sampling_effort,phi=phi,
                                haul.prey.no=1,calc.prey.number=-1,used.prey.number=-1) %>%
                  dplyr::filter(!(is.na(stomcon)))
    }

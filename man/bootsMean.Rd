@@ -11,7 +11,9 @@ bootsMean(
   n_rep = NA,
   do_Diri = FALSE,
   minPreyProportion = 0,
-  Diri_min = 0.001
+  Diri_min = 0.001,
+  Diri_max = 0.99,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -28,6 +30,10 @@ bootsMean(
 \item{minPreyProportion}{Lower level for average prey proportion to be kept as a named prey. If lower, the prey weight is allocated to "other" prey.}
 
 \item{Diri_min}{Value to be used in estimating the Dirichelt parameter in case of a zero proportion.}
+
+\item{Diri_max}{Maximum average proportion allowed for estimation of of Dirichlet parameters.}
+
+\item{verbose}{Show progress.}
 }
 \value{
 Data set with mean and variance of diets and fit to Dirichlet distribution. Output includes

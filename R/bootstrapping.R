@@ -62,16 +62,25 @@ bootstrap_addVar<-function(s) {
 #' @param s Stomach data set of class STOMobs.
 #' @param show Show either number of stomachs per strata or number of stomachs per samples available for bootstrapping.
 #' @param vari Variable, number of stomachs or number of samples
+#' @param Logical for condense of table
 #' @return table Information on data available for bootstrapping
 #' @export
 #' @examples \dontrun{bootstrap_show(s)}
-bootstrap_show<-function(s,show=c("strata",'sample')[1],vari=c("stomach","sample")[1]) {
-  if (show=="strata" & vari=="stomach") return(xtabs(n_tot ~boots_strata+pred_size+pred_name,data=s[['PRED']])) else
-  if (show=="sample" & vari=="stomach") return(xtabs(n_tot ~boots_id+pred_size+pred_name,data=s[['PRED']])) else
-  if (show=="strata" & vari=="sample")  return(xtabs(      ~boots_strata+pred_size+pred_name,data=s[['PRED']])) else
-  if (show=="sample" & vari=="sample")  return(xtabs(      ~boots_id+pred_size+pred_name,data=s[['PRED']]))
-}
+bootstrap_show<-function(s,show=c("strata",'sample')[1],vari=c("stomach","sample")[1],condense=TRUE) {
+  if (show=="strata" & vari=="stomach") y<-xtabs(n_tot ~boots_strata+pred_size+pred_name,data=s[['PRED']]) else
+  if (show=="sample" & vari=="stomach") y<-xtabs(n_tot ~boots_id+    pred_size+pred_name,data=s[['PRED']]) else
+  if (show=="strata" & vari=="sample")  y<-xtabs(      ~boots_strata+pred_size+pred_name,data=s[['PRED']]) else
+  if (show=="sample" & vari=="sample")  y<-xtabs(      ~boots_id+    pred_size+pred_name,data=s[['PRED']])
 
+  yy<-lapply(1:dim(y)[3],function(x) {
+    yy<-y[,,x]
+    d1<-rowSums(yy)>0
+    d2<-colSums(yy)>0
+    yy[d1,d2]
+  })
+ names(yy)<-dimnames(y)[[3]]
+ return(yy)
+}
 
 
 #' Add missing prey and prey size combination for bootstrap replicates
@@ -123,18 +132,25 @@ add_missing_boots<-function(bt,mis_value) {
 #' @param tAngle Angle X-axis text.
 #' @param Colours Colours for frequency.
 #' @param maxbins maximum number of bins in plot.
+#' @param inclData Date set with combinations of stratum_time, pred_name and pred_size to be included in the plot.
 #' @return nothing (if show_plot=TRUE) or a list of plots.
 #' @importFrom ggplot2 ggplot facet_grid geom_histogram labs geom_text theme_minimal scale_fill_manual aes element_text element_line
 #' @importFrom rlang .data
 #' @export
 plotboots.size<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(1,10),addTitle=FALSE,tAngle=90,
-                   Colours='red',maxbins=50) {
+                   Colours='red',maxbins=50,inclData) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-quarter<-year<-NULL
   allNames<-prey_name<-prey_size<-stratum_time<-NULL
 
   control<-attr(b[[1]],'control')
   # to one data frame
   x<-do.call(rbind,lapply(b,as.data.frame))
+
+  # select data form inclData if exits
+  if (!missing(inclData)) {
+    x<-inner_join(x,inclData,by=intersect(names(x), names(inclData)))
+  }
+
   reps<-max(x$rep_id)
   if (reps<maxbins) bins=reps else bins<-maxbins
 
@@ -146,7 +162,7 @@ plotboots.size<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(
                   prey_size=substr(prey_size,cut_prey_size[1],cut_prey_size[2])) %>%
 
     dplyr::group_by(stratum_time,year,quarter,pred_name, pred_size,prey_name,rep_id) %>%
-    dplyr::mutate(prey_w=sum(prey_w)) %>% dplyr::ungroup() %>%
+    dplyr::mutate(prey_w=sum(prey_w)*100) %>% dplyr::ungroup() %>%
 
 
     dplyr::select(key,stratum_time,pred_name, pred_size,n_tot,prey_name,prey_size,prey_w,rep_id)
@@ -177,12 +193,13 @@ plotboots.size<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(
 #' @param Colours Colours for frequency.
 #' @param maxbins maximum number of bins in plot.
 #' @param statistics Data set (estimated by call to bootsMean) including statistics to be shown on the plot.
+#' @param inclData Date set with combinations of stratum_time, pred_name and pred_size to be included in the plot.
 #' @return nothing (if show_plot=TRUE) or a list of plots.
 #' @importFrom ggplot2 ggplot facet_grid geom_histogram geom_line geom_vline labs geom_text theme_minimal after_stat scale_fill_manual aes element_text element_line
 #' @importFrom rlang .data
 #' @export
 plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=90,
-                    Colours=c("red","green","blue"),maxbins=75,statistics) {
+                    Colours=c("red","green","blue"),maxbins=75,statistics,inclData) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-quarter<-year<-NULL
   allNames<-prey_name<-prey_size<-stratum_time<-NULL
 
@@ -200,13 +217,24 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
   x<-do.call(rbind,lapply(b,as.data.frame))
   reps<-max(x$rep_id)
   if (reps<maxbins) bins=reps else bins<-maxbins
+
+  # select data form inclData if exits
+  if (!missing(inclData)) {
+    x<-inner_join(x,inclData,by=intersect(names(x), names(inclData)))
+  }
   # calculate year and quarter from specifications, and sum up by prey
-  x<-x %>%
+ x<-x %>%
     dplyr::mutate(year=as.integer(eval(control@strata_year_back)),
                   quarter=as.integer(eval(control@strata_quarter_back)),
                   pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2])) %>%
-    dplyr::group_by(stratum_time,year,quarter,pred_name, pred_size,prey_name,rep_id) %>%
-    dplyr::summarise(prey_w=sum(prey_w)*100) %>% dplyr::ungroup()
+    dplyr::select(stratum_time,year,quarter,pred_name, pred_size,prey_name,rep_id,prey_w) %>%
+    dplyr::group_by(stratum_time,year,quarter,pred_name, pred_size,prey_name,rep_id,) %>%
+    dplyr::summarize(prey_w=sum(prey_w),.groups = "keep") %>%
+    dplyr::group_by(stratum_time,year,quarter,pred_name, pred_size,rep_id) %>%
+    dplyr::mutate(prey_w=prey_w*sum(prey_w)*100) %>%
+    dplyr::ungroup()
+
+
   if (addStat) {
     x<-left_join(x,stat,by = c("year", "quarter", "pred_name", "pred_size", "prey_name"))
   }
@@ -217,12 +245,13 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
       if (is.na(sum(x$phi))) addDiri<-FALSE else addDiri<-TRUE
       if (addDiri) {
          df<- x %>% group_by(pred_size,prey_name,mu,phi,param) %>%
-           summarize(minPw=min(prey_w),maxPw=max(prey_w),n_rep_id=n()) %>%
+           summarize(minPw=min(prey_w),maxPw=max(prey_w),n_rep_id=n(),.groups = "keep") %>%
            mutate( fromD=max(0.1,minPw*0.9), toD=min(99.9,maxPw*1.05), binwidth=(toD-fromD)/100/bins) %>% ungroup() %>%
            mutate(nbin=bins)
+         dfff<<-df
          df2<- df %>% group_by(pred_size,prey_name,mu,phi,param,binwidth,fromD,toD) %>%
-           summarize(prey_w=seq(from=fromD,to=toD,length.out=bins),
-                  y=dbeta(prey_w/100, shape1 = param, shape2 = phi-param))  %>% ungroup()
+           reframe(prey_w=seq(from=fromD,to=toD,length.out=bins),
+                  y=dbeta(prey_w/100, shape1 = param, shape2 = phi-param),.groups = "keep")  %>% ungroup()
 
       } else {
         df<- select(x,pred_size,prey_name,mean_w) %>% unique()
@@ -249,7 +278,7 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
     a<- a+facet_grid(vars(prey_name), vars(pred_size),scales = "free", drop = TRUE)
 
     if (show_plot) suppressWarnings(print(a)) else return(a)
-  })
+  }) #end by
   if (show_plot) return() else return(out)
 }
 
@@ -263,6 +292,8 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 #' @param do_Diri Logical for performing statistics assuming the replicates are Dirichlet distributed.
 #' @param minPreyProportion Lower level for average prey proportion to be kept as a named prey. If lower, the prey weight is allocated to "other" prey.
 #' @param Diri_min Value to be used in estimating the Dirichelt parameter in case of a zero proportion.
+#' @param Diri_max Maximum average proportion allowed for estimation of of Dirichlet parameters.
+#' @param verbose Show progress.
 #' @return Data set with mean and variance of diets and fit to Dirichlet distribution. Output includes
 #' \tabular{ll}{
 #' \strong{Variable} \tab \strong{Contents} \cr
@@ -289,7 +320,7 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 #' }
 #' @importFrom Compositional diri.est dirimean.test
 #' @export
-bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPreyProportion=0.0,Diri_min=0.001) {
+bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPreyProportion=0.0,Diri_min=0.001,Diri_max=0.99,verbose=FALSE) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-year<-NULL
   allNames<-prey_name<-prey_size<-stratum_time<-NULL
 
@@ -320,18 +351,19 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
     mutate(prey_name=if_else(incl,prey_name,factor(other,levels=levels(x$prey_name)))) %>%
     dplyr::group_by(year,quarter,pred_name, pred_size,prey_name,rep_id) %>% dplyr::summarise(prey_w=sum(prey_w))
 
-  #rescale to 1.00 again (should no be necessary ?)
+  #rescale to 1.00 again (should not be necessary ?)
   x<-x %>% group_by(year,quarter,pred_name, pred_size,rep_id) %>%
     dplyr::mutate(prey_w=prey_w/sum(prey_w))
 
   out<-by(x,list(x$pred_name,x$pred_size,x$year,x$quarter),function(x) {
-
     x<-droplevels(x)
     preys<-levels(x$prey_name)
     xm<- x %>% dplyr::group_by(year,quarter,pred_name, pred_size,prey_name) %>%
       dplyr::summarise(mean_w=mean(prey_w),sd_w=sd(prey_w),n=n(),.groups="keep") %>%  dplyr::ungroup()
+    if (verbose) print(xm)
+    maxxm<-max(xm$mean_w,na.rm=TRUE)
     a<-list(ok=TRUE,empirical=xm,preys=preys)
-    if (do_Diri) {
+    if (do_Diri & maxxm<Diri_max) {
       xx<-tidyr::pivot_wider(x,values_from=prey_w,names_from=prey_name)  %>% dplyr::ungroup()
       xx<-dplyr::select(xx,all_of(preys))
       xx<-as.matrix(xx)
@@ -343,7 +375,7 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
       if (class(aa)=="try-error") a$ok<-FALSE else a<-append(a,aa)
       if (a$ok) aa<-try(Compositional::dirimean.test(xx,aa$param),silent=TRUE) #Log-likelihood ratio test for a Dirichlet mean vector.
       if (class(aa)=="try-error") a$ok<-FALSE else a<-append(a,list(p_value=as.numeric(aa$info['p-value'])))
-    }
+    } else a$ok<-FALSE
     return(a)
   })
 

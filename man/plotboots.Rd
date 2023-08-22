@@ -13,7 +13,8 @@ plotboots(
   tAngle = 90,
   Colours = c("red", "green", "blue"),
   maxbins = 75,
-  statistics
+  statistics,
+  inclData
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ plotboots(
 \item{maxbins}{maximum number of bins in plot.}
 
 \item{statistics}{Data set (estimated by call to bootsMean) including statistics to be shown on the plot.}
+
+\item{inclData}{Date set with combinations of stratum_time, pred_name and pred_size to be included in the plot.}
 }
 \value{
 nothing (if show_plot=TRUE) or a list of plots.

@@ -2,7 +2,7 @@
 title: "Example 05:Create data for model"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{ex05_Create_data_for_model}
+  %\VignetteIndexEntry{Example 05:Create data for model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,9 +10,9 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  options(rmarkdown.html_vignette.check_title = FALSE) 
+  comment = "#>"
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 

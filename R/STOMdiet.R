@@ -29,15 +29,22 @@ as_STOMdiet <- function(d,new_pred_var,new_prey_var){
 
   pn<-names(d)
   if (! missing(new_pred_var)) {
-    for (v in new_pred_var) stopifnot("new_pred_var is is not in d"=v %in% pn)
-    match(new_pred_var,pn)
+    mm<-match(new_pred_var,pn)
+    if (any(is.na(mm))) {
+      cat("The variables specified in new_pred_var:",new_pred_var[is.na(mm)], "are not in input data\n")
+      stop("as_STOMdiet stopped")
+    }
   } else new_pred_var<-NULL
 
   pred<-unique(subset(d,select=unique(c(pn[pn %in% attr(d,'PRED')],new_pred_var))))
 
   if (! missing(new_prey_var)) {
-    for (v in new_prey_var) stopifnot("new_prey_var is not in d"= v %in% pn)
-  } else new_prey_var<-NULL
+    mm<-match(new_prey_var,pn)
+    if (any(is.na(mm))) {
+      cat("The variables specified in new_prey_var:",new_prey_var[is.na(mm)], "are not in input data\n")
+      stop("as_STOMdiet stopped")
+    }
+   } else new_prey_var<-NULL
 
   prey<-subset(d,select=unique(c(pn[pn %in% attr(d,'PREY')],new_prey_var)))
 

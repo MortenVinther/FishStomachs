@@ -2,7 +2,7 @@
 title: "Example 06 Bootstrapping"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{ex06_Bootstrapping}
+  %\VignetteIndexEntry{Example 06 Bootstrapping}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -170,7 +170,7 @@ return(d)
 ```
 
 
-The creation of data for bootstrapping is done by the function bootstrap_data(), which create a new STOMobs object including the bootstrap replicate data.
+Creation of data for bootstrapping is done by the function bootstrap_data(), which create a new STOMobs object including the bootstrap replicate data.
 The result of the call, bd, is a list of STOMobs object.
 
 ```{r ex06_06}
@@ -194,7 +194,6 @@ bt[[1]] # STOMdiet object
 
 bt[[2]] # STOMdiet object 
 
-
 ```
 
 The STOMdiet can be changed. In this case predator and prey names are changed into English names and prey weights into relative weights
@@ -204,9 +203,7 @@ The STOMdiet can be changed. In this case predator and prey names are changed in
 bt2<-lapply(bt,function(x){
  x<-from_to_species_diet(x,pred_from_to=c("species","short"),prey_from_to=c("species","short"),
       sp_info_file=file.path(system.file( package = "FishStomachs"),"extdata",'species_info.csv'))
- #Relative stomach contents
- x[['PREY']]<- x[['PREY']] %>% dplyr::group_by(key) %>% 
-   dplyr::mutate(prey_w=prey_w/sum(prey_w)*100) %>% dplyr::ungroup()
+ x<-diet_relative(x)
  return(x)
 
 })
@@ -214,7 +211,6 @@ bt2<-lapply(bt,function(x){
 # change to English names in the source data for bootstrap, for a later merge
  source<-from_to_species_diet(s,pred_from_to=c("species","short"),prey_from_to=c("species","short"),
     sp_info_file=file.path(system.file( package = "FishStomachs"),"extdata",'species_info.csv'))
-
 
 ```
 The estimated diets for each bootstrap replicates are different as shown below, where the two first replicates are compared.
@@ -262,16 +258,15 @@ bt4<-lapply(bt3,function(x){
   subset(x,pred_name=='Cod' & stratum_time=='1991-Q1' & !(pred_size %in% c('0100-0149','0150-0199')))
 })
 
-
 plotboots(b=bt4,show_plot=TRUE,cut_pred_size=c(1,4),addTitle=TRUE,tAngle=90)
 
 ```
 
 
 
-The bootstrap mean and variance from replicates are calculated by a call to bootsMean(). See help(bootsMean) for more information.
+The bootstrap mean and variance from replicates are calculated by a call to bootsMean(). 
+First the raw observations are loaded.
 ```{r ex06_13}
-
 
 # load diet data (point estimate) from example 03
 load(file=file.path(system.file( package = "FishStomachs"),"extdata","ex03d.Rdata"),verbose=TRUE)
@@ -280,23 +275,18 @@ load(file=file.path(system.file( package = "FishStomachs"),"extdata","ex03d.Rdat
  pointEst<-from_to_species_diet(d,pred_from_to=c("species","short"),prey_from_to=c("species","short"),
     sp_info_file=file.path(system.file( package = "FishStomachs"),"extdata",'species_info.csv'))
 
-
-bb<-bootsMean(b=bt4,pointEst,by_prey_size=FALSE)
-head(bb)
-
-plotboots(b=bt4,show_plot=TRUE,cut_pred_size=c(1,4),addTitle=TRUE,tAngle=90)
-
-
-
 ```
 
-With more replicates, loaded from data set. 
+
+With more replicates, loaded from package data set, simple mean and variance, and Dirichlet parameters are calculated. See help(bootsMean) for more information. 
 
 ```{r ex06_14}
 
 load(file=file.path(system.file( package = "FishStomachs"),"extdata","bt4.Rdata"),verbose=TRUE)
 
 bb<-bootsMean(b=bt4,pointEst,by_prey_size=FALSE,do_Diri=TRUE)
+
+# summary statistics for predator cod, size 0400-0499, 1991, Q1,  
 select(bb,prey_name, phi,param,mu,mean_w,sd_w,prey_w)
 
 plotboots(b=bt4,cut_pred_size=c(1,4),addTitle=TRUE,tAngle=90,statistics=bb)

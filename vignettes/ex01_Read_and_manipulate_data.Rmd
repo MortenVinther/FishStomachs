@@ -2,7 +2,7 @@
 title: "example 01: Read and manipulate data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{ex01_Read_and_manipulate_data}
+  %\VignetteIndexEntry{example 01: Read and manipulate data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

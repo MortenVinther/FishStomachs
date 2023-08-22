@@ -2,7 +2,7 @@
 title: "Example 04: Population diet"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{ex04_Population_diet}
+  %\VignetteIndexEntry{Example 04: Population diet}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -11,7 +11,6 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  options(rmarkdown.html_vignette.check_title = FALSE),
   fig.width=7, fig.height=8
 )
 ```
