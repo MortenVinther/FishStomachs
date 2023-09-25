@@ -116,7 +116,7 @@ read_exchange_data <- function(control, delete_errors = FALSE, allow_alias_names
 
     strings_to_factors_NA <- function(x) {
         x %>%
-            dplyr::mutate_if(is.character, forcats::fct_explicit_na)
+            dplyr::mutate_if(is.character, forcats::fct_na_value_to_level)
     }
 
     a <- strings_to_factors_NA(a)

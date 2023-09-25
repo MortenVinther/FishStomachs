@@ -16,13 +16,13 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-This example shows the basic data structures and  how to read data on exchange data format. Further, examples are shown on and how to make initial editing and addition of data.
+This example shows the basic data structures and  how to read data on exchange data format. Further, examples are shown how to make initial editing and addition of data.
 
 ### Basic data structures and reading data from exchange format
 
 FishStomachs gives the opportunity to process data and to document this process. It uses a control (or option) object (REF) to specify input data and the processing of data.
 
-First we have to make a control object, to specify which data we want to import. Stomach contents data are in this case from the data set, cod_stom_1991.csv, included in the FishStomachs package. The stomach_dir must also include a CSV file (database_format.csv) where the data set structure is defined, and which alias for field names that can used and which fields that are mandatory.
+First we have to make a control object, to specify which data we want to import. Stomach contents data are in this case from the data set, cod_stom_1991.csv, included in the FishStomachs package. The stomach_dir must also include a CSV file (database_format.csv) where the data set structure is defined, and which alias for field names that can be used and which fields that are mandatory.
 
 In this case, data from 1991 and for the predator cod (*Gadus morhua*) are used.  
 
@@ -53,9 +53,9 @@ Data are read in using the read_exchange_data function.
 s<-read_exchange_data(control,keep_just_mandatory_fields = TRUE)
 
 ```
-In this case we just want to keep the mandatory data fields (for illustrative purposes)  as specified by  the parameter keep_just_mandatory_fields. See the documentation for exchange format in the help for \code{read_exchange_data()}.
+In this case we just want to keep the mandatory data fields (for illustrative purposes)  as specified by  the parameter keep_just_mandatory_fields. See the documentation for exchange format in the help for read_exchange_data().
 
-The resulting "s" data from the \code{read_exchange_data()} is the basic structure used for stomach contents data. Technically, s is an object of the class STOMobs, which is a list with one data set on the predator and another set with information of the preys (see below). One predator record may have several prey records. The two sets are linked by the variables sample_id and  fish_id. More text on the individual fields can be found in the documentation for exchange format (REF). A STOMobs object also includes some attributes about the compilation of data attached to the object, and a control object (class \code{STOMcontrol}) for providing options for compilation and documentations  
+The resulting "s" data from read_exchange_data() is the basic structure used for stomach contents data. Technically, s is an object of the class STOMobs, which is a list with one data set on the predator and another set with information of the preys (see below). One predator record may have several prey records. The two sets are linked by the variables sample_id and  fish_id. More text on the individual fields can be found in the documentation for exchange format (REF). A STOMobs object also includes some attributes about the compilation of data attached to the object, and a control object (class \code{STOMcontrol}) for providing options for compilation and documentations  
 
 ```{r ex01_03}
 str(s)
@@ -99,7 +99,7 @@ Data sets for stomach contents is often large which makes it almost impossible t
  print(get_control(s),show=c('general','detailed_test_output'))
 ```
 
-The default contents make no sense for this example and we have to change it. This is done by changing the contents of list detailed_tst_criteria to include any criteria for sub-setting data that are further documented in the specified detailed_tst_file. The  detailed_tst_criteria should include one argument for each criteria you want to apply, specified as an expression. You can define a criterion for each field a STOMobs object. The easiest way to change values for the control object is by using the built in functions \code{edit_control}.
+The default contents make no sense for this example and we have to change it. This is done by changing the contents of list detailed_tst_criteria to include any criteria for sub-setting data that are further documented in the specified detailed_tst_file. The  detailed_tst_criteria should include one argument for each criteria you want to apply, specified as an expression. You can define a criterion for each field a STOMobs object. The easiest way to change values for the control object is by using the built in functions edit_control().
 
 
 ```{r ex01_06}

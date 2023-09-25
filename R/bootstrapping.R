@@ -234,10 +234,12 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
     dplyr::mutate(prey_w=prey_w*sum(prey_w)*100) %>%
     dplyr::ungroup()
 
-
   if (addStat) {
     x<-left_join(x,stat,by = c("year", "quarter", "pred_name", "pred_size", "prey_name"))
+    x$pred_size<-paste0(x$pred_size,'  phi=',round(x$phi,1))
   }
+
+  #test  x<-subset(x,pred_name=='Cod' & stratum_time=='1981-Q1')
   out<-by(x,list(x$pred_name,x$stratum_time),function(x) {
     binwidth_master<-range(x$prey_w,na.rm=TRUE)
     binwidth_master<-(binwidth_master[2]-binwidth_master[1])/100/bins
@@ -245,7 +247,8 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
       if (is.na(sum(x$phi))) addDiri<-FALSE else addDiri<-TRUE
       if (addDiri) {
          df<- x %>% group_by(pred_size,prey_name,mu,phi,param) %>%
-           summarize(minPw=min(prey_w),maxPw=max(prey_w),n_rep_id=n(),.groups = "keep") %>%
+           # summarize(minPw=min(prey_w),maxPw=max(prey_w),n_rep_id=dplyr::n(),.groups = "keep") %>%
+           summarize(minPw=min(prey_w),maxPw=max(prey_w),              .groups = "keep") %>%
            mutate( fromD=max(0.1,minPw*0.9), toD=min(99.9,maxPw*1.05), binwidth=(toD-fromD)/100/bins) %>% ungroup() %>%
            mutate(nbin=bins)
          dfff<<-df
@@ -283,6 +286,50 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 }
 
 
+
+#modified code from Compositional::diri.est (which have some unsolvable problems with the sp package?)
+diriEst<-function (x,iterlim = 1000,type = "mle" )  {
+  n <- dim(x)[1]
+  z <- log(x)
+  loglik <- function(param, z, n) {
+    param <- exp(param)
+    -n*lgamma(sum(param))+n*sum(lgamma(param))-sum(z %*% (param - 1))
+  }
+  diriphi <- function(param, z, n) {
+    phi <- exp(param[1])
+    b <- c(1, exp(param[-1]))
+    b <- b/sum(b)
+    -n * lgamma(phi)+n*sum(lgamma(phi*b))-sum(z %*%(phi * b - 1))
+  }
+  if (type == "mle") {
+    suppressWarnings({
+      da <- nlm(loglik, colMeans(x) * 10, z = z,
+                n = n, iterlim =  iterlim)
+      da <- optim(da$estimate, loglik, z = z, n = n, control = list(maxit = 5000),
+                  hessian = TRUE)
+    })
+    result <- list(loglik = -da$value, param = exp(da$par),
+                   std = sqrt(diag(solve(da$hessian))))
+  }
+  if (type == "prec") {
+    suppressWarnings({
+      da <- nlm(diriphi, c(10, colMeans(x)[-1]),
+                z = z, n = n, iterlim = iterlim)
+      da <- optim(da$estimate, diriphi, z = z, n = n, control = list(maxit = 5000),
+                  hessian = TRUE)
+    })
+    phi <- exp(da$par[1])
+    a <- c(1, exp(da$par[-1]))
+    a <- a/sum(a)
+    result <- list(loglik = -da$value, phi = phi, mu = a,
+                   param = phi * a)
+  }
+  return(result)
+}
+
+
+
+
 #' Statistics from bootstrap replicates.
 #'
 #' @param b Bootstrap diet data set. List of elements of class STOMdiet.
@@ -292,7 +339,8 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 #' @param do_Diri Logical for performing statistics assuming the replicates are Dirichlet distributed.
 #' @param minPreyProportion Lower level for average prey proportion to be kept as a named prey. If lower, the prey weight is allocated to "other" prey.
 #' @param Diri_min Value to be used in estimating the Dirichelt parameter in case of a zero proportion.
-#' @param Diri_max Maximum average proportion allowed for estimation of of Dirichlet parameters.
+#' @param excl_diri Combinations (year, quarter, pred_name, pred_size) where Dirichlet parameters are not estimated.
+#' @param Diri_max Maximum average proportion for one food item  allowed for estimation of of Dirichlet parameters.
 #' @param verbose Show progress.
 #' @return Data set with mean and variance of diets and fit to Dirichlet distribution. Output includes
 #' \tabular{ll}{
@@ -309,8 +357,6 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 #'  param     \tab Estimated parameters assuming a Dirichlet distribution of bootstrap replicates.\cr
 #'  phi       \tab Estimated precision parameter (sum of param from the Dirichlet distribution).\cr
 #'  mu        \tab Estimated mean value from the Dirichlet distribution.\cr
-#'  p_value   \tab p-value for Log-likelihood ratio test for the estimated Dirichlet mean vector.\cr
-#'  Log-likelihood ratio test for a Dirichlet mean vector
 #'  mean_w    \tab Mean value of prey weights (proportions).\cr
 #'  sd_w      \tab Standard deviation of prey weights (proportions).\cr
 #'  prey_w    \tab Point estimate of prey weight (proportions). \cr
@@ -318,14 +364,16 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 #'  n_stom    \tab Number of stomachs available before bootstrap ( from the \code{pointEst} data).\cr
 #'  n_sample  \tab Number of samples available before bootstrap.\cr
 #' }
-#' @importFrom Compositional diri.est dirimean.test
 #' @export
-bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPreyProportion=0.0,Diri_min=0.001,Diri_max=0.99,verbose=FALSE) {
+bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPreyProportion=0.0,Diri_min=0.001,excl_diri=NA,Diri_max=0.99,verbose=FALSE) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-year<-NULL
   allNames<-prey_name<-prey_size<-stratum_time<-NULL
 
   control<-attr(b[[1]],'control')
   other<-control@other
+  if (missing(pointEst)) stop('A data set with a point estimate of diet must be be provided')
+
+  if (class(excl_diri)== "data.frame") excl_some_diri<-TRUE else excl_some_diri<-FALSE
 
   # to data frame
   x<-do.call(rbind,lapply(b,as.data.frame))
@@ -340,7 +388,7 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
                   quarter=as.integer(eval(control@strata_quarter_back))) %>%
     dplyr::group_by(year,quarter,pred_name, pred_size,prey_name,rep_id) %>%
     dplyr::summarise(prey_w=sum(prey_w),.groups="keep") %>%
-    dplyr::ungroup() %>% filter(!is.na(prey_w))
+    dplyr::ungroup() %>% dplyr::filter(!is.na(prey_w))
 
   #rescale to 1.00
   x<-x %>% group_by(year,quarter,pred_name, pred_size,rep_id) %>%
@@ -355,15 +403,30 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
   x<-x %>% group_by(year,quarter,pred_name, pred_size,rep_id) %>%
     dplyr::mutate(prey_w=prey_w/sum(prey_w))
 
-  out<-by(x,list(x$pred_name,x$pred_size,x$year,x$quarter),function(x) {
+  sampling<-pointEst[['PRED']] %>% dplyr::mutate(year=as.integer(eval(control@strata_year_back)),
+                                             quarter=as.integer(eval(control@strata_quarter_back))) %>%
+    dplyr::select(year,quarter,pred_name,pred_size,n_sample)
+
+  x<-dplyr::left_join(x,sampling,by = join_by(year, quarter, pred_name, pred_size))
+
+
+  if (excl_some_diri) {
+    excl_diri$do_diri_est<-FALSE
+    x<-left_join(x,excl_diri,by = join_by(year, quarter, pred_name, pred_size))
+    x[is.na(x$do_diri_est),"do_diri_est"]<-TRUE
+  } else x$do_diri_est<-TRUE
+
+ #tst x<-dplyr::filter(x,pred_name=='Cod' & pred_size=="0150-0200" & year==1981 & quarter==1)
+   out<-by(x,list(x$pred_name,x$pred_size,x$year,x$quarter),function(x) {
     x<-droplevels(x)
     preys<-levels(x$prey_name)
-    xm<- x %>% dplyr::group_by(year,quarter,pred_name, pred_size,prey_name) %>%
-      dplyr::summarise(mean_w=mean(prey_w),sd_w=sd(prey_w),n=n(),.groups="keep") %>%  dplyr::ungroup()
+    xm<- x %>% dplyr::group_by(year,quarter,pred_name, pred_size,n_sample,prey_name) %>%
     if (verbose) print(xm)
     maxxm<-max(xm$mean_w,na.rm=TRUE)
+    #n_sample<-x[1,'n_sample']
+    do_it<-x[1,"do_diri_est"]
     a<-list(ok=TRUE,empirical=xm,preys=preys)
-    if (do_Diri & maxxm<Diri_max) {
+    if (do_Diri & maxxm<Diri_max & do_it) {
       xx<-tidyr::pivot_wider(x,values_from=prey_w,names_from=prey_name)  %>% dplyr::ungroup()
       xx<-dplyr::select(xx,all_of(preys))
       xx<-as.matrix(xx)
@@ -371,10 +434,10 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
         xx[xx==0]<-Diri_min
         xx<-xx/apply(xx,1,sum) #rescale to 1.0
       }
-      aa<-try(Compositional::diri.est(xx,type = "prec"),silent=TRUE) #MLE of the parameters of a Dirichlet distribution.
+      aa<-try(diriEst(xx,type = "prec"),silent=TRUE) #MLE of the parameters of a Dirichlet distribution.
       if (class(aa)=="try-error") a$ok<-FALSE else a<-append(a,aa)
-      if (a$ok) aa<-try(Compositional::dirimean.test(xx,aa$param),silent=TRUE) #Log-likelihood ratio test for a Dirichlet mean vector.
-      if (class(aa)=="try-error") a$ok<-FALSE else a<-append(a,list(p_value=as.numeric(aa$info['p-value'])))
+      #if (a$ok) aa<-try(Compositional::dirimean.test(xx,aa$param),silent=TRUE) #Log-likelihood ratio test for a Dirichlet mean vector.
+      #if (class(aa)=="try-error") a$ok<-FALSE else a<-append(a,list(p_value=as.numeric(aa$info['p-value'])))
     } else a$ok<-FALSE
     return(a)
   })
@@ -386,21 +449,20 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
     if (x$ok & do_Diri)  data.frame(nboots=x$empirical$n,
                  year=x$empirical$year,quarter=x$empirical$quarter,
                  pred_name=x$empirical$pred_name,pred_size=x$empirical$pred_size,
-                 prey=x$preys,n_prey_sp=length(x$preys),phi=x$phi,param=x$param,mu=x$mu,p_value=x$p_value,
+                 prey=x$preys,n_prey_sp=length(x$preys),phi=x$phi,param=x$param,mu=x$mu, #p_value=x$p_value,
                  mean_w=x$empirical$mean_w,sd_w=x$empirical$sd_w) else
                data.frame(nboots=x$empirical$n,year=x$empirical$year,quarter=x$empirical$quarter,
                pred_name=x$empirical$pred_name,pred_size=x$empirical$pred_size,
-               prey=x$preys,n_prey_sp=length(x$preys),phi=NA,param=NA,mu=NA, p_value=NA,
+               prey=x$preys,n_prey_sp=length(x$preys),phi=NA_real_,param=NA_real_,mu=NA_real_, #p_value=NA,
                mean_w=x$empirical$mean_w,sd_w=x$empirical$sd_w)
   }
   )
   out<-do.call(rbind,b)
-  if (missing(pointEst)) stop('A data set wth a point estimate of diet must be be provided')
  # samp<-left_join(
 #    bootstrap_show(source,show=c("strata",'sample')[1],vari=c("stomach","sample")[1]) %>%
-#      as.data.frame() %>% filter(Freq>0) %>% rename(n_stom=Freq),
+#      as.data.frame() %>% dplyr::filter(Freq>0) %>% rename(n_stom=Freq),
 #   bootstrap_show(source,show=c("strata",'sample')[1],vari=c("stomach","sample")[2]) %>%
-#      as.data.frame() %>% filter(Freq>0) %>% rename(n_sample=Freq),
+#      as.data.frame() %>% dplyr::filter(Freq>0) %>% rename(n_sample=Freq),
 #    by = c("boots_strata", "pred_size", "pred_name")
  #  )
   pc<-get_control(pointEst)

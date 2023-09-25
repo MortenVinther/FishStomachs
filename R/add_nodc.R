@@ -10,7 +10,7 @@
 #' @title Add NODC Id where missing
 #'
 #' @param stom Stomach data set of class STOMobs, from e.g. \link{read_exchange_data}.
-#' @param NODC_ID File Name including latin (or other) predator or prey name (column species and column NODC). File 'NODC_latin.csv' in the package /inst directory is used as default.
+#' @param NODC_ID File Name including Latin (or other) predator or prey name (column species and column NODC). File 'NODC_latin.csv' in the package /inst directory is used as default.
 #' @param predator_or_prey Add missing NODC for "predator" or "prey".
 #' @param stop_if_errror  Logical for stopping if NODC is not found.
 #' @param delete_first Logical for deleting exiting predator or prey NODC.

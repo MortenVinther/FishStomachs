@@ -10,8 +10,8 @@ add_strata <- function(stom) {
   stratum_area<-with(stom[['PRED']],eval(control@strata_area_exp))
   stratum_sub_area<-with(stom[['PRED']],eval(control@strata_sub_area_exp))
   stom[['PRED']] <-stom[['PRED']] %>%
-      dplyr::mutate(stratum_time=forcats::fct_explicit_na(stratum_time),stratum_area=forcats::fct_explicit_na(stratum_area),
-                    stratum_sub_area=forcats::fct_explicit_na(stratum_sub_area))
+      dplyr::mutate(stratum_time=forcats::fct_na_value_to_level(stratum_time),stratum_area=forcats::fct_na_value_to_level(stratum_area),
+                    stratum_sub_area=forcats::fct_na_value_to_level(stratum_sub_area))
   attr(stom,all_stom_attributes()['strata'])<-TRUE
   return(stom)
 }

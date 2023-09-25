@@ -2,8 +2,8 @@ alias_1,alias_2,alias_3,field,types,mandatory,PRED,PREY,units,remarks
 Dataset, ,filename,dataset,c,T,T,F,free text,Data set name
 Country, , ,country,c,T,T,F,ICES Alpha code,Sampling country
 Ship, , ,ship,c,T,T,F,ICES Alpha code,"Sampling platform, e.g. Research vessel name "
-Latitude,latitude, ,lat,d,F,T,F,,"Sample lattitude, decimal format"
-Longitude,longitude, ,lon,d,F,T,F, ,"Sample lattitude, decimal format"
+Latitude,latitude, ,lat,d,F,T,F,,"Sample latitude, decimal format"
+Longitude,longitude, ,lon,d,F,T,F, ,"Sample latitude, decimal format"
 Estimated_Lat_Lon, , ,est_lat_lon,c,F,T,F,,Is longitude or lattitude estimated?
 ICES_StatRec, ,Square,rectangle,c,T,T,F, ,"ICES statistical rectangle, or other smaller area"
 ICES_AreaCode, , ,area,c,T,T,F, ,"ICES area, or other larger area"

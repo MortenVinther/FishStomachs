@@ -14,6 +14,7 @@ redist_unidentified_prey_sp(
   selected_pred,
   remains_to_other = TRUE,
   by_prey_size = TRUE,
+  keep_size = TRUE,
   verbose = FALSE
 )
 }
@@ -36,13 +37,15 @@ redist_unidentified_prey_sp(
 
 \item{by_prey_size}{Do the allocation by prey and prey size (\code{by_prey_size=TRUE}) or just by prey (\code{by_prey_size=FALSE}).}
 
+\item{keep_size}{Keep the size information of not redistributed items (\code{keep_size=TRUE}) or set size information to missing (\code{keep_size=FALSE}).}
+
 \item{verbose}{Logical, show details}
 }
 \value{
 Stomach contents data of class STOMobs.
 }
 \description{
-Redistribute partly identified preys to the distibution of the identified prey species from the same predator and predator size
+Redistribute partly identified preys to the distribution of the identified prey species from the same predator and predator size
 within the given area and time strata.
 }
 \details{

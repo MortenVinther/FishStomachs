@@ -16,7 +16,7 @@ add_NODC_ID(
 \arguments{
 \item{stom}{Stomach data set of class STOMobs, from e.g. \link{read_exchange_data}.}
 
-\item{NODC_ID}{File Name including latin (or other) predator or prey name (column species and column NODC). File 'NODC_latin.csv' in the package /inst directory is used as default.}
+\item{NODC_ID}{File Name including Latin (or other) predator or prey name (column species and column NODC). File 'NODC_latin.csv' in the package /inst directory is used as default.}
 
 \item{predator_or_prey}{Add missing NODC for "predator" or "prey".}
 

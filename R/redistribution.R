@@ -1,5 +1,5 @@
 
-#' Redistribute partly identified preys to the distibution of the identified prey species from the same predator and predator size
+#' Redistribute partly identified preys to the distribution of the identified prey species from the same predator and predator size
 #' within the given area and time strata.
 #'
 #' The function allocate partly identified preys into identified preys. A group of partly identified could for example be Clupeidae (herring like fish)
@@ -40,6 +40,7 @@
 #' @param do_only Do only redistribution for the selected steps.
 #' @param selected_pred Predators for which redistribution is done. All predators are included,if \code{selected_pred value} is missing.
 #' @param by_prey_size Do the allocation by prey and prey size (\code{by_prey_size=TRUE}) or just by prey (\code{by_prey_size=FALSE}).
+#' @param keep_size Keep the size information of not redistributed items (\code{keep_size=TRUE}) or set size information to missing (\code{keep_size=FALSE}).
 #' @param verbose Logical, show details
 #' @param remains_to_other Convert not fully identified prey species to prey 'other' where no species allocation key can be found.
 #' @return Stomach contents data of class STOMobs.
@@ -47,7 +48,7 @@
 #' @examples \dontrun{x=2}
 #'
 redist_unidentified_prey_sp <- function(s, dist_time = stratum_time, dist_area = stratum_area, dist_pred_size = pred_size, from_to_species, do_only, selected_pred, remains_to_other = TRUE,
-    by_prey_size = TRUE,verbose=FALSE) {
+    by_prey_size = TRUE,keep_size=TRUE,verbose=FALSE) {
     # test s=b; from_to_species=from_to;remains_to_other = FALSE; selected_pred<-sort(unique(s[['PRED']]$pred_name)); do_only=c(1,2); by_prey_size<-FALSE
   fish_id<-from_prey_name<-pred_name<-pred_size<-prey_name<-prey_w<-proportion<-sample_id<-stratum_area<-stratum_time<-to_species<-NULL
   pred_size_class<-prey_size<-NULL
@@ -140,10 +141,14 @@ redist_unidentified_prey_sp <- function(s, dist_time = stratum_time, dist_area =
 
         found_rows <- unique(found$row)
         l_found_rows <- length(found_rows)
-        not_found <- dplyr::filter(dist, !(row %in% found_rows)) %>%
-            dplyr::mutate(prey_name = from_prey_name, prey_size = factor(mis_prey_len, levels = levels(s$prey_size)), prey_size_class = mis_prey_size_class)
 
-        if (remains_to_other) {
+        #print(dplyr::filter(dist, !(row %in% found_rows))%>% select("group","from_prey_name","digest","prey_size_class","prey_size","prey_l_mean","prey_w" ))
+
+        not_found <- dplyr::filter(dist, !(row %in% found_rows))
+        if ( keep_size & by_prey_size) not_found<- not_found %>% dplyr::mutate(prey_name = from_prey_name)
+        if (!keep_size | !by_prey_size) not_found<- not_found %>% dplyr::mutate(prey_name = from_prey_name, prey_size = factor(mis_prey_len, levels = levels(s$prey_size)), prey_size_class = mis_prey_size_class)
+
+       if (remains_to_other) {
           not_found <- not_found %>%
             dplyr::mutate(prey_name = factor(other, levels = levels(s$prey_name)), prey_size = factor(mis_prey_len, levels = levels(s$prey_size)), prey_size_class = mis_prey_size_class,
                           prey_n = 0, prey_l_mean = NA)
@@ -241,7 +246,8 @@ redist_unidentified_prey_lengths <- function(s, dist_time = stratum_time, dist_a
         return(a1)
     }
     rel_key <- strata_rel_dist(dist_key)
-    found <- dplyr::inner_join(dist, rel_key, by = c("pred_name", "prey_name", "dist_time", "dist_area", "dist_pred_size")) %>%
+
+    found <- dplyr::inner_join(dist, rel_key, by = c("pred_name", "prey_name", "dist_time", "dist_area", "dist_pred_size"),relationship = "many-to-many") %>%
         dplyr::mutate(prey_w = prey_w * proportion, proportion = NULL, prey_n = 0)
 
     found_rows <- unique(found$row)
@@ -258,11 +264,11 @@ redist_unidentified_prey_lengths <- function(s, dist_time = stratum_time, dist_a
 
     if (others_to_other) {
       remains<-bind_rows(
-       remains %>% filter(!(prey_name %in% c(sel_prey,other)))  %>%
+       remains %>% dplyr::filter(!(prey_name %in% c(sel_prey,other)))  %>%
         dplyr::mutate(prey_name = factor(other, levels = levels(s$prey_name)),
         prey_size = factor(mis_prey_len, levels = levels(s$prey_size)),
         prey_size_class = mis_prey_size_class,prey_n = 0),
-       remains %>% filter( (prey_name %in% c(sel_prey,other)))
+       remains %>% dplyr::filter( (prey_name %in% c(sel_prey,other)))
       )
     }
 

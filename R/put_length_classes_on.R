@@ -64,7 +64,7 @@ put_size_class_on_predator <- function(stom, len_classes) {
 
 
     stom[["PRED"]] <- dplyr::bind_rows(incl2, excl) %>%
-        dplyr::mutate(pred_size = fct_explicit_na(pred_size))
+        dplyr::mutate(pred_size = fct_na_value_to_level(pred_size))
     attr(stom, all_stom_attributes()["pred_size"]) <- TRUE
     return(stom)
 }
@@ -185,7 +185,7 @@ put_size_class_on_prey <- function(stom, len_classes, too_small_to_other = TRUE)
 
 
     stom[["PREY"]] <- dplyr::bind_rows(incl2, excl) %>%
-        dplyr::mutate(prey_name = fct_explicit_na(prey_name), prey_size = fct_explicit_na(prey_size), year = NULL, quarter = NULL)
+        dplyr::mutate(prey_name = fct_na_value_to_level(prey_name), prey_size = fct_na_value_to_level(prey_size), year = NULL, quarter = NULL)
 
     # sum(st$prey_w,na.rm=TRUE)-sum(stom[['PREY']]$prey_w,na.rm=TRUE) summary(dplyr::filter(stom[['PREY']],prey_name=='other'))
     attr(stom, all_stom_attributes()["prey_size"]) <- TRUE

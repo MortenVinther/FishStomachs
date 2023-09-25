@@ -4,42 +4,8 @@ Criterium:
 
  NEW set: Before any change 
 
-stratum_area: R-1 stratum_sub_area: 50E7 stratum_time: 1991-Q1 sample_id: Gadus morhua_SCO_y:91_q:1_ID:582  fish_id: 0500-0699 
-Number of stomachs ('n_tot'): 4
-          Clupea harengus other Trisopterus esmarkii     all
-0100-0149              NA    NA               7048.3  7048.3
-0200-0249         25852.5    NA                   NA 25852.5
-0250-0299              NA    NA                   NA     0.0
-9999-9999              NA  10.2                   NA    10.2
-all               25852.5  10.2               7048.3 32911.0
-
-stratum_area: R-7 stratum_sub_area: 40F6 stratum_time: 1991-Q1 sample_id: Gadus morhua_FRA_y:91_q:1_ID:1008  fish_id: 1000-1499 
-Number of stomachs ('n_tot'): 1
-          Clupea harengus Merlangius merlangus    other      all
-0100-0149              NA                   NA       NA      0.0
-0200-0249         40580.2                   NA       NA  40580.2
-0250-0299              NA             129775.9       NA 129775.9
-9999-9999              NA                   NA 225135.6 225135.6
-all               40580.2             129775.9 225135.6 395491.7
-
 
  NEW set: after stomach content per stomach and potential relative weight 
-
-stratum_area: R-1 stratum_sub_area: 50E7 stratum_time: 1991-Q1 sample_id: Gadus morhua_SCO_y:91_q:1_ID:582  fish_id: 0500-0699 
-Number of stomachs ('n_tot'): 4
-          Clupea harengus other Trisopterus esmarkii    all
-0100-0149              NA    NA               1762.1 1762.1
-0200-0249          6463.1    NA                   NA 6463.1
-9999-9999              NA   2.5                   NA    2.5
-all                6463.1   2.5               1762.1 8227.7
-
-stratum_area: R-7 stratum_sub_area: 40F6 stratum_time: 1991-Q1 sample_id: Gadus morhua_FRA_y:91_q:1_ID:1008  fish_id: 1000-1499 
-Number of stomachs ('n_tot'): 1
-          Clupea harengus Merlangius merlangus    other      all
-0200-0249         40580.2                   NA       NA  40580.2
-0250-0299              NA             129775.9       NA 129775.9
-9999-9999              NA                   NA 225135.6 225135.6
-all               40580.2             129775.9 225135.6 395491.7
 
 
  NEW set: after aggregation by sub-area strata. Average stomach contents by sub-strata. 

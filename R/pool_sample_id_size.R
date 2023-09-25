@@ -77,7 +77,7 @@ pool_data <- function(stom) {
     dplyr::summarise(prey_w=sum(prey_w,na.rm=TRUE),prey_l_mean=sum(prey_n*prey_l_mean_num),prey_n=sum(prey_n)) %>%
     dplyr::mutate(prey_l_mean=as.integer(prey_l_mean/prey_n),prey_n=as.integer(prey_n)) %>% dplyr::rename(fish_id=pred_size)
 
-  stom[['PRED']]<-pred %>% dplyr::ungroup() %>% dplyr::mutate(fish_id=forcats::fct_explicit_na(pred_size))
+  stom[['PRED']]<-pred %>% dplyr::ungroup() %>% dplyr::mutate(fish_id=forcats::fct_na_value_to_level(pred_size))
   stom[['PREY']]<-prey %>% dplyr::ungroup() %>% dplyr::mutate(fish_id=factor(fish_id,levels=levels(stom[['PRED']]$fish_id)))
 
   attr(stom,all_stom_attributes()['pooled'])<-TRUE

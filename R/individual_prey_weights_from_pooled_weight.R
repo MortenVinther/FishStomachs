@@ -294,7 +294,7 @@ prey_w_from_pooled_weight<-function(stom,sum_other_preys=TRUE,do_plots=FALSE,qua
   bb[mis_ll_rec,'prey_ll']<-mis_l
   bb[mis_ll_rec,'prey_lu']<-mis_l
 
-  bb <- bb%>% dplyr::mutate(weight_sample_id=NULL,pool_prey_w=NULL,prey_name=fct_explicit_na(prey_name))
+  bb <- bb%>% dplyr::mutate(weight_sample_id=NULL,pool_prey_w=NULL,prey_name=fct_na_value_to_level(prey_name))
 
   # remove records from stom[['PRED']] where preys have been deleted due to errors
   stom[['PRED']]<-dplyr::anti_join(stom[['PRED']],del2_sample_id,by = c("sample_id", "fish_id"))

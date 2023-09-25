@@ -615,8 +615,8 @@ from_to_species_diet<-function(d,pred_from_to=c("xcode","xshort"),prey_from_to=c
       rename(pred_name=new_pred_name,pred_id_number=number)
 
     if (refactor) {
-      aa <- aa %>% filter(new_pred_name %in% unique(dd$pred_name)) %>% unique() %>% arrange(number)
-      aa <- bind_rows(filter(aa,number>0),filter(aa,number==0)) %>%
+      aa <- aa %>% dplyr::filter(new_pred_name %in% unique(dd$pred_name)) %>% unique() %>% arrange(number)
+      aa <- bind_rows(dplyr::filter(aa,number>0),dplyr::filter(aa,number==0)) %>%
         mutate(number=1:dplyr::n())
       dd$pred_name<-forcats::fct_relevel(dd$pred_name,aa$new_pred_name)
     }
@@ -631,8 +631,8 @@ from_to_species_diet<-function(d,pred_from_to=c("xcode","xshort"),prey_from_to=c
       rename(prey_name=new_prey_name,prey_id_number=number)
 
     if (refactor) {
-      aa <- aa %>% filter(new_prey_name %in% unique(dd$prey_name)) %>% unique() %>% arrange(number)
-      aa <- bind_rows(filter(aa,number>0),filter(aa,number==0)) %>%
+      aa <- aa %>% dplyr::filter(new_prey_name %in% unique(dd$prey_name)) %>% unique() %>% arrange(number)
+      aa <- bind_rows(dplyr::filter(aa,number>0),dplyr::filter(aa,number==0)) %>%
         mutate(number=1:dplyr::n())
       dd$prey_name<-forcats::fct_relevel(dd$prey_name,aa$new_prey_name)
     }

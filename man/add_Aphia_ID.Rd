@@ -18,7 +18,7 @@ add_Aphia_ID(
 \arguments{
 \item{stom}{Stomach data set of class STOMobs, from e.g. \link{read_exchange_data}).}
 
-\item{Worms_Aphia_ID}{File Name including WoRMS Aphia ID by latin (or other) predator or prey name.file 'WoRM_AphiaID.csv' in the package /inst directory is used as default.}
+\item{Worms_Aphia_ID}{File Name including WoRMS Aphia ID by Latin (or other) predator or prey name.file 'WoRM_AphiaID.csv' in the package /inst directory is used as default.}
 
 \item{predator_or_prey}{Add missing Aphia ID for predator | prey.}
 
@@ -31,7 +31,7 @@ add_Aphia_ID(
 \item{match_item}{Variable name in WoRM_AphiaID.csv ("item" or "scientific') used to assign WoRMS Aphia ID.}
 }
 \value{
-Stomach data on on internal format.
+Stomach data on internal format.
 }
 \description{
 Add WoRMS Aphia Id

@@ -17,7 +17,7 @@
 #' @param reorganize_keys Change internal keys (\code{sample_id}, \code{fish_id}). Do not change into TRUE!.
 #' @return STOMobs object.
 #' @examples \dontrun{read_exchange_data(stom_dir = 'NorthSea', exchange_file = 'cod_stomachs_2017.dat')}
-#' @importFrom forcats fct_explicit_na
+#' @importFrom forcats fct_na_value_to_level
 #' @export
 change_data <- function(stom,delete_vars,control_criteria=FALSE,
                         pred_weight_multiplier=1,pred_length_multiplier=1,prey_weight_multiplier=1,prey_length_multiplier=1,
@@ -67,7 +67,7 @@ change_data <- function(stom,delete_vars,control_criteria=FALSE,
     if (!any(grepl("record_type",colnames(stom[['PRED']])))) stom[['PRED']]$record_type<-as.character(NA)
     stom[['PRED']]$record_type<-as.character( stom[['PRED']]$record_type)
     stom[['PRED']] <- stom[['PRED']] %>% dplyr::mutate(record_type=dplyr::if_else(is.na(record_type),dplyr::if_else(n_tot>1,'PS','SS'),record_type)) %>%
-          dplyr::mutate( record_type=forcats::fct_explicit_na(record_type))
+          dplyr::mutate( record_type=forcats::fct_na_value_to_level(record_type))
   }
 
   if (add_weight_method & !("prey_w_meth" %in% colnames(stom[['PREY']]))) {

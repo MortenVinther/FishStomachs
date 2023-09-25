@@ -44,7 +44,7 @@ bias_correct_energy_etc<-function(x,nodc_group_file,param_file,temperature_file,
 
 
   # add parm
-  parm<- dplyr::mutate (parm,pred_name=factor(pred_name,levels=levels(x[['PRED']]$pred_name))) %>% filter(!is.na(pred_name))
+  parm<- dplyr::mutate (parm,pred_name=factor(pred_name,levels=levels(x[['PRED']]$pred_name))) %>% dplyr::filter(!is.na(pred_name))
   pred<-dplyr::left_join(dplyr::select(x[['PRED']],sample_id,fish_id,pred_name,year,quarter,rectangle,pred_l,pred_ll,n_tot,n_food),parm,by = "pred_name")
 
   # add temperature

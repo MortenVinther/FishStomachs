@@ -23,6 +23,7 @@ as.data.frame.STOMobs <- function(stom,add_empty=TRUE){
     cnames<-colnames(a)
     crit<-is.na(a$prey_name)
     if (any(crit)) {
+      if (!(other %in% levels(a$prey_name))) a$prey_name<-factor(a$prey_name, levels = c(levels(a$prey_name),other))
       a[crit,'prey_name']<-other
       if ('prey_size' %in% cnames) a[crit,'prey_size']<-mis_ll
       if ('prey_size_class' %in% cnames) a[crit,'prey_size_class']<-mis_size_class
@@ -239,7 +240,7 @@ summary.STOMobs <- function(x, level=1){
 #' If the same stomach_id is present within different datasets the method will stop.
 #' If a variable name is only present in some of the datasets, the variable will be
 #' added to the remaining datasets (filled with NA) and a warning will be triggered.
-#' The control attributes from the first STOMobs will be used for the resulting combined STOMobs
+#' The control attributes from the first STOMobs will be used for the resulting combined STOMobs.
 #' The R-Code is modified from the DATRAS R-package (Thanks to Casper Berg)
 #'
 #' @title Combine multiple STOMobs objects

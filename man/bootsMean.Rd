@@ -12,6 +12,7 @@ bootsMean(
   do_Diri = FALSE,
   minPreyProportion = 0,
   Diri_min = 0.001,
+  excl_diri = NA,
   Diri_max = 0.99,
   verbose = FALSE
 )
@@ -31,7 +32,9 @@ bootsMean(
 
 \item{Diri_min}{Value to be used in estimating the Dirichelt parameter in case of a zero proportion.}
 
-\item{Diri_max}{Maximum average proportion allowed for estimation of of Dirichlet parameters.}
+\item{excl_diri}{Combinations (year, quarter, pred_name, pred_size) where Dirichlet parameters are not estimated.}
+
+\item{Diri_max}{Maximum average proportion for one food item  allowed for estimation of of Dirichlet parameters.}
 
 \item{verbose}{Show progress.}
 }
@@ -51,8 +54,6 @@ n_prey_sp \tab Number of "preys" observed.\cr
 param     \tab Estimated parameters assuming a Dirichlet distribution of bootstrap replicates.\cr
 phi       \tab Estimated precision parameter (sum of param from the Dirichlet distribution).\cr
 mu        \tab Estimated mean value from the Dirichlet distribution.\cr
-p_value   \tab p-value for Log-likelihood ratio test for the estimated Dirichlet mean vector.\cr
-Log-likelihood ratio test for a Dirichlet mean vector
 mean_w    \tab Mean value of prey weights (proportions).\cr
 sd_w      \tab Standard deviation of prey weights (proportions).\cr
 prey_w    \tab Point estimate of prey weight (proportions). \cr

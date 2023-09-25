@@ -23,11 +23,11 @@ assessment models (e.g. SMS or Gadget). Such models require data on diet
 and biomass eaten (food ration) by predator species and size
 classes. The average "population" diet or food ration should basically
 be calculated from a stratified mean of the individual stomach content
-samples, weighted by strata adensity of the predator and the area of the strata.
+samples, weighted by strata density of the predator and the area of the strata.
 This seems simple, but incomplete and patchy sampling makes it often
 necessary to use a series of *ad hoc* solutions.
 
-In general a series of data compilation methods could be applied:
+In general, a series of data compilation methods could be applied:
 
 1.  Read and check data from agreed exchange format;
 2.  Bias correct to take into account variable evacuation rate;
@@ -72,7 +72,7 @@ knitr::kable(a[,4:10])
   
      
   
-**Table 2. Alias names accepted as default. Aliases can be changed and added  by using a local version of the the database format. The data base format and aliases are specified in the file stomach_format.csv.**
+**Table 2. Alias names accepted as default. Aliases can be changed and added  by using a local version of the database format. The data base format and aliases are specified in the file stomach_format.csv.**
 ```{r, maketable2, results = "asis", echo=FALSE,message=FALSE}
 a<-dplyr::mutate(a,alias_1=dplyr::if_else(is.na(alias_1),' ',alias_1),alias_2=dplyr::if_else(is.na(alias_2),' ',alias_2),alias_3=dplyr::if_else(is.na(alias_3),' ',alias_3))
 knitr::kable(a[,1:4]) 

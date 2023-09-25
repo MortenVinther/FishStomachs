@@ -1,7 +1,7 @@
 #' Regurgitated stomachs are from feeding fish, but their actual absolute stomach contents (in the sea) are not known.
-#' Stomach contents from regurgitated stomach are not analysed or included as data, however the number
+#' Stomach contents from regurgitated stomachs are not analysed or included as data, however the number
 #' of regurgitated stomachs (n_regur) should be noted together with the number of stomachs with skeletal remains only (n_nskel) and the number of empty stomachs (n_empty).
-#' The bias correction assumes that the regurgitated stomachs have had a the same stomach contents as the observed feeding fish (n_food).
+#' The bias correction assumes that the regurgitated stomachs have had the same stomach contents as the observed feeding fish (n_food).
 #'
 #' Ideally each stomach should be classified as: with food, with food but
 #' regurgitated, with skeletal remains only or empty. This information is

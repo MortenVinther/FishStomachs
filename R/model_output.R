@@ -30,8 +30,8 @@
 #'
 model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FALSE) {
 
- # test diet<-d2; length_classes_file=file.path(config_dir,paste0("length_classes_",sz,".csv")) ; sp_info_file<-file.path(config_dir,'species_info.csv')
-  a<-area<-b<-code<-config_dir<-group<-key<-mean.weight<-n_tot<-no<-number<-pred_id_number<-pred_l_mean<-pred_name<-NULL
+ # test diet<-d2; length_classes_file=file.path(config_dir,paste0("length_classes_",sz,".csv")) ; sp_info_file<-file.path(config_dir,'species_info.csv'); intoSMSformat=TRUE
+   a<-area<-b<-code<-config_dir<-group<-key<-mean.weight<-n_tot<-no<-number<-pred_id_number<-pred_l_mean<-pred_name<-NULL
   pred_size<-pred_size_class<-predator<-prey<-prey_id_number<-prey_l_mean<-prey_name<-prey_size<-prey_size_class<-NULL
   prey_w<-quarter<-sampling_effort<-sl<-SMS_species<-Species<-stomcon<-stratum_area<-stratum_time<-type<-year<-NULL
   group<-NULL
@@ -72,7 +72,7 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
     dplyr::summarise(minl=min(prey_size_class),maxl=max(prey_size_class),.groups = "keep")
 
 
-  b_expand<-p %>% tidyr::complete(tidyr::nesting(stratum_time,year,quarter,stratum_area,pred_name,pred_size,pred_size_class, n_tot, phi,pred_l_mean,prey_name), prey_size_class)
+  b_expand<-p %>% tidyr::complete(tidyr::nesting(stratum_time,year,quarter,stratum_area,pred_name,pred_size,pred_size_class, n_tot, n_sample,phi,pred_l_mean,prey_name), prey_size_class)
 
   bb<-dplyr::left_join(b_expand,prey_range,by = c("stratum_time", "year", "quarter", "stratum_area", "pred_name", "pred_size", "pred_size_class", "prey_name")) %>%
     dplyr::filter(prey_size_class>=minl-1 & prey_size_class<=maxl+1) %>%
@@ -104,7 +104,7 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
 
   bb[bb$prey_name==other & bb$prey_w==0,'prey_w']<-min_stom
  #filter(bb,type=='mid')
-  bb <- dplyr::select(bb,year,quarter,stratum_time, stratum_area, pred_name, pred_size,pred_size_class,pred_l_mean,n_tot, phi, prey_name,type, prey_size,prey_size_class, prey_w) %>%
+  bb <- dplyr::select(bb,year,quarter,stratum_time, stratum_area, pred_name, pred_size,pred_size_class,pred_l_mean,n_tot, n_sample,phi, prey_name,type, prey_size,prey_size_class, prey_w) %>%
     dplyr::group_by(year,quarter,stratum_time, stratum_area, pred_name, pred_size,pred_size_class) %>%
     dplyr::mutate(prey_w=prey_w/sum(prey_w)) %>% dplyr::ungroup()
   bb<- dplyr::mutate_if(bb, is.factor,as.character)
@@ -136,7 +136,8 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
       pred_size,
       pred_size_class,
       pred_l_mean,
-      sampling_effort=n_tot,
+      n_sample,
+      n_tot,
       phi,
       prey,
       prey_id_number,
@@ -152,11 +153,13 @@ model_output<-function(diet,  length_classes_file, sp_info_file,intoSMSformat=FA
 
      bb<- bb %>% dplyr::mutate(mean.weight=if_else(lw_a<0,9999,lw_a*prey_l_mean**lw_b),lw_a=NULL,lw_b=NULL)
      bb<-bb %>% dplyr::transmute(SMS_area=area,year=year,quarter=quarter,pred=predator,pred.no=pred_id_number,
-                               pred.size=substr(pred_size,1,4),pred.size.class=pred_size_class,
-                               pred.mean.length=pred_l_mean,prey=prey,prey.no=prey_id_number,
-                               prey.size=substr(prey_size,1,4),prey.size.range=prey_size,prey.size.class=prey_size_class,
+                               pred.size=pred_size,pred.size.class=pred_size_class,
+                               pred.mean.length=pred_l_mean,
+                               haul.no=n_sample,stom.no=n_tot, phi=phi,
+                               prey=prey,prey.no=prey_id_number,
+                               prey.size=prey_size,prey.size.class=prey_size_class,
                                prey.mean.length=prey_l_mean,prey.mean.length.ALK=-9,
-                               stomcon=prey_w,type,mean.weight=mean.weight,haul.no=sampling_effort,phi=phi,
+                               stomcon=prey_w,type,mean.weight=mean.weight,
                                haul.prey.no=1,calc.prey.number=-1,used.prey.number=-1) %>%
                  dplyr::filter(!(is.na(stomcon)))
    }

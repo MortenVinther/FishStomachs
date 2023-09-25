@@ -51,7 +51,7 @@ group_prey_species <- function(stom, keep_prey_names,sum_other_food=TRUE,NODC_sp
       oth<-oth %>% dplyr::group_by(sample_id,fish_id,prey_name) %>% dplyr::summarise(prey_w=sum(prey_w)) %>%dplyr::ungroup()
     }
     oth<-do_other(oth)
-    st<-dplyr::bind_rows(remains,oth) %>% dplyr::mutate(prey_name=fct_explicit_na(prey_name))
+    st<-dplyr::bind_rows(remains,oth) %>% dplyr::mutate(prey_name=fct_na_value_to_level(prey_name))
     stom[['PREY']]<-st
   } else {
     named<-st$prey_nodc %in% dplyr::filter(NODC_split,named)$First
@@ -72,7 +72,7 @@ group_prey_species <- function(stom, keep_prey_names,sum_other_food=TRUE,NODC_sp
       st2<-dplyr::bind_rows(remains,oth) %>% dplyr::mutate(prey_nodc=-9)
     }
 
-    stom[['PREY']]<-dplyr::bind_rows(st_named, dplyr::mutate(st2,prey_name=prey_group, prey_group=NULL))%>%  dplyr::mutate(prey_name=fct_explicit_na(prey_name))
+    stom[['PREY']]<-dplyr::bind_rows(st_named, dplyr::mutate(st2,prey_name=prey_group, prey_group=NULL))%>%  dplyr::mutate(prey_name=fct_na_value_to_level(prey_name))
 
     dplyr::filter(stom[['PREY']],prey_name=='unknown')
   }
