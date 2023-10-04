@@ -11,7 +11,8 @@ bias_correct_energy_etc(
   temperature_file,
   energy_file,
   hour_multiplier = 1,
-  pred_length_multiplier = 1
+  pred_length_multiplier = 1,
+  stomach_consum = c("stom", "cons")[1]
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ bias_correct_energy_etc(
 The unit, grammes per hour can be changed by the hour_multiplier, e.g \code{hour_multiplier=2190} will provide g/quarter of the year.;}
 
 \item{pred_length_multiplier}{Multiplier for predator length (to derive the predator length used (in cm) from the predator length variable (pred_l)used in data)}
+
+\item{stomach_consum}{bias correct stomach observations or estimate unbiased food consumption}
 }
 \value{
 Stomach contents data of class \code{STOMobs} where the observed prey weights has been recalculated to ration eaten by hour (or any other unit chosen by \code{hour_multiplier})

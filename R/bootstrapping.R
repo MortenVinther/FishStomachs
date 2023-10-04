@@ -285,10 +285,8 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
   if (show_plot) return() else return(out)
 }
 
-
-
 #modified code from Compositional::diri.est (which have some unsolvable problems with the sp package?)
-diriEst<-function (x,iterlim = 1000,type = "mle" )  {
+diriEst<-function (x,iterlim = 1000 )  {
   n <- dim(x)[1]
   z <- log(x)
   loglik <- function(param, z, n) {
@@ -301,17 +299,6 @@ diriEst<-function (x,iterlim = 1000,type = "mle" )  {
     b <- b/sum(b)
     -n * lgamma(phi)+n*sum(lgamma(phi*b))-sum(z %*%(phi * b - 1))
   }
-  if (type == "mle") {
-    suppressWarnings({
-      da <- nlm(loglik, colMeans(x) * 10, z = z,
-                n = n, iterlim =  iterlim)
-      da <- optim(da$estimate, loglik, z = z, n = n, control = list(maxit = 5000),
-                  hessian = TRUE)
-    })
-    result <- list(loglik = -da$value, param = exp(da$par),
-                   std = sqrt(diag(solve(da$hessian))))
-  }
-  if (type == "prec") {
     suppressWarnings({
       da <- nlm(diriphi, c(10, colMeans(x)[-1]),
                 z = z, n = n, iterlim = iterlim)
@@ -321,9 +308,8 @@ diriEst<-function (x,iterlim = 1000,type = "mle" )  {
     phi <- exp(da$par[1])
     a <- c(1, exp(da$par[-1]))
     a <- a/sum(a)
-    result <- list(loglik = -da$value, phi = phi, mu = a,
-                   param = phi * a)
-  }
+    result <- list(loglik = -da$value, phi = phi, mu = a, param = phi * a)
+
   return(result)
 }
 
@@ -421,6 +407,7 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
     x<-droplevels(x)
     preys<-levels(x$prey_name)
     xm<- x %>% dplyr::group_by(year,quarter,pred_name, pred_size,n_sample,prey_name) %>%
+      dplyr::summarise(mean_w=mean(prey_w),sd_w=sd(prey_w),n=dplyr::n(),.groups="keep") %>%  dplyr::ungroup()
     if (verbose) print(xm)
     maxxm<-max(xm$mean_w,na.rm=TRUE)
     #n_sample<-x[1,'n_sample']
@@ -434,7 +421,7 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
         xx[xx==0]<-Diri_min
         xx<-xx/apply(xx,1,sum) #rescale to 1.0
       }
-      aa<-try(diriEst(xx,type = "prec"),silent=TRUE) #MLE of the parameters of a Dirichlet distribution.
+      aa<-try(diriEst(xx),silent=TRUE) #MLE of the parameters of a Dirichlet distribution.
       if (class(aa)=="try-error") a$ok<-FALSE else a<-append(a,aa)
       #if (a$ok) aa<-try(Compositional::dirimean.test(xx,aa$param),silent=TRUE) #Log-likelihood ratio test for a Dirichlet mean vector.
       #if (class(aa)=="try-error") a$ok<-FALSE else a<-append(a,list(p_value=as.numeric(aa$info['p-value'])))

@@ -180,6 +180,7 @@ calc_population_stom<-function(s,verbose=FALSE) {
   mis_ll<-paste(mis_l,mis_l,sep='-')
   do_details <- control@detailed_tst_output
 
+ local_test<-FALSE
 
   check_sc<-function(sc,strata=c('sub_strata','strata','total')[1]){
     sc_names<-names(sc)
@@ -201,6 +202,7 @@ calc_population_stom<-function(s,verbose=FALSE) {
   }
 
   if (do_details) do_detailed_output(s,append=FALSE,label='NEW set: Before any change',digits=1,rel_weight=FALSE,write_criteria=TRUE,show_mis_length=FALSE,transpose=TRUE,by_sample_id=TRUE)
+  if (local_test) save(s,file="pop_stom_01.Rdata")
 
   pred<-s[['PRED']]  %>% dplyr::mutate_if(is.factor,as.character)
   prey<-s[['PREY']]  %>% dplyr::mutate_if(is.factor,as.character)
@@ -247,6 +249,9 @@ calc_population_stom<-function(s,verbose=FALSE) {
     class(a) <- "STOMobs"
     attr(a,'control')<-control
     do_detailed_output(a,append=TRUE,label='NEW set: after stomach content per stomach and potential relative weight',digits=1,rel_weight=control@calc_sub_strata$relative_weight,write_criteria=FALSE,show_mis_length=FALSE,transpose=TRUE,by_sample_id=TRUE)
+    if (local_test) save(a,file="pop_stom_02.Rdata")
+
+
   }
 
   # weighted mean prey_w by stratum_sub_area
@@ -274,6 +279,7 @@ calc_population_stom<-function(s,verbose=FALSE) {
     class(a) <- "STOMobs"
     attr(a,'control')<-control
     do_detailed_output(a,append=TRUE,label='NEW set: after aggregation by sub-area strata. Average stomach contents by sub-strata.',digits=1,rel_weight=control@calc_sub_strata$relative_weight,write_criteria=FALSE,show_mis_length=FALSE,transpose=TRUE,by_sample_id=TRUE)
+    if (local_test) save(a,file="pop_stom_03.Rdata")
   }
 
   #############  by strata area
@@ -320,6 +326,7 @@ calc_population_stom<-function(s,verbose=FALSE) {
     class(a) <- "STOMobs"
     attr(a,'control')<-control
     do_detailed_output(a,append=TRUE,label='NEW set: after aggregation by area strata.',digits=1,rel_weight=control@calc_strata$relative_weight,write_criteria=FALSE,show_mis_length=FALSE,transpose=TRUE,by_sample_id=TRUE)
+    if (local_test) save(a,file="pop_stom_04.Rdata")
   }
 
   ### Total
@@ -366,6 +373,7 @@ calc_population_stom<-function(s,verbose=FALSE) {
     a <- list(PRED=PRED, PREY = PREY)
     class(a) <- "STOMobs"
     attr(a,'control')<-control
+    if (local_test) save(a,file="pop_stom_05.Rdata")
     do_detailed_output(a,append=TRUE,label='NEW set: after aggregation into total area.',digits=1,rel_weight=control@calc_total$relative_weight,write_criteria=FALSE,show_mis_length=FALSE,transpose=TRUE,by_sample_id=TRUE)
     do_detailed_output(a,append=TRUE,label='NEW set: after aggregation into total area.',digits=1,rel_weight=TRUE,write_criteria=FALSE,show_mis_length=FALSE,transpose=TRUE,by_sample_id=TRUE)
   }
@@ -383,6 +391,8 @@ calc_population_stom<-function(s,verbose=FALSE) {
 
   class(a) <- "STOMdiet"
   attr(a,'control')<-control
+  if (local_test) save(a,file="pop_stom_06.Rdata")
+
   a<-refac_prey(a)
   return(a)
 }
