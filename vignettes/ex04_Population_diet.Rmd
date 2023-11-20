@@ -15,8 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-
-The population diet (estimated in Example 03) is organised as an object of the class STOMdiet, which is basically a list of predator and prey related information. The attributes to a STOMdiet (the control object) includes information on the compilation of data. 
+The population diet (estimated in Example 03) is organised as an object of the class STOMdiet, which is basically a list of predator and prey related information. The attributes of a STOMdiet (the control object) include information on the compilation of data.
 
 ```{r ex04_01}
 library(FishStomachs)
@@ -34,7 +33,8 @@ print(attr(d,'control'),show=c('calc_diet','stratification'))
 
 
 ```
-STOMdiet objects can be sub-setted and combined by the methods subset and c. 
+
+STOMdiet objects can be sub-setted and combined by the methods subset and c.
 
 ```{r ex04_02}
 
@@ -72,7 +72,8 @@ names(d2[['PREY']])
 rm(d2)
 
 ```
-There are various summary functions available for the STOMdiet object. 
+
+There are various summary functions available for the STOMdiet object.
 
 ```{r ex04_04}
 
@@ -88,6 +89,7 @@ summary(d1,level=4,drop.unused.levels=TRUE)
 ```
 
 And plots of relative stomach contents in weight.
+
 ```{r ex04_05}
 
 #default
@@ -99,7 +101,6 @@ plot(d,Ncol=1,cut_pred_size=c(1,4),addTitle = TRUE, addNstom=TRUE,refac_prey=TRU
 
 
 ```
-
 
 It is possible to change the names of both predator and prey species.
 
@@ -114,9 +115,7 @@ plot(d2,Ncol=1,cut_pred_size=c(1,4),addTitle = TRUE, addNstom=TRUE)
 
 ```
 
-
 Plots can also be done where the prey size class is shown. In this plot data from all quarters in 1991 are combined (weighted mean, by number of stomachs, of all quarters of 1991).
-
 
 ```{r ex04_07}
 
@@ -128,7 +127,6 @@ plotSize(subset(d2,!(pred_size %in% c("0100-0149","0150-0199"))),
           cut_pred_size=c(1,3),addTitle=TRUE, byVar=c('year-quarter','year','quarter','none')[2])
 
 ```
-
 
 ```{r ex04_08, include = FALSE}
 
@@ -207,7 +205,6 @@ d_simple[['PREY']]<- d_simple[['PREY']] %>% dplyr::group_by(key) %>%
    dplyr::mutate(prey_w=prey_w/sum(prey_w)) %>% dplyr::ungroup()
 
 ```
-
 
 ```{r ex04_09}
 # table of differences

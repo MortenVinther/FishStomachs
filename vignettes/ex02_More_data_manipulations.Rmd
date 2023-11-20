@@ -21,8 +21,6 @@ suppressMessages(library(dplyr))
 suppressMessages(library(readr))
 ```
 
-
-
 ```{r ex01_15}
 
 library(FishStomachs)
@@ -32,13 +30,11 @@ load(file=file.path(system.file( package = "FishStomachs"),"extdata","ex01.Rdata
 s
 ```
 
-A series of data manipulations, with addition of new variables, are needed before the population diet (or food ration) can be calculated. This example shows how the FishStomachs function can be used.
+A series of data manipulations, with the addition of new variables, are needed before the population diet (or food ration) can be calculated. This example shows how the FishStomachs function can be used.
 
+### Bias correct, energy contents, armament etc.
 
-### Bias correct, energy contents, arament etc.
-
-Bias correction of stomach evacuation rate and thereby stomach content due to different energy contents, armament of the prey items can optional be done by the function bias_correct_energy_etc(), based on the work by Andersen and Beyer, xxx. The function call uses several extra information kept on files for the bias correction, see the help for bias_correct_energy_etc(). In this example, these input files a supplied with the FishStomachs. 
-
+Bias correction of stomach evacuation rate and thereby stomach content due to different energy contents, the armament of the prey items can optionally be done by the function bias_correct_energy_etc(), based on the work by Andersen and Beyer, xxx. The function call uses several extra information kept on files for the bias correction, see the help for bias_correct_energy_etc(). In this example, these input files a supplied with the FishStomachs.
 
 ```{r ex02_01}
 # Data for grouping of prey items based on the NODC which provide an easy grouping.  
@@ -70,13 +66,13 @@ s<-bias_correct_energy_etc(s,hour_multiplier=2190,
 
 ```
 
-The shown stomach contents in absolute terms have changed due to the changes from  observed stomach content to evacuation ratio (or food ration), in grammes (you can see the initial observed values of stomach contents in section "Showing a subset of data"). The unit is grammes per quarter (parameter hour_multiplier=2190) whereas the evacuation model uses the unit grammes per hour.  In relative terms, *Clupea harengus* has changed from  77.2% to 78.6 % for sample fish_id: 582. On sample level this change is due to the prey specific armament value (1.08 for *Clupea harengus*, and 1.0 for *Trisopterus esmarkii*. The difference in energy contents of the various preys does not change the relative stomach contents as the average energy content for the entire stomach is used in the calculation. See help for bias_correct_energy_etc() for more details. 
+The shown stomach contents in absolute terms have changed due to the changes from observed stomach content to evacuation ratio (or food ration), in grammes (you can see the initial observed values of stomach contents in the section "Showing a subset of data"). The unit is grammes per quarter (parameter hour_multiplier=2190) whereas the evacuation model uses the unit grammes per hour. In relative terms, *Clupea harengus* has changed from 77.2% to 78.6 % for sample fish_id: 582. On sample level this change is due to the prey specific armament value (1.08 for *Clupea harengus*, and 1.0 for *Trisopterus esmarkii*. The difference in energy contents of the various preys does not change the relative stomach contents as the average energy content for the entire stomach is used in the calculation. See help for bias_correct_energy_etc() for more details.
 
 ### Size classes on predator and preys.
-Stomach contents may be recorded by length e.g. cm group or other size classes. For this examples, size classes which range depended on the size (e.g. 50-60 mm and 100-120 mm) was used in the sampling protocol and data compilation. Size classes are user defined and must include a lower and upper size (length) for each species. 
 
-First the size classes are made from specifications, which in this case are from an input CSV file within the FishStomachs. 
+Stomach contents may be recorded by length e.g. cm group or other size classes. For this examples, size classes which range depending on the size (e.g. 50-60 mm and 100-120 mm) were used in the sampling protocol and data compilation. Size classes are user defined and must include a lower and upper size (length) for each species.
 
+First, the size classes are made from specifications, which in this case are from an input CSV file within the FishStomachs.
 
 ```{r ex02_03}
 head(read.csv(file.path(system.file('extdata', package = 'FishStomachs'),'length_classes_config.csv')))
@@ -86,9 +82,7 @@ ll
 ll<-subset(ll,year==1981); ll$year<-1991 
 ```
 
-The specification file includes lower size range for a given size class, together with the span of years, quarters and species this should be applied to. The Species variable is in this case "All" which includes all species, however it could also include individual species names, which makes it possible to assign species specific size classes.
-Function make_length_classes transforms the specifications into size classes by individual year and quarters.
-
+The specification file includes lower size range for a given size class, together with the span of years, quarters and species this should be applied to. The Species variable is in this case "All" which includes all species, however it could also include individual species names, which makes it possible to assign species specific size classes. Function make_length_classes transforms the specifications into size classes by individual year and quarters.
 
 ```{r ex02_04}
 s<-put_size_class_on_predator(s,len_classes=ll) # add variables pred_size_class and pred_size.
@@ -97,34 +91,36 @@ s
 do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE)
 
 ```
-The detailed output show that the the size class 100-150 now include the 100 and the 120 mm size classes as the 1981 size class have been used.  
+
+The detailed output shows that the the size class 100-150 now include the 100 and the 120 mm size classes as the 1981 size classes have been used.
 
 ### Bias correct regurgitated stomachs.
 
-Regurgitated stomachs are from feeding fish, but their actual absolute stomach contents (in the sea) are not known. Stomach contents from regurgitated stomach are not analysed or included as data, however the number of regurgitated stomachs (n_regur) should be noted together with the number of stomachs with skeletal remains only (n_nskel) and the number of empty stomachs (n_empty). The bias correction assumes that the regurgitated stomachs have had a the same stomach contents as the observed feeding fish (n_food).  See the help(bias_correct_regurgitated) for more details.
+Regurgitated stomachs are from feeding fish, but their actual absolute stomach contents (in the sea) are not known. Stomach contents from regurgitated stomachs are not analysed or included as data, however the number of regurgitated stomachs (n_regur) should be noted together with the number of stomachs with skeletal remains only (n_nskel) and the number of empty stomachs (n_empty). The bias correction assumes that the regurgitated stomachs had the same stomach contents as the observed feeding fish (n_food). See the help(bias_correct_regurgitated) for more details.
 
 ```{r ex02_05}
 #overview of number of stomachs
 summary(s,level=2)
 ```
 
-
 #### Pooling of data
-To save time, stomach data from the North Sea sampled in the period 1981-1991 were not sampled and analysed by the individual predator specimens. Instead, stomach contents from one or more predators within a size group (e.g. 40-50 cm cod) were pooled at sea during sampling. The "pool" of stomach contents included only fish from feeding (non-regurgitated stomachs), while the number of fish with regurgitated stomachs and the number of predators with empty stomachs were recorded. The average stomach content from  a sample could then we estimated, taking the bias from regurgitated stomach into account.
 
-Today, most samples are done by the individual fish, where one or more predator by a given size class (e.g. cm group), are analysed individually. To get an unbiased estimate of the average stomach contents, the number of regurgitated and empty stomachs within the size class must however be known and recorded. To be able to make the bias correction, individually sampled stomachs must first be pooled within size class, which could be the same as the size classes used for sampling or wider.
+To save time, stomach data from the North Sea sampled in the period 1981-1991 were not sampled and analysed by the individual predator specimens. Instead, stomach contents from one or more predators within a size group (e.g. 40-50 cm cod) were pooled at sea during sampling. The "pool" of stomach contents included only fish from feeding (non-regurgitated stomachs), while the number of fish with regurgitated stomachs and the number of predators with empty stomachs were recorded. The average stomach content from a sample could then be estimated, taking the bias from regurgitated stomach into account.
 
-When Size classes have been added to predator and preys pooling of data are simple done by a call to \code{pool_data}.
+Today, most samples are done by the individual fish, where one or more predators by a given size class (e.g. cm group), are analysed individually. To get an unbiased estimate of the average stomach contents, the number of regurgitated and empty stomachs within the size class must however be known and recorded. To be able to make the bias correction, individually sampled stomachs must first be pooled within size class, which could be the same as the size classes used for sampling or wider.
 
+When Size classes have been added to predators and preys, pooling of data are simply done by a call to \code{pool_data}.
 
 ```{r ex02_06}
 #pool data by sample_ID
 s<-pool_data(s)
 do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE)
 ```
+
 In this case, the call has no effect, as data already are pooled.
 
-For the poled data, the bias correction of regurgitated stomachs are done by the call to \code{bias_correct_regurgitated}. 
+For the poled data, the bias correction of regurgitated stomachs are done by the call to \code{bias_correct_regurgitated}.
+
 ```{r ex02_07}
 #overview of number of stomachs
 summary(s,level=2)
@@ -135,16 +131,11 @@ do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE)
 summary(s,level=2)
 ```
 
-fish_id: 1008 sample consists of one cod stomach with food, so the bias correction has no effect.
-fish_id: 582 sample include one cod with food, one cod with empty stomach and 2 cods with regurgitated stomachs. The contents of the one stomach was  549.8 g (is is actually the ration eaten by quarter),
-as the the bias correction for energy contents *etc* has been made. With the assumption that the regurgitated stomach had the same stomach content as the one feeding cod the four cod would in total have a total stomach contents (ration) of 3*549.8 g = 1649.5 g.
+fish_id: 1008 sample consists of one cod stomach with food, so the bias correction has no effect. fish_id: 582 sample include one cod with food, one cod with an empty stomach and 2 cods with regurgitated stomachs. The contents of the one stomach was 549.8 g (it is actually the ration eaten by quarter), as the the bias correction for energy contents *etc* has been made. With the assumption that the regurgitated stomach had the same stomach content as the one feeding cod the four cod would in total have a total stomach contents (ration) of 3\*549.8 g = 1649.5 g.
 
 Information on regurgitated and empty stomach are by default deleted by the bias correction, such that only the total number of stomachs (n_tot) are kept.
-
 
 ```{r ex02_06b,  include = FALSE}
 # save data
 save(s,file=file.path(system.file( package = "FishStomachs"),"extdata","ex02.Rdata"))
 ```
-
-

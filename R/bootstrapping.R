@@ -343,9 +343,9 @@ diriEst<-function (x,iterlim = 1000 )  {
 #'  param     \tab Estimated parameters assuming a Dirichlet distribution of bootstrap replicates.\cr
 #'  phi       \tab Estimated precision parameter (sum of param from the Dirichlet distribution).\cr
 #'  mu        \tab Estimated mean value from the Dirichlet distribution.\cr
-#'  mean_w    \tab Mean value of prey weights (proportions).\cr
+#'  mean_w    \tab Mean value of prey weights (proportions) from the bootstrap replicates.\cr
 #'  sd_w      \tab Standard deviation of prey weights (proportions).\cr
-#'  prey_w    \tab Point estimate of prey weight (proportions). \cr
+#'  prey_w    \tab Prey weight (proportions) estimated without bootstrapping. \cr
 #'  strata    \tab Strata used for bootstrap.\cr
 #'  n_stom    \tab Number of stomachs available before bootstrap ( from the \code{pointEst} data).\cr
 #'  n_sample  \tab Number of samples available before bootstrap.\cr
@@ -423,8 +423,6 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
       }
       aa<-try(diriEst(xx),silent=TRUE) #MLE of the parameters of a Dirichlet distribution.
       if (class(aa)=="try-error") a$ok<-FALSE else a<-append(a,aa)
-      #if (a$ok) aa<-try(Compositional::dirimean.test(xx,aa$param),silent=TRUE) #Log-likelihood ratio test for a Dirichlet mean vector.
-      #if (class(aa)=="try-error") a$ok<-FALSE else a<-append(a,list(p_value=as.numeric(aa$info['p-value'])))
     } else a$ok<-FALSE
     return(a)
   })
@@ -445,13 +443,7 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
   }
   )
   out<-do.call(rbind,b)
- # samp<-left_join(
-#    bootstrap_show(source,show=c("strata",'sample')[1],vari=c("stomach","sample")[1]) %>%
-#      as.data.frame() %>% dplyr::filter(Freq>0) %>% rename(n_stom=Freq),
-#   bootstrap_show(source,show=c("strata",'sample')[1],vari=c("stomach","sample")[2]) %>%
-#      as.data.frame() %>% dplyr::filter(Freq>0) %>% rename(n_sample=Freq),
-#    by = c("boots_strata", "pred_size", "pred_name")
- #  )
+
   pc<-get_control(pointEst)
   p<-as.data.frame(pointEst)
   if (by_prey_size) p$prey<-paste(p$prey_name,p$prey_size,sep=':::') else p$prey<-p$prey_name
@@ -461,7 +453,6 @@ bootsMean<-function(b,pointEst,by_prey_size=FALSE,n_rep=NA,do_Diri=FALSE,minPrey
     group_by(year,quarter,pred_name,pred_size,n_tot,n_sample,prey) %>% summarize(prey_w=sum(prey_w)) %>%
     group_by(year,quarter,pred_name,pred_size,n_tot,n_sample) %>% mutate(prey_w=prey_w/sum(prey_w)) %>%
     rename(n_stom=n_tot) %>% ungroup()
-
 
    out<-left_join(out,p, by = c("year", "quarter", "pred_name", "pred_size", "prey"))
 

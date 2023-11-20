@@ -3,8 +3,11 @@ title: "FishStomachs"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{FishStomachs}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r, include = FALSE}
@@ -13,52 +16,64 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-## Compilation of stomach content data for estimation of population diet and food ration. ##
+
+## Compilation of stomach content data for estimation of population diet and food ration.
 
 Compilation of data from individual stomachs to population level is not
 trivial and the method will depend highly on the question asked. Stomach
 data are often collected to get information on the average diet or food
 ration of a given species within a given area to inform multispecies
 assessment models (e.g. SMS or Gadget). Such models require data on diet
-and biomass eaten (food ration) by predator species and size
-classes. The average "population" diet or food ration should basically
-be calculated from a stratified mean of the individual stomach content
-samples, weighted by strata density of the predator and the area of the strata.
-This seems simple, but incomplete and patchy sampling makes it often
-necessary to use a series of *ad hoc* solutions.
+and biomass eaten (food ration) by predator species and size classes.
+The average "population" diet or food ration should basically be
+calculated from a stratified mean of the individual stomach content
+samples, weighted by the strata density of the predator and the area of
+the strata. This seems simple, but incomplete and patchy sampling makes
+it often necessary to use a series of *ad hoc* solutions.
 
 In general, a series of data compilation methods could be applied:
 
-1.  Read and check data from agreed exchange format;
+1.  Read and check data from the agreed exchange format;
 2.  Bias correct to take into account variable evacuation rate;
 3.  Assign size classes for predators and preys;
-4.  Bias correct to take into account regurgitated stomachs within sample units;
-5.  Aggregate stomachs contents within sample_id and size classes.
+4.  Bias correct to take into account regurgitated stomachs within
+    sample units;
+5.  Aggregate stomach contents within sample_id and size classes.
 6.  Allocate unidentified or partly identified prey items;
-7.  Calculate population diet and food ration from a weighted average. 
+7.  Calculate population diet and food ration from a weighted average.
 
-The sequence of these steps, of which some of the steps might be repeated, 
-will depend on the individual sampling design and the quality of the analysed data.
+The sequence of these steps, of which some of the steps might be
+repeated, will depend on the individual sampling design and the quality
+of the analysed data.
 
-The FishStomachs package defines data structures suitable for stomach data, and provides the necessary methods to compile observed stomach data into population diet and biomass eaten, used for multispecies models. The methods applied for a set of observations are stored within the data output to document the compilation steps taken. 
+The FishStomachs package defines data structures suitable for stomach
+data, and provides the necessary methods to compile observed stomach
+data into population diet and biomass eaten, used for multispecies
+models. The methods applied for a set of observations are stored within
+the data output to document the compilation steps taken.
 
 With my experience from compiling stomach data for the North Sea for use
 in the MSVPA/SMS models, this document describes the methods above and
 how these can be applied.
 
-### 1) Data exchange format ###
+### 1) Data exchange format
 
-Data must be recorded, stored and exchanged on an agreed and documented
-format suitable for the purpose of sampling. 
-This R-package uses a user defined format (see Table 1)  with the possibility to rename variable names
-such that it is possible to include existing
-data bases (e.g. ICES stomach contents data base). The new format includes a number of mandatory (system defined) and optional (user defined) variable names, 
-which uses "aliases" (See Table 2)  as a link to "internal" variable names used for processing by FishStomachs. 
+Data must be recorded, stored and exchanged in an agreed and documented
+format suitable for the purpose of sampling. This R-package uses a user
+defined format (see Table 1) with the possibility to rename variable
+names such that it is possible to include existing databases (e.g. ICES
+stomach contents database). The new format includes a number of
+mandatory (system defined) and optional (user defined) variable names,
+which uses "aliases" (See Table 2) as a link to "internal" variable
+names used for processing by FishStomachs.
 
-
-**Table 1. Database format. "field" is variable name used in FishStomachs; "types" is the type of input(c=character, i=integer, d=double, l=logical);	"mandatory" is the field required as minimum (T=TRUE, F=FALSE);	"PRED" is the variable part of predator information; 
-"PREY" is the information part of prey information; "units" is the unit or values applied.
-The data base format is specified in the file stomach_format.csv.**
+**Table 1. Database format. "field" is the variable name used in
+FishStomachs; "types" is the type of input(c=character, i=integer,
+d=double, l=logical); "mandatory" is the field required as minimum
+(T=TRUE, F=FALSE); "PRED" is the variable part of predator information;
+"PREY" is the information part of prey information; "units" is the unit
+or values applied. The data base format is specified in the file
+stomach_format.csv.**
 
 ```{r, maketable1, results = "asis", echo=FALSE,message=FALSE}
 a<-readr::read_csv(file.path(system.file( package = "FishStomachs"),"stomach_format.csv"),col_types = readr::cols())
@@ -69,52 +84,50 @@ a<-  dplyr::mutate(a,units=dplyr::if_else(is.na(units),' ',units))
 knitr::kable(a[,4:10])
 
 ```
-  
-     
-  
-**Table 2. Alias names accepted as default. Aliases can be changed and added  by using a local version of the database format. The data base format and aliases are specified in the file stomach_format.csv.**
+
+**Table 2. Alias names accepted as default. Aliases can be changed and
+added by using a local version of the database format. The data base
+format and aliases are specified in the file stomach_format.csv.**
+
 ```{r, maketable2, results = "asis", echo=FALSE,message=FALSE}
 a<-dplyr::mutate(a,alias_1=dplyr::if_else(is.na(alias_1),' ',alias_1),alias_2=dplyr::if_else(is.na(alias_2),' ',alias_2),alias_3=dplyr::if_else(is.na(alias_3),' ',alias_3))
 knitr::kable(a[,1:4]) 
 
 ```
-   
 
-
-The presently used ICES
-data exchange format for stomachs (see Appendix 1 in this document) is based on the "Year
-of the stomach" sampling for North Sea stocks in the period 1981-1991
-(see Appendix 2). The new version includes some extensions to better
-include stomachs sampled outside the "Year of the stomach", e.g. from
-national sampling programs with less standardized recording. Another
-change is that the new exchange format uses the WoRMS AphiaID
+The presently used ICES data exchange format for stomachs (see Appendix
+1 in this document) is based on the "Year of the stomach" sampling for
+North Sea stocks in the period 1981-1991 (see Appendix 2). The new
+version includes some extensions to better include stomachs sampled
+outside the "Year of the stomach", e.g. from national sampling programs
+with less standardized recording. Another change is that the new
+exchange format uses the WoRMS AphiaID
 (<http://www.marinespecies.org/index.php>) species taxonomic ode, where
 the old format used the NODC codes
 (<https://www.nodc.noaa.gov/General/CDR-detdesc/taxonomic-v8.html>).
 
-
 In this document, the examples and variable names used are based on a
 data set on the ICES exchange format (Appendix 1).
 
-### 2) Bias correction to take into account variable evacuation rate ###
+### 2) Bias correction to take into account variable evacuation rate
 
-It is often assumed that diet (eaten food) is the same as the observed stomach
-content. This is however not the case as the stomach evacuation rate of
-an individual stomach depends on e.g. the average meal size, average
-energy density of the meal, prey armament and temperature. Large energy
-rich meals will for example have lower evacuation rate than small energy
-poor meals. Therefore, large energy rich meals will be present in a
-stomach a longer time and thereby detectable for a longer time, than
-stomach contents from small energy poor meals.
+It is often assumed that diet (eaten food) is the same as the observed
+stomach content. This is however not the case as the stomach evacuation
+rate of an individual stomach depends on e.g. the average meal size,
+average energy density of the meal, prey armament and temperature. Large
+energy rich meals will for example have a lower evacuation rate than
+small energy poor meals. Therefore, large energy rich meals will be
+present in a stomach for a longer time and thereby detectable for a
+longer time, than stomach contents from small energy poor meals.
 
-In the two sub-sections below it is described how to bias correct the
+In the two sub-sections below, it is described how to bias correct the
 effect of variable stomach evacuation rate and thereby how to bias
 correct the estimated average diet (or consumption rate) estimated from
 the observed stomach contents data. Ideally, this bias correction should
 take place at the level of sampling, i.e. by the individual stomach or
 by the pool of stomachs by sample site.
 
-#### Estimation of food ration from stomach contents data ####
+#### Estimation of food ration from stomach contents data
 
 Food rations (evacuation rate of stomach contents) can be estimated from
 the observed stomach contents using the methods suggested by Andersen
@@ -124,7 +137,6 @@ their resistance to digestion (armament).
 
 Ration (R) (per hour) of prey group (i) for pooled stomachs is
 calculated from:
-
 
 $$R = \sum_{i}^{}{(\rho*M_{i}*b_{i}*e^{\delta T}*L^{\lambda}}*E^{\xi})*K*\left(\frac{N_{A}}{N_{F}} \right)^{\alpha - 1}*S^{\alpha}$$
 
@@ -143,12 +155,12 @@ N= Number of stomachs in the sample, total (A) and with food (F)
 
 S = average stomach contents in grams
 
-
-$\rho$, $\delta$, $\lambda$, $\xi$ and K are parameters to the model (Table 3)
+$\rho$, $\delta$, $\lambda$, $\xi$ and K are parameters to the model
+(Table 3)
 
 Values for armament (M) and average energy density of individual prey
-(groups) as used in the compilation of the North Sea stomachs are presented
-in Table 5.
+(groups) as used in the compilation of the North Sea stomachs are
+presented in Table 5.
 
 When data exist by the individual stomachs, the ration eaten per
 (feeding) fish can be calculated as:
@@ -159,15 +171,15 @@ $$R = \sum_{i}^{}{\rho * M_i* b_i* e^{\delta T} * L^{\lambda} * E^{\xi} * S^{\al
 evacuation used for the compilation of stomachs from predators in the
 North Sea.**
 
-  Predator   $\rho$    $\lambda$ $\delta$  $\xi$  $\alpha$   K
-  ---------- --------- --------  -------- ------- -------- ------
-  Cod        0.00224   1.30      0.083    -0.85   0.5      0.85
-  Haddock    0.00191   1.30      0.083    -0.85   0.5      0.85
-  Saithe     0.00171   1.35      0.081    -0.85   0.5      0.85
-  Whiting    0.00171   1.35      0.081    -0.85   0.5      0.85
-  Mackerel   0.00174   1.30      0.080    -0.85   0.5      0.85
+| Predator | $\rho$  | $\lambda$ | $\delta$ | $\xi$ | $\alpha$ |  K   |
+|:---------|:--------|-----------|----------|:-----:|----------|:----:|
+| Cod      | 0.00224 | 1.30      | 0.083    | -0.85 | 0.5      | 0.85 |
+| Haddock  | 0.00191 | 1.30      | 0.083    | -0.85 | 0.5      | 0.85 |
+| Saithe   | 0.00171 | 1.35      | 0.081    | -0.85 | 0.5      | 0.85 |
+| Whiting  | 0.00171 | 1.35      | 0.081    | -0.85 | 0.5      | 0.85 |
+| Mackerel | 0.00174 | 1.30      | 0.080    | -0.85 | 0.5      | 0.85 |
 
-#### Estimation of diet from stomach contents data ####
+#### Estimation of diet from stomach contents data
 
 The method for bias correction in the calculation of food ration as
 outlined above can also be applied to calculate the ration of the
@@ -195,23 +207,22 @@ knitr::kable(a,col.names=c("Species","Quarter","Lower length (mm)","Upper length
 
 ```
 
-
-### 3) Assign predator and prey size classes. ###
+### 3) Assign predator and prey size classes.
 
 Stomach data can be sampled, analysed and recorded by the individual
 fish or by size group ("pooled stomach data") for the individual sample
-unit (sample_id), e.g. trawl haul. To save time during sampling and analysis of the
-stomach contents, the "Year of the stomach" data were sampled and
-analysed by pre-determined size classes (Table 4). Pooled stomachs do
-not provide information by the individual fish and on the variation in
-stomach contents, which is preferable in e.g. estimation of daily food
-ration and diet. Grouping of stomachs by size classes is however often
-necessary in the later compilation of data, as data are to scarce to be
-compiled by e.g. each cm group separately.
+unit (sample_id), e.g. trawl haul. To save time during sampling and
+analysis of the stomach contents, the "Year of the stomach" data were
+sampled and analysed by pre-determined size classes (Table 4). Pooled
+stomachs do not provide information on the individual fish and on the
+variation in stomach contents, which is preferable in e.g. estimation of
+daily food ration and diet. Grouping of stomachs by size classes is
+however often necessary in the later compilation of data, as data are
+too scarce to be compiled by e.g. each cm group separately.
 
-In general, I will suggest to use size classes, e.g. the size
-classes used in 1991 by "Year of the stomach" sampling (Table 3). That
-means that the variables in the data exchange format.
+In general, I will suggest using size classes, e.g. the size classes
+used in 1991 by "Year of the Stomach" sampling (Table 3). That means
+that the variables are in the data exchange format.
 
 -   pred_ll (predator lower length bound)
 
@@ -221,91 +232,86 @@ means that the variables in the data exchange format.
 
 -   prey_lu (prey upper length bound)
 
-are set from the length information on the individual predators
-and preys, if not already included in the data and defined by the sampling design.
+are set from the length information on the individual predators and
+preys, if not already included in the data and defined by the sampling
+design.
 
+**Table 5. Size classes (for items larger than 5 cm) used for sampling
+and compilation of stomach data in the North Sea "Year of the stomach"
+1991 sampling.**
 
-**Table 5. Size classes (for items larger than 5 cm) used for sampling and
-compilation of stomach data in the North Sea "Year of the stomach" 1991
-sampling.**
+| Length class, 1991 | Length (cm) |
+|:-------------------|:------------|
+| 50                 | 5-5.9       |
+| 60                 | 6-6.9       |
+| 70                 | 7-7.9       |
+| 80                 | 8-9.9       |
+| 100                | 10-11.9     |
+| 120                | 12-14.9     |
+| 150                | 15-19.9     |
+| 200                | 20-24.9     |
+| 250                | 25-29.9     |
+| 300                | 30-34.9     |
+| 350                | 35-39.9     |
+| 400                | 40-49.9     |
+| 500                | 50-59.9     |
+| 600                | 60-69.9     |
+| 700                | 70-79.9     |
+| 800                | 80-99.9     |
+| 1000               | 100-119.9   |
+| 1200               | \>120       |
 
-  Length class, 1991   Length (cm)
-  -------------------- -------------
-  50                   5-5.9
-  60                   6-6.9
-  70                   7-7.9
-  80                   8-9.9
-  100                  10-11.9
-  120                  12-14.9
-  150                  15-19.9
-  200                  20-24.9
-  250                  25-29.9
-  300                  30-34.9
-  350                  35-39.9
-  400                  40-49.9
-  500                  50-59.9
-  600                  60-69.9
-  700                  70-79.9
-  800                  80-99.9
-  1000                 100-119.9
-  1200                 \>120
-
-### 4) Bias correction: Taking number of empty and regurgitated stomachs into account ###
+### 4) Bias correction: Taking number of empty and regurgitated stomachs into account
 
 Ideally each stomach should be classified as: with food, with food but
 regurgitated, with skeletal remains only or empty. This information is
 included in the presently used exchange format.
 
- 
-Database variable        Comments
----------------------    -----------------------------------------------------------------
-n_food                    Stomachs with (recently ingested) food
-n_regur                   Stomach with food, but evidence of regurgitation of parts or all the stomach contents.
-n_skel                    Stomachs with practically indigestible remains and the fish is not considered feeding recently
-n_empty                   No stomach contents
- 
+| Database variable | Comments                                                                                       |
+|:------------------|:-----------------------------------------------------------------------------------------------|
+| n_food            | Stomachs with (recently ingested) food                                                         |
+| n_regur           | Stomach with food, but evidence of regurgitation of parts or all the stomach contents.         |
+| n_skel            | Stomachs with practically indigestible remains and the fish is not considered feeding recently |
+| n_empty           | No stomach contents                                                                            |
+
 Stomach contents from regurgitated (or everted) stomachs should not be
 included in the estimation of diet as the proportion regurgitated is
 unknown. The number of fish with regurgitated stomachs should however be
-recorded ("n_regur"). With the assumption that the
-regurgitated stomachs sampled within a "sample_id" have had the same
-stomach contents as the feeding (non-regurgitated) fish each observed
-prey item weight and number should be corrected by a factor to calculate
-the mean stomach contents of a predator within "sample_id".
+recorded ("n_regur"). With the assumption that the regurgitated stomachs
+sampled within a "sample_id" have had the same stomach contents as the
+feeding (non-regurgitated) fish each observed prey item weight and
+number should be corrected by a factor to calculate the mean stomach
+contents of a predator within "sample_id".
 
-$factor =  \frac{(N_{F} + N_{R})}{N_{F}*(N_{F} + N_{SR} + N_{R} + N_{E})}$
+$factor = \frac{(N_{F} + N_{R})}{N_{F}*(N_{F} + N_{SR} + N_{R} + N_{E})}$
 
 Where
 
 $N_{F}$ = Number of feeding fish ("n_food")
 
-$N_{R}$ = Number of feeding fish, but regurgitated
-("n_regur")
+$N_{R}$ = Number of feeding fish, but regurgitated ("n_regur")
 
 $N_{\text{SR}}$ = Number of non-feeding fish, stomachs containing only
 skeletal remains ("n_skel")
 
-$N_{E}$ = Number of non-feeding fish with empty stomachs
-("n_empty")
+$N_{E}$ = Number of non-feeding fish with empty stomachs ("n_empty")
 
-In practice it is difficult to detect fish with regurgitated stomachs,
+In practice, it is difficult to detect fish with regurgitated stomachs,
 and later data analysis may often show that there is a clear difference
 in the proportions of regurgitated stomachs between vessels surveying in
 the same area at the same time.
 
-Another issue is how to distinguish "n_skel" from
-"n_food". In the original compilation of the 1991 "Year of
-the Stomach" (ICES, 1997), $N_{SR}$ was added to the numerator in
-the calculation of the factor above. However I think
-"n_skel" should be considered as stomachs from not
-(recently) feeding fish and should be treated as empty stomachs, i.e.
-that the stomach contents should be disregarded in the compilation of
-data for feeding fish.
+Another issue is how to distinguish "n_skel" from "n_food". In the
+original compilation of the 1991 "Year of the Stomach" (ICES, 1997),
+$N_{SR}$ was added to the numerator in the calculation of the factor
+above. However, I think "n_skel" should be considered as stomachs from
+not (recently) feeding fish and should be treated as empty stomachs,
+i.e. that the stomach contents should be disregarded in the compilation
+of data for feeding fish.
 
-### 5) Aggregate stomach contents within sample_id and size classes ###
+### 5) Aggregate stomach contents within sample_id and size classes
 
-
-### 6) Allocate unidentified and partly identified prey items ###
+### 6) Allocate unidentified and partly identified prey items
 
 Parts of the stomach contents are often not fully identified to species
 (group) or size class. With the assumption that the unidentified items
@@ -318,14 +324,15 @@ would be the same with and without the unidentified items. I am not
 aware of published studies that quantify bias for the two approaches.
 
 The allocation of unidentified items to identified items is not simple
-in practise. A stomach may for example contain remains of an
-unidentified fish and identified invertebrates. In such case it would
+in practice. A stomach may for example contain remains of an
+unidentified fish and identified invertebrates. In such case, it would
 not be sensible to allocate the remains to the identified preys. However
 other stomachs from the same predator and size class from the same haul
-might include identified fish preys which could be used a "distribution
-key" for unidentified items. If a given haul does not include identified
-preys for a "distribution key" an alternative key could be obtained from
-the neighbouring hauls or from another size classes within the haul.
+might include identified fish preys which could be used as a
+"distribution key" for unidentified items. If a given haul does not
+include identified preys for a "distribution key" an alternative key
+could be obtained from the neighbouring hauls or from another size
+classes within the haul.
 
 It is not possible to give specific rules on how to allocate
 unidentified prey items, other than the distribution key should be
@@ -333,56 +340,68 @@ derived from "local" data as far as possible. By "local" is meant from
 the same haul, time period, predator size class, ICES rectangle,
 roundfish area *etc*.
 
-#### Assigning prey group ####
-Stomach contents data may include prey identified to species species level, even for preys that 
-are considered as "other prey" in the later data set produces for multi species assessments. 
+#### Assigning prey group
 
-With 250.000 stomachs sampled in the North Sea as basis for multispecies
-models a pragmatic approach was needed for allocation unidentified
-items. The former used NODC codes for preys are not maintained anymore
-by NOAA, however NODC codes are still very useful for compilation of
-stomach data as they are based on a 10-digit \"intelligent\" code. By
-\"intelligent\" code numbers it is meant that information about taxonomy
-was built into the codes through the use of 2-digit couplets to
-represent one or more levels of the taxonomic hierarchy. For example, a
-species assigned a 10-digit code would belong to the genus represented
-by the first 8 digits of the code. In the compilation of stomach data,
-this hierarchy makes it easier to assign (by an algorithm) partly
-identified food items, to the identified items within the same genus,
-family or order. Lookup table exist in the ICES system to assign a NODC
-code to the WoRMS AphiaID code system presently used by ICES. The
-section "Compilation of stomach data for use in the North Sea SMS model"
-provides examples on how allocation of unidentified items could be done.
+Stomach contents data may include prey identified to species species
+level, even for preys that are considered as "other prey" in the later
+data set produced for multi species assessments.
 
-To be more specific. For the North sea data compilation the model prey species (e.g. cod, whiting, sprat)
-were maintained as named preys. The remaining prey items were grouped according to the table below. Invertebrates (NODC < 8500000000)
-are treated as "other food" in the model an aggregated into one group. Two groups of prey items, Clupeidae and Gadoidae were maintained as they were used to name e.g. preys that 
-most likely were sprat or herring (Clupeidae) but could not be determined to species level. "other fish" includes fish preys that are not either a Clupeidae or Gadoidae. The "unknown" group (NODC > 900000000) was used for unidentified prey remains (either fish or invertebrates).  
+With 250.000 stomachs sampled in the North Sea as the basis for
+multispecies models a pragmatic approach was needed for allocation of
+unidentified items. The former used NODC codes for preys are not
+maintained anymore by NOAA, however NODC codes are still very useful for
+the compilation of stomach data as they are based on a 10-digit
+"intelligent" code. By "intelligent" code numbers it is meant that
+information about taxonomy was built into the codes through the use of
+2-digit couplets to represent one or more levels of the taxonomic
+hierarchy. For example, a species assigned a 10-digit code would belong
+to the genus represented by the first 8 digits of the code. In the
+compilation of stomach data, this hierarchy makes it easier to assign
+(by an algorithm) partly identified food items, to the identified items
+within the same genus, family or order. Lookup tables exist in the ICES
+system to assign a NODC code to the WoRMS AphiaID code system presently
+used by ICES. The section "Compilation of stomach data for use in the
+North Sea SMS model" provides examples of how allocation of unidentified
+items could be done.
 
- Species group	First NODC	Last NODC
- -------------  ----------  ---------
- other food      400000000	8499999999
- other fish	    8500000000	8747009999
- Clupeidae	    8747010000	8747019999
- other fish	    8747020000	8791029999
- Gadidae	      8791030000	8791031999
- Other fish	    8791032000	8999999999
- unknown	      9000000000	9999999999
+To be more specific. For the North Sea data compilation, the model prey
+species (e.g. cod, whiting, sprat) were maintained as named preys. The
+remaining prey items were grouped according to the table below.
+Invertebrates (NODC \< 8500000000) are treated as "other food" in the
+model and aggregated into one group. Two groups of prey items, Clupeidae
+and Gadoidae were maintained as they were used to name e.g. preys that
+most likely were sprat or herring (Clupeidae) but could not be
+determined to species level. "other fish" includes fish preys that are
+not either a Clupeidae or Gadoidae. The "unknown" group (NODC \>
+900000000) was used for unidentified prey remains (either fish or
+invertebrates).
 
-to allocate the partly identified preys, preys within the Clupeidae and Gadidae were first allocated to the identified species within the group (if such exists)
+| Species group | First NODC | Last NODC  |
+|---------------|------------|------------|
+| other food    | 400000000  | 8499999999 |
+| other fish    | 8500000000 | 8747009999 |
+| Clupeidae     | 8747010000 | 8747019999 |
+| other fish    | 8747020000 | 8791029999 |
+| Gadidae       | 8791030000 | 8791031999 |
+| Other fish    | 8791032000 | 8999999999 |
+| unknown       | 9000000000 | 9999999999 |
 
-### 7) Aggregation of stomachs contents into population metrics ###
+to allocate the partly identified preys, preys within the Clupeidae and
+Gadidae were first allocated to the identified species within the group
+(if such exists)
+
+### 7) Aggregation of stomachs contents into population metrics
 
 The average diet should basically be calculated as a stratified mean of
 the individual stomach content samples, weighted by strata abundances
 (indices) of the predator and strata areas. For the initial compilation
-of the "Year of the stomach" an average stomach contents was first
-calculate by ICES rectangles and finally aggregated to population level
-(ICES, 1997). When there was more than one sample within a rectangle the
-rectangle value was calculated as the weighted mean of the sample (haul)
-average values, the weighting factors being the number of stomachs from
-each sample. Four methods were tried to calculate the "population"
-average stomach:
+of the "Year of the stomach" the average stomach contents were first
+calculated by ICES rectangles and finally aggregated to the population
+level (ICES, 1997). When there was more than one sample within a
+rectangle the rectangle value was calculated as the weighted mean of the
+sample (haul) average values, the weighting factors being the number of
+stomachs from each sample. Four methods were tried to calculate the
+"population" average stomach:
 
 i.  The rectangle values were averaged disregarding the number of
     stomachs sampled within each rectangle.
@@ -391,7 +410,7 @@ ii. The rectangle values were weighted by the sample size (total number
     of stomachs sampled within the rectangle).
 
 iii. The rectangle values were weighted by the survey catch rates within
-    the rectangle.
+     the rectangle.
 
 iv. The rectangle values were weighted by the square root of survey
     catch rates within the rectangle; this reduces the influence of
@@ -402,21 +421,18 @@ predators cod, haddock, whiting and mackerel, while option *ii* was used
 for saithe because the samples (survey catches) were patchily
 distributed.
 
-The compilation of data for the SMS
-model deviates from the original method used. Average stomach contents
-by ICES rectangle are derived in the same way as done initially, but the SMS
-method calculates then the weighted mean of stomach contents by ICES
-roundfish area using the square root of the mean rectangle survey cpue
-(option iv) as weighting factor (but option ii are used for saithe).
+The compilation of data for the SMS model deviates from the original
+method used. Average stomach contents by ICES rectangle are derived in
+the same way as done initially, but the SMS method calculates then the
+weighted mean of stomach contents by ICES roundfish area using the
+square root of the mean rectangle survey cpue (option iv) as weighting
+factor (but option ii are used for saithe).
 
-The calculation of the population diet for SMS was done as a weighted average
-of the strata (roundfish area) average diet weighted by the product of
-the average strata survey cpue and area of the strata.
+The calculation of the population diet for SMS was done as a weighted
+average of the strata (roundfish area) average diet weighted by the
+product of the average strata survey cpue and area of the strata.
 
-
-
-References
-==========
+# References
 
 Andersen N.G., Beyer J.E. 2005a. Mechanistic modelling of gastric
 evacuation applying the square root model to describe surface-dependent
@@ -449,8 +465,6 @@ Pinnegar, J.K. (2014) DAPSTOM - An Integrated Database & Portal for Fish
 Stomach Records. Version 4.7. Centre for Environment, Fisheries &
 Aquaculture Science, Lowestoft, UK. February 2014, 39 pp.
 
-
-
 **\
 **
 
@@ -474,13 +488,13 @@ Aquaculture Science, Lowestoft, UK. February 2014, 39 pp.
 | Longitude                         | Data sampling position --         |
 |                                   | longitude                         |
 +-----------------------------------+-----------------------------------+
-| Estimated\_Lat\_Long              | Flag whether the sampling         |
+| Estimated_Lat_Long                | Flag whether the sampling         |
 |                                   | position based on the reported    |
 |                                   | area                              |
 +-----------------------------------+-----------------------------------+
-| ICES\_StatRec                     | ICES statistical rectangle        |
+| ICES_StatRec                      | ICES statistical rectangle        |
 +-----------------------------------+-----------------------------------+
-| ICES\_AreaCode                    | ICES area code                    |
+| ICES_AreaCode                     | ICES area code                    |
 +-----------------------------------+-----------------------------------+
 | Year                              | YYYY                              |
 +-----------------------------------+-----------------------------------+
@@ -494,7 +508,7 @@ Aquaculture Science, Lowestoft, UK. February 2014, 39 pp.
 +-----------------------------------+-----------------------------------+
 | Haul                              | Haul number                       |
 +-----------------------------------+-----------------------------------+
-| Sampling\_Method                  | Predator sampling method          |
+| Sampling_Method                   | Predator sampling method          |
 +-----------------------------------+-----------------------------------+
 | Depth                             | Sampling depth                    |
 +-----------------------------------+-----------------------------------+
@@ -505,59 +519,59 @@ Aquaculture Science, Lowestoft, UK. February 2014, 39 pp.
 |                                   | Fish ID unique for Country, year, |
 |                                   | quarter and ship                  |
 +-----------------------------------+-----------------------------------+
-| ICES\_SampleID                    | ICES predator reference           |
+| ICES_SampleID                     | ICES predator reference           |
 +-----------------------------------+-----------------------------------+
-| Predator\_AphiaID                 | Predator WoRMS AphiaID            |
+| Predator_AphiaID                  | Predator WoRMS AphiaID            |
 +-----------------------------------+-----------------------------------+
-| Predator\_LatinName               | Predator taxon Latin Name         |
+| Predator_LatinName                | Predator taxon Latin Name         |
 +-----------------------------------+-----------------------------------+
-| Predator\_Weight(mean)            | (Mean) predator weight            |
+| Predator_Weight(mean)             | (Mean) predator weight            |
 +-----------------------------------+-----------------------------------+
-| Predator\_Age(mean)               | (Mean) predator age               |
+| Predator_Age(mean)                | (Mean) predator age               |
 +-----------------------------------+-----------------------------------+
-| Predator\_Lengh(mean)             | (Mean) predator length            |
+| Predator_Lengh(mean)              | (Mean) predator length            |
 +-----------------------------------+-----------------------------------+
-| Predator\_LowerLengthBound        | Predator's length lower bound     |
+| Predator_LowerLengthBound         | Predator's length lower bound     |
 +-----------------------------------+-----------------------------------+
-| Predator\_UpperLengthBound        | Predator's length upper bound     |
+| Predator_UpperLengthBound         | Predator's length upper bound     |
 +-----------------------------------+-----------------------------------+
-| Predator\_CPUE                    | Predator catch per hour           |
+| Predator_CPUE                     | Predator catch per hour           |
 +-----------------------------------+-----------------------------------+
-| GallBladder\_stage(class)         | Gall bladder stage                |
+| GallBladder_stage(class)          | Gall bladder stage                |
 +-----------------------------------+-----------------------------------+
-| Stomach\_METFP                    | Method of stomach preservation    |
+| Stomach_METFP                     | Method of stomach preservation    |
 +-----------------------------------+-----------------------------------+
-| Stomach\_TotalNo                  | Total number of stomachs in the   |
+| Stomach_TotalNo                   | Total number of stomachs in the   |
 |                                   | pool -- for single stomachs       |
 |                                   | always 1.                         |
 +-----------------------------------+-----------------------------------+
-| Stomach\_WithFood                 | Number of stomachs with food      |
+| Stomach_WithFood                  | Number of stomachs with food      |
 +-----------------------------------+-----------------------------------+
-| Stomach\_Regurgitated             | Number of stomachs regurgitated   |
+| Stomach_Regurgitated              | Number of stomachs regurgitated   |
 +-----------------------------------+-----------------------------------+
-| Stomach\_WithSkeletalRemains      | Number of stomachs with skeletal  |
+| Stomach_WithSkeletalRemains       | Number of stomachs with skeletal  |
 |                                   | remains                           |
 +-----------------------------------+-----------------------------------+
-| Stomach\_Empty                    | Number of empty stomachs          |
+| Stomach_Empty                     | Number of empty stomachs          |
 +-----------------------------------+-----------------------------------+
-| Stomach\_ContentWgt               | Stomach content weight            |
+| Stomach_ContentWgt                | Stomach content weight            |
 +-----------------------------------+-----------------------------------+
-| Stomach\_EmptyWgt                 | Stomach empty weight              |
+| Stomach_EmptyWgt                  | Stomach empty weight              |
 +-----------------------------------+-----------------------------------+
 | Stomach fullness                  | Stomach fullness                  |
 +-----------------------------------+-----------------------------------+
-| Stomach\_Item                     | Stomach item name (see Appendix   |
+| Stomach_Item                      | Stomach item name (see Appendix   |
 |                                   | B)                                |
 +-----------------------------------+-----------------------------------+
-| ICES\_ItemID                      | ICES stomach item ID              |
+| ICES_ItemID                       | ICES stomach item ID              |
 +-----------------------------------+-----------------------------------+
-| Prey\_AphiaID                     | Prey WoRMS AphiaID                |
+| Prey_AphiaID                      | Prey WoRMS AphiaID                |
 +-----------------------------------+-----------------------------------+
-| Prey\_LatinName                   | Prey taxon Latin Name             |
+| Prey_LatinName                    | Prey taxon Latin Name             |
 +-----------------------------------+-----------------------------------+
-| Prey\_IdentMet                    | Prey identification method        |
+| Prey_IdentMet                     | Prey identification method        |
 +-----------------------------------+-----------------------------------+
-| Prey\_DigestionStage              | Prey digestion stage              |
+| Prey_DigestionStage               | Prey digestion stage              |
 |                                   |                                   |
 |                                   | 0= Intact prey (skin, fins, legs  |
 |                                   | and flesh is complete), 1=        |
@@ -569,19 +583,19 @@ Aquaculture Science, Lowestoft, UK. February 2014, 39 pp.
 |                                   | material (no flesh, only bones,   |
 |                                   | shells, otoliths)                 |
 +-----------------------------------+-----------------------------------+
-| Prey\_TotalNo                     | Total number of preys             |
+| Prey_TotalNo                      | Total number of preys             |
 +-----------------------------------+-----------------------------------+
-| Prey\_Weight                      | Prey weight in grams              |
+| Prey_Weight                       | Prey weight in grams              |
 +-----------------------------------+-----------------------------------+
-| Prey\_LengthIdentifier            | Prey length identifier            |
+| Prey_LengthIdentifier             | Prey length identifier            |
 +-----------------------------------+-----------------------------------+
-| Prey\_Length                      | Prey length in cm                 |
+| Prey_Length                       | Prey length in cm                 |
 +-----------------------------------+-----------------------------------+
-| Prey\_LowerLengthBound            | Prey length lower bound           |
+| Prey_LowerLengthBound             | Prey length lower bound           |
 +-----------------------------------+-----------------------------------+
-| Prey\_UpperLengthBound            | Prey length upper bound           |
+| Prey_UpperLengthBound             | Prey length upper bound           |
 +-----------------------------------+-----------------------------------+
-| Prey\_MinNo                       | Minimum number of preys           |
+| Prey_MinNo                        | Minimum number of preys           |
 +-----------------------------------+-----------------------------------+
 | Remarks                           | Any relevant comments             |
 +-----------------------------------+-----------------------------------+
@@ -594,42 +608,42 @@ sampling program 1981-1991,**
 
 Source *ICES Coop. Res. Rep. No. 219 , pp 421-422*
 
-  **Position**   **Name**                      **Type^a^**   **Range of values**   **Comment**
-  -------------- ----------------------------- ------------- --------------------- --------------------------------------------
-  1-2            Ecosystem name                2N            1-8                   Footnote^b^ for coding scheme
-  3-4            Year                          2N            01-99                 Year - 1900
-  5              Quarter                       1N            1-4                   X
-  6-9            Square                        4AN                                 ICES rectangle
-  10-19          Predator code                 10N                                 NODC 10-digit 
-  20-24          Sample number                 5N            1-99999               Unique fish ID
-  25-27          Country                       3A                                  ICES alpha codes, No data:XXX
-  28-31          Ship                          4A                                  ICES alpha, if available, No data: XXXX
-  32-34          Sampling method               3A                                  Footnote^d^ for coding scheme No data: XXX
-  35-40          Station/haul                  6AN                                 Use national system,No data: XXXXXX
-  41-42          Month                         2N            01-12                 Not known: 99
-  43-44          Day                           2N            01-31                 Not known: 99
-  45-48          Time of day                   4N            0-2359,               Local time, hh/mm, start of tow. Not known: 9999
-  49             Quadrant                      lN            1-4, 9                See footnote^d^ Not known: 9
-  50-53          Latitude                      4N            0-9000,               dd/mm. Not known: 9999
-  54-58          Longitude                     5N            0-18000,              ddd/mm. Not known: 99999
-  59-61          Depth (meters)                3N            1-999                 Mean depth of tow. Not know: 999
-  62-64          Temperature (bottom)          3N            -9.9 to 99.8          XX.X one implied decimal. Not known: 999
-  65-68          Predator (mean) length        4N            1-9999                mm XXXX
-  69-73          Predator (mean) weight        5N            1-99999               grams XXXXX. Not known: 99999
-  74-75          Predator (mean) age           2N            0-99                  Not known: 99
-  76-79          Predator lower length bound   4N            1-9999                mm XXXX
-  80-83          Predator upper length bound   4N            1-9999                mm XXXX
-  84-90          CPUE                          7N            1-9999999             Weighting coefficient for sample.Not known: 1
-  91-93          Number with food              3N            0-999                 0, 1 for individual samples
-  94-96          Number regurgitated           3N            0-999                 0, 1 for individual samples
-  97-99          Number with skeletal remains  3N            0-999                 0, 1 for individual samples
-  100-102        Number empty                  3N            0-999                 0, 1 for individual samples
-  103-112        Prey species code             10N                                 NODC 10-digits
-  113-116        Prey lower length bound       4N            1-9999                mm XXXX. Not known: 9999
-  117-120        Prey upper length bound       4N            1-9999                mm XXXX. Not known: 9999
-  121-128        Prey weight                   8N            1-99999999            Total weight mg XXXXXXXX
-  129-134        Prey number                   6N            1-999999              Total number. Not known: 999999
-  135            Digestion stage               1N            0-2, 9                See footnote^e^
+| **Position** | **Name**                     | **Type^a^** | **Range of values** | **Comment**                                      |
+|:-------------|:-----------------------------|:------------|:--------------------|:-------------------------------------------------|
+| 1-2          | Ecosystem name               | 2N          | 1-8                 | Footnote^b^ for coding scheme                    |
+| 3-4          | Year                         | 2N          | 01-99               | Year - 1900                                      |
+| 5            | Quarter                      | 1N          | 1-4                 | X                                                |
+| 6-9          | Square                       | 4AN         |                     | ICES rectangle                                   |
+| 10-19        | Predator code                | 10N         |                     | NODC 10-digit                                    |
+| 20-24        | Sample number                | 5N          | 1-99999             | Unique fish ID                                   |
+| 25-27        | Country                      | 3A          |                     | ICES alpha codes, No <data:XXX>                  |
+| 28-31        | Ship                         | 4A          |                     | ICES alpha, if available, No data: XXXX          |
+| 32-34        | Sampling method              | 3A          |                     | Footnote^d^ for coding scheme No data: XXX       |
+| 35-40        | Station/haul                 | 6AN         |                     | Use national system,No data: XXXXXX              |
+| 41-42        | Month                        | 2N          | 01-12               | Not known: 99                                    |
+| 43-44        | Day                          | 2N          | 01-31               | Not known: 99                                    |
+| 45-48        | Time of day                  | 4N          | 0-2359,             | Local time, hh/mm, start of tow. Not known: 9999 |
+| 49           | Quadrant                     | lN          | 1-4, 9              | See footnote^d^ Not known: 9                     |
+| 50-53        | Latitude                     | 4N          | 0-9000,             | dd/mm. Not known: 9999                           |
+| 54-58        | Longitude                    | 5N          | 0-18000,            | ddd/mm. Not known: 99999                         |
+| 59-61        | Depth (meters)               | 3N          | 1-999               | Mean depth of tow. Not know: 999                 |
+| 62-64        | Temperature (bottom)         | 3N          | -9.9 to 99.8        | XX.X one implied decimal. Not known: 999         |
+| 65-68        | Predator (mean) length       | 4N          | 1-9999              | mm XXXX                                          |
+| 69-73        | Predator (mean) weight       | 5N          | 1-99999             | grams XXXXX. Not known: 99999                    |
+| 74-75        | Predator (mean) age          | 2N          | 0-99                | Not known: 99                                    |
+| 76-79        | Predator lower length bound  | 4N          | 1-9999              | mm XXXX                                          |
+| 80-83        | Predator upper length bound  | 4N          | 1-9999              | mm XXXX                                          |
+| 84-90        | CPUE                         | 7N          | 1-9999999           | Weighting coefficient for sample.Not known: 1    |
+| 91-93        | Number with food             | 3N          | 0-999               | 0, 1 for individual samples                      |
+| 94-96        | Number regurgitated          | 3N          | 0-999               | 0, 1 for individual samples                      |
+| 97-99        | Number with skeletal remains | 3N          | 0-999               | 0, 1 for individual samples                      |
+| 100-102      | Number empty                 | 3N          | 0-999               | 0, 1 for individual samples                      |
+| 103-112      | Prey species code            | 10N         |                     | NODC 10-digits                                   |
+| 113-116      | Prey lower length bound      | 4N          | 1-9999              | mm XXXX. Not known: 9999                         |
+| 117-120      | Prey upper length bound      | 4N          | 1-9999              | mm XXXX. Not known: 9999                         |
+| 121-128      | Prey weight                  | 8N          | 1-99999999          | Total weight mg XXXXXXXX                         |
+| 129-134      | Prey number                  | 6N          | 1-999999            | Total number. Not known: 999999                  |
+| 135          | Digestion stage              | 1N          | 0-2, 9              | See footnote^e^                                  |
 
 a)  All numeric fields (N) right justified, zero filled; all apha (A)
     and mixed alpha/numeric fields (AN) left justified, space filled

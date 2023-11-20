@@ -15,8 +15,7 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-
-The transformation of population diet into model data is highly dependent on the receiving model. In this case the data is made for the model SMS (REF).
+The transformation of population diet into model data is highly dependent on the receiving model. In this case, the data are made for the model SMS (REF).
 
 First diet data are loaded and options for model data are checked.
 
@@ -30,14 +29,12 @@ d
 control<-attr(d,'control')
 print(control,show=c('model_options','constants'))
 
-# in this case the default setting are fine, however 
+# in this case the default settings are fine, however 
 # they could be changed by a call to edit_control(), see example 3
 
 ```
 
-The options are mainly how to handle missing values ("holes") for prey sizes. If for example, there are information for prey herring 5-7 cm and 10-15 cm (but no 7-10 cm), the option insert_mid_value=TRUE will insert a low weight proportion  "mid_value" for the herring size 7-10 cm. The option "insert_tails" is for adding low weight proportions with a size smaller (and higher) than the observed size range.
-
-
+The options are mainly how to handle missing values ("holes") for prey sizes. If for example, there is information for prey herring 5-7 cm and 10-15 cm (but no 7-10 cm), the option insert_mid_value=TRUE will insert a low weight proportion "mid_value" for the herring size 7-10 cm. The option "insert_tails" is for adding low weight proportions with a size smaller (and higher) than the observed size range.
 
 The function for converting data ("model_output") requires two input files; one for specifying length classes and one file for internal model dependent (SMS) numbering and naming of species. Data and call are shown below.
 

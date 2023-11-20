@@ -54,9 +54,9 @@ n_prey_sp \tab Number of "preys" observed.\cr
 param     \tab Estimated parameters assuming a Dirichlet distribution of bootstrap replicates.\cr
 phi       \tab Estimated precision parameter (sum of param from the Dirichlet distribution).\cr
 mu        \tab Estimated mean value from the Dirichlet distribution.\cr
-mean_w    \tab Mean value of prey weights (proportions).\cr
+mean_w    \tab Mean value of prey weights (proportions) from the bootstrap replicates.\cr
 sd_w      \tab Standard deviation of prey weights (proportions).\cr
-prey_w    \tab Point estimate of prey weight (proportions). \cr
+prey_w    \tab Prey weight (proportions) estimated without bootstrapping. \cr
 strata    \tab Strata used for bootstrap.\cr
 n_stom    \tab Number of stomachs available before bootstrap ( from the \code{pointEst} data).\cr
 n_sample  \tab Number of samples available before bootstrap.\cr

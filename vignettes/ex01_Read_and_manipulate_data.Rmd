@@ -7,7 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -16,15 +15,15 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-This example shows the basic data structures and  how to read data on exchange data format. Further, examples are shown how to make initial editing and addition of data.
+This example shows the basic data structures and how to read data on the exchange data format. Further, examples are shown how to make initial editing and addition of data.
 
-### Basic data structures and reading data from exchange format
+### Basic data structures and reading data from the exchange format
 
 FishStomachs gives the opportunity to process data and to document this process. It uses a control (or option) object (REF) to specify input data and the processing of data.
 
-First we have to make a control object, to specify which data we want to import. Stomach contents data are in this case from the data set, cod_stom_1991.csv, included in the FishStomachs package. The stomach_dir must also include a CSV file (database_format.csv) where the data set structure is defined, and which alias for field names that can be used and which fields that are mandatory.
+First we have to make a control object, to specify which data we want to import. Stomach contents data are in this case from the data set, cod_stom_1991.csv, included in the FishStomachs package. The stomach_dir must also include a CSV file (database_format.csv) where the data set structure is defined, and which alias for field names can be used and which fields are mandatory.
 
-In this case, data from 1991 and for the predator cod (*Gadus morhua*) are used.  
+In this case, data from 1991 and for the predator cod (*Gadus morhua*) are used.
 
 ```{r ex01_01}
 
@@ -49,13 +48,15 @@ print(control,show=c('general','data_used'))
 The stomach_format in the control shows where to find the format and for the input file. In this case it is the default value that is used, which is the file included in FishStomachs, but another specification file can be specified, see vignette FishStomachs.
 
 Data are read in using the read_exchange_data function.
+
 ```{r ex01_02}
 s<-read_exchange_data(control,keep_just_mandatory_fields = TRUE)
 
 ```
-In this case we just want to keep the mandatory data fields (for illustrative purposes)  as specified by  the parameter keep_just_mandatory_fields. See the documentation for exchange format in the help for read_exchange_data().
 
-The resulting "s" data from read_exchange_data() is the basic structure used for stomach contents data. Technically, s is an object of the class STOMobs, which is a list with one data set on the predator and another set with information of the preys (see below). One predator record may have several prey records. The two sets are linked by the variables sample_id and  fish_id. More text on the individual fields can be found in the documentation for exchange format (REF). A STOMobs object also includes some attributes about the compilation of data attached to the object, and a control object (class \code{STOMcontrol}) for providing options for compilation and documentations  
+In this case we just want to keep the mandatory data fields (for illustrative purposes) as specified by the parameter keep_just_mandatory_fields. See the documentation for the exchange format in the help for read_exchange_data().
+
+The resulting "s" data from read_exchange_data() is the basic structure used for stomach contents data. Technically, s is an object of the class STOMobs, which is a list with one data set on the predator and another set with information of the preys (see below). One predator record may have several prey records. The two sets are linked by the variables sample_id and fish_id. More text on the individual fields can be found in the documentation for exchange format (REF). A STOMobs object also includes some attributes about the compilation of data attached to the object, and a control object (class \code{STOMcontrol}) for providing options for compilation and documentation
 
 ```{r ex01_03}
 str(s)
@@ -63,8 +64,7 @@ s[['PRED']]
 s[['PREY']]
 ```
 
-A subset of data can be made by the method subset, and several data sets can be combined with the method c, see below.
-
+A subset of data can be made by the method subset, and several data sets can be combined with method c, see below.
 
 ```{r ex01_03b}
 
@@ -83,24 +83,21 @@ rm(s1,s234,s1234)
 
 ```
 
-
-The overview of data does also show the status of manipulations, which may be necessary to  do to estimate population diet. The  FishStomachs package provides functions for these steps. 
+The overview of data also shows the status of manipulations, which may be necessary to estimate population diet. The FishStomachs package provides functions for these steps.
 
 ```{r ex01_04}
 s
 ```
 
-
 ### Showing data for a subset of data
 
-Data sets for stomach contents is often large which makes it almost impossible to track the effect of data manipulation done for all records. FishStomachs gives the opportunity to follow and document the effects of data manipulations for a subset of the observations. This subset is done by by specifying the group use of the detailed_test_output in the control object  within s. 
+Data sets for stomach contents are often large which makes it almost impossible to track the effect of data manipulation done for all records. FishStomachs gives the opportunity to follow and document the effects of data manipulations for a subset of the observations. This subset is done by specifying the group use of the detailed_test_output in the control object within s.
 
 ```{r ex01_05}
  print(get_control(s),show=c('general','detailed_test_output'))
 ```
 
-The default contents make no sense for this example and we have to change it. This is done by changing the contents of list detailed_tst_criteria to include any criteria for sub-setting data that are further documented in the specified detailed_tst_file. The  detailed_tst_criteria should include one argument for each criteria you want to apply, specified as an expression. You can define a criterion for each field a STOMobs object. The easiest way to change values for the control object is by using the built in functions edit_control().
-
+The default contents make no sense for this example and we have to change it. This is done by changing the contents of list detailed_tst_criteria to include any criteria for sub-setting data that are further documented in the specified detailed_tst_file. The detailed_tst_criteria should include one argument for each criterion you want to apply, specified as an expression. You can define a criterion for each field of a STOMobs object. The easiest way to change values for the control object is by using the built-in functions edit_control().
 
 ```{r ex01_06}
 # makes a list with the criteria for the sub-set 
@@ -120,7 +117,8 @@ print(get_control(s),show=c('general','detailed_test_output'))
 do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE, label='Start of example 01')
 
 ```
-The output file (in this case shown on the screen, as parameter to_screen=TRUE), shows the stomach contents weight by prey and prey size for two samples.For a comprehensive documentation of the data manipulation steps done, the output can be sampled in a file, or appended to file already in use.
+
+The output file (in this case shown on the screen, as parameter to_screen=TRUE), shows the stomach contents weight by prey and prey size for two samples. For comprehensive documentation of the data manipulation steps done, the output can be sampled in a file, or appended to a file already in use.
 
 The relative stomach contents can also be shown.
 
@@ -130,17 +128,16 @@ do_detailed_output(s, by_sample_id=TRUE,to_screen=TRUE,rel_weight = TRUE,label='
 
 ```
 
-
 ### Change and edit stomach data
-The function  change_data() gives the opportunities to make changes, often used in the stomach data compilation and to add additional fields.  See the full documentation change_data() for details.
-In this example, change_data() is run with default parameters. This will in  this case include the two values n_tot (total number of stomachs) and record_type (flag for single or pooled stomachs). After the Change_data() is executed, the "Changes done" is set to TRUE. 
+
+The function change_data() gives the opportunities to make changes, often used in the stomach data compilation and to add additional fields. See the full documentation change_data() for details. In this example, change_data() is run with default parameters. This will in this case include the two values n_tot (total number of stomachs) and record_type (flag for single or pooled stomachs). After the Change_data() is executed, the "Changes done" is set to TRUE.
 
 ```{r ex01_08}
 s<-change_data(s)
 s
 ```
 
-There are also special functions to add data, which will be explained later on. For now, NODC codes are assigned by the function add_NODC_ID for each predator and prey species. 
+There are also special functions to add data, which will be explained later on. For now, NODC codes are assigned by the function add_NODC_ID for each predator and prey species.
 
 ```{r ex01_09}
 
@@ -149,15 +146,11 @@ s<-add_NODC_ID(s, predator_or_prey = c("predator", "prey")[2])
 
 ```
 
-
 The next step "Prey weights by record done" is an option for some data (e.g. Baltic cod data) where the prey weight used is the weight of all sizes combined (prey_w_meth="p" in exchange data), and not by the individual prey length class (prey_w_meth="r" in exchange data). For this example data, all weights are by prey length (i.e. by record), so it is not necessary to run the function individual_prey_weights_from_pooled_weights. This is also shown in the output above where "Prey weights by record done" is set automatically to TRUE as part of the change_data() call.
-
-
 
 ### Accessing data directly
 
-As explained previously, a STOMobs object consist of a list with data for the predator (e.g. implemented as s[['PRED']]) and 
-the prey (e.g. implemented as s[['PREY']]), which are linked  by the variables sample_id and  fish_id. This structure makes it possible to edit each data set independently, as shown below.
+As explained previously, a STOMobs object consist of a list with data for the predator (e.g. implemented as s[['PRED']]) and the prey (e.g. implemented as s[['PREY']]), which are linked by the variables sample_id and fish_id. This structure makes it possible to edit each data set independently, as shown below.
 
 ```{r ex01_10}
 
@@ -168,8 +161,7 @@ s[['PRED']]<- s[['PRED']] %>% mutate(box17=if_else(rectangle %in% c('40F6','40F7
 
 ```
 
-Another way of doing it, which is preferable when both data from both predator and preys are used, is to transform data into a data.frame, where changes can be made, and afterwards transform data back again to a STOMobs object. In the example below, the variables "cannibal" and "large_prey" require input from both PRED and PREY.  
-
+Another way of doing it, which is preferable when both data from both predators and preys are used, is to transform data into a data.frame, where changes can be made, and afterwards transform data back again to a STOMobs object. In the example below, the variables "cannibal" and "large_prey" require input from both PRED and PREY.
 
 ```{r ex01_11}
 
@@ -187,11 +179,7 @@ The new_pred_var='cannibal' specifies that a new variable cannibal should be add
 
 By using the method as.data.frame followed by the the function as_STOMobs, attributes and the attached control object are kept updated automatically.
 
-
-
 ```{r ex01_12,  include = FALSE}
 # save data
  save(s,file=file.path(system.file( package = "FishStomachs"),"extdata","ex01.Rdata"))
 ```
-
-
