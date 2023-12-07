@@ -192,22 +192,28 @@ plotboots.size<-function(b,show_plot=TRUE,cut_pred_size=c(1,10),cut_prey_size=c(
 #' @param tAngle Angle X-axis text.
 #' @param Colours Colours for frequency.
 #' @param maxbins maximum number of bins in plot.
+#' @param add_mean_diri logical, plot diet proportions estimated from Dirichlet parameters (Colours[3]).
+#' @param add_mean_boots logcal, plot diet proportions estimated from the mean of bootstrapping replicates (Colours[4]).
+#' @param add_no_boots logical, plot diet proportions without bootstrapping. (Colours[5]).
 #' @param statistics Data set (estimated by call to bootsMean) including statistics to be shown on the plot.
 #' @param inclData Date set with combinations of stratum_time, pred_name and pred_size to be included in the plot.
 #' @return nothing (if show_plot=TRUE) or a list of plots.
 #' @importFrom ggplot2 ggplot facet_grid geom_histogram geom_line geom_vline labs geom_text theme_minimal after_stat scale_fill_manual aes element_text element_line
 #' @importFrom rlang .data
 #' @export
+#'
 plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FALSE,tAngle=90,
-                    Colours=c("red","green","blue"),maxbins=75,statistics,inclData) {
+                    Colours=c("#C10534","green","blue","pink","skyblue"),
+                    ltys=c("dotted", "dotdash","longdash"), maxbins=75,statistics,inclData,
+                    add_mean_diri=TRUE,add_mean_boots=FALSE,add_no_boots=FALSE) {
   key<-n_tot<-one<-pred_name<-pred_size<-prey_w<-quarter<-quarter<-year<-NULL
   allNames<-prey_name<-prey_size<-stratum_time<-NULL
 
   control<-attr(b[[1]],'control')
   addStat<-FALSE
   if (!missing(statistics)) {
-    stat<-statistics %>% select(year, quarter,pred_name,pred_size,prey,prey_name,n_prey_sp,phi,mu,param,mean_w) %>%
-      mutate(pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2]))
+    stat<-statistics %>% select(year, quarter,pred_name,pred_size,prey,prey_name,n_prey_sp,phi,mu,param,mean_w,prey_w) %>%
+      mutate(pred_size=substr(pred_size,cut_pred_size[1],cut_pred_size[2])) %>% rename(prey_w_no_boots=prey_w)
     addStat<-TRUE
   }
 
@@ -236,28 +242,28 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 
   if (addStat) {
     x<-left_join(x,stat,by = c("year", "quarter", "pred_name", "pred_size", "prey_name"))
-    x$pred_size<-paste0(x$pred_size,'  phi=',round(x$phi,1))
+    x$pred_size<-paste0(x$pred_size,'  alpha0=',round(x$phi,1))
   }
 
-  #test  x<-subset(x,pred_name=='Cod' & stratum_time=='1981-Q1')
+
   out<-by(x,list(x$pred_name,x$stratum_time),function(x) {
+
     binwidth_master<-range(x$prey_w,na.rm=TRUE)
     binwidth_master<-(binwidth_master[2]-binwidth_master[1])/100/bins
     if (addStat) {
       if (is.na(sum(x$phi))) addDiri<-FALSE else addDiri<-TRUE
       if (addDiri) {
-         df<- x %>% group_by(pred_size,prey_name,mu,phi,param) %>%
+         df<- x %>% group_by(pred_size,prey_name,mu,phi,param,prey_w_no_boots,mean_w) %>%
            # summarize(minPw=min(prey_w),maxPw=max(prey_w),n_rep_id=dplyr::n(),.groups = "keep") %>%
            summarize(minPw=min(prey_w),maxPw=max(prey_w),              .groups = "keep") %>%
            mutate( fromD=max(0.1,minPw*0.9), toD=min(99.9,maxPw*1.05), binwidth=(toD-fromD)/100/bins) %>% ungroup() %>%
            mutate(nbin=bins)
-         dfff<<-df
          df2<- df %>% group_by(pred_size,prey_name,mu,phi,param,binwidth,fromD,toD) %>%
            reframe(prey_w=seq(from=fromD,to=toD,length.out=bins),
                   y=dbeta(prey_w/100, shape1 = param, shape2 = phi-param),.groups = "keep")  %>% ungroup()
 
       } else {
-        df<- select(x,pred_size,prey_name,mean_w) %>% unique()
+        df<- select(x,pred_size,prey_name,mean_w,prey_w,mu) %>% unique()
       }
     }
 
@@ -272,10 +278,13 @@ plotboots<-function(b,show_plot=TRUE,freq=TRUE,cut_pred_size=c(1,10),addTitle=FA
 
     if (addStat)  {
       if (addDiri) {
-        a<- a+geom_line(data = df2, aes(y=y*binwidth_master), color = "#C10534", size = 1, alpha = 0.75)+
-           geom_vline(aes(xintercept=mu*100), linetype="dotted",color = Colours[3], size=1.5,data = df)
+        a<- a+geom_line(data = df2, aes(y=y*binwidth_master), color =Colours[1], linewidth = 1, alpha = 0.75)
+
+          if ( add_mean_diri) a<-a+geom_vline(aes(xintercept=mu*100), linetype=ltys[1], color = Colours[3], linewidth=1.5,data = df)
+          if ( add_mean_boots) a<-a+geom_vline(aes(xintercept= mean_w*100), linetype=ltys[2],color = Colours[4], linewidth=1.5,data = df)
+          if ( add_no_boots) a<-a+geom_vline(aes(xintercept=prey_w_no_boots*100), linetype=ltys[3],color = Colours[5], linewidth=1.5,data = df)
       } else {
-        a<-a+geom_vline(aes(xintercept=mean_w*100), linetype="dotted",color = Colours[3], size=1.5,data = df)
+        a<-a+geom_vline(aes(xintercept=mean_w*100), linetype="dotted",color = Colours[3], linewidth=1.5,data = df)
       }
     }
     a<- a+facet_grid(vars(prey_name), vars(pred_size),scales = "free", drop = TRUE)

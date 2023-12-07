@@ -1,8 +1,8 @@
 Package: FishStomachs
 Type: Package
 Title: Compilation of stomach contents data
-Version: 1.0.5
-Date: 2023-08-21
+Version: 1.1
+Date: 2023-12-06
 Authors@R: c(person(given="Morten",
                     family="Vinther",
                     email="mv@aqua.dtu.dk",

@@ -11,10 +11,14 @@ plotboots(
   cut_pred_size = c(1, 10),
   addTitle = FALSE,
   tAngle = 90,
-  Colours = c("red", "green", "blue"),
+  Colours = c("#C10534", "green", "blue", "pink", "skyblue"),
+  ltys = c("dotted", "dotdash", "longdash"),
   maxbins = 75,
   statistics,
-  inclData
+  inclData,
+  add_mean_diri = TRUE,
+  add_mean_boots = FALSE,
+  add_no_boots = FALSE
 )
 }
 \arguments{
@@ -37,6 +41,12 @@ plotboots(
 \item{statistics}{Data set (estimated by call to bootsMean) including statistics to be shown on the plot.}
 
 \item{inclData}{Date set with combinations of stratum_time, pred_name and pred_size to be included in the plot.}
+
+\item{add_mean_diri}{logical, plot diet proportions estimated from Dirichlet parameters (Colours\link{3}).}
+
+\item{add_mean_boots}{logcal, plot diet proportions estimated from the mean of bootstrapping replicates (Colours\link{4}).}
+
+\item{add_no_boots}{logical, plot diet proportions without bootstrapping. (Colours\link{5}).}
 }
 \value{
 nothing (if show_plot=TRUE) or a list of plots.
