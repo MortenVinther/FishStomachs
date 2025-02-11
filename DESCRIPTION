@@ -14,7 +14,7 @@ Maintainer: Morten Vinther <mv@aqua.dtu.dk>
 Description: Compiles observed stomach contents data on a flexible exchange format into food ration and diet data used for multi species models.
 Encoding: UTF-8
 License: GPL
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Roxygen: list(markdown = TRUE)
 Depends: R (>= 4.0)
 Collate:

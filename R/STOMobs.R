@@ -187,7 +187,7 @@ subset.STOMobs <- function(x,...,na_rm=TRUE){
 
 #' Print STOMobs
 #' @param x Object of class STOMobs
-#' @param show_attributes Show the attributes for for the objects.
+#' @param show_attributes Show the attributes for the objects.
 #' @method print STOMobs
 #' @export
 print.STOMobs <- function(x,show_attributes=TRUE){
@@ -206,7 +206,9 @@ print.STOMobs <- function(x,show_attributes=TRUE){
   if (show_attributes) lapply(all_stom_attributes(),function(xx){aa<-attr(x,which=xx); cat(paste0(aa,ifelse(aa,':  ',': '),xx,'\n')) })
 }
 
-
+#' Length of predator file
+#' @param x Object of class STOMobs
+#' @param show_attributes Show the attributes for the objects.
 length.STOMobs <- function(x)nrow(x[['PRED']])
 
 
@@ -217,6 +219,8 @@ length.STOMobs <- function(x)nrow(x[['PRED']])
 #' @param level Level of details, 1 or 2.
 #' @examples \dontrun{summary(s,level=2)}
 #' @export
+
+
 summary.STOMobs <- function(x, level=1){
   stopifnot('n_tot' %in% names(x[['PRED']]))
   if (level==1) {
